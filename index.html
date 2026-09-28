@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>25K 신조 PM 대시보드</title>
 <style>
   :root{
@@ -14,7 +14,10 @@
     --ink:#17171a;
     --ink-soft:#5b5b60;
     --ink-faint:#8c8c90;
-    --accent:#2b2b30;
+    --acc
+</head>
+<body>
+t:#2b2b30;
     --accent-ink:#ffffff;
     --blue:#7fa8e0;
     --blue-soft:#eaf1fb;
@@ -112,17 +115,31 @@
   .cat-dot.contract{background:var(--blue);} .cat-dot.design{background:var(--green);} .cat-dot.build{background:var(--yellow);}
 
   /* ---------- timeline (connected master schedule) ---------- */
-  .tl2{display:flex;align-items:flex-start;border:1px solid var(--border-soft);border-radius:10px;overflow:hidden;background:var(--bg-elev);}
+  .tl2-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .tl2-filter{font-family:var(--font-body);font-size:11.5px;font-weight:600;color:var(--ink-soft);background:var(--bg-sunken);border:1px solid var(--border);border-radius:999px;padding:5px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .tl2-filter .cat-dot{width:6px;height:6px;}
+  .tl2-filter:hover{border-color:var(--ink-faint);}
+  .tl2-filter.active{background:var(--ink);color:var(--bg-elev);border-color:var(--ink);}
+  .tl2{display:flex;align-items:flex-start;border:1px solid var(--border-soft);border-radius:10px;overflow:visible;background:var(--bg-elev);}
+  .tl2-labels{border-radius:10px 0 0 10px;overflow:hidden;}
+  .tl2-labels:has(.tl2-label-row.expanded){overflow:visible;}
   .tl2-labels{flex:0 0 220px;width:220px;border-right:1px solid var(--border);}
   .tl2-axis-spacer{height:30px;border-bottom:1px solid var(--border);}
-  .tl2-label-row{height:60px;padding:7px 12px;border-bottom:1px solid var(--border-soft);display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;}
+  .tl2-label-row{height:60px;padding:7px 12px;border-bottom:1px solid var(--border-soft);display:flex;flex-direction:column;justify-content:center;gap:3px;position:relative;transition:visibility 0s;}
+  .tl2-label-row.tl2-hidden{visibility:hidden;}
   .tl2-lr-top{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
   .tl2-title{font-size:12.5px;font-weight:600;color:var(--ink);}
   .tl2-date{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
-  .tl2-sub{font-size:10.5px;color:var(--ink-soft);line-height:1.35;}
+  .tl2-acc-btn{margin-left:auto;border:none;background:none;color:var(--ink-faint);font-size:10px;cursor:pointer;padding:2px 4px;line-height:1;transition:transform .12s ease;}
+  .tl2-acc-btn:hover{color:var(--ink);}
+  .tl2-label-row.expanded .tl2-acc-btn{transform:rotate(180deg);}
+  .tl2-sub{display:none;font-size:10.5px;color:var(--ink-soft);line-height:1.4;position:absolute;left:12px;right:8px;top:100%;background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;padding:8px 10px;box-shadow:var(--shadow);z-index:6;margin-top:2px;}
+  .tl2-label-row.expanded .tl2-sub{display:block;}
   .tl2-sub b{font-family:var(--font-mono);font-weight:500;color:var(--ink-soft);}
+  .tl2-empty{display:none;padding:16px 12px;font-size:11.5px;color:var(--ink-faint);text-align:center;}
+  .tl2-empty.show{display:block;}
 
-  .tl2-chart{flex:1;position:relative;min-width:0;height:510px;
+  .tl2-chart{flex:1;position:relative;min-width:0;height:450px;border-radius:0 10px 10px 0;overflow:hidden;
     /* gridlines drawn as pure CSS background layers — hard-stop linear-gradients render as
        genuine pixel-snapped hairlines in every browser, with none of the anti-aliased "blur"
        an SVG <line> stroke or a scaled HTML border can show. No extra DOM elements needed. */
@@ -155,7 +172,7 @@
 
   @media (max-width:560px){
     .tl2-labels{flex:0 0 128px;width:128px;}
-    .tl2-title{font-size:11px;} .tl2-date{font-size:9px;display:block;} .tl2-sub{display:none;}
+    .tl2-title{font-size:11px;} .tl2-date{font-size:9px;display:block;}
   }
 
   .tl-tip{position:fixed;z-index:50;background:var(--accent);color:var(--accent-ink);font-size:11.5px;line-height:1.5;padding:10px 12px;border-radius:9px;box-shadow:var(--shadow);max-width:240px;display:none;}
@@ -228,8 +245,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+
 <div class="wrap">
 
   <div class="draft-banner">
@@ -293,6 +309,12 @@
         <span class="meta">2026.03 — 2028.03 · Today: 2026.09.23</span>
       </div>
       <div class="card">
+        <div class="tl2-filters" id="tl2Filters">
+          <button class="tl2-filter active" data-filter="all">전체</button>
+          <button class="tl2-filter" data-filter="contract"><span class="cat-dot contract"></span>계약·금융</button>
+          <button class="tl2-filter" data-filter="design"><span class="cat-dot design"></span>설계</button>
+          <button class="tl2-filter" data-filter="build"><span class="cat-dot build"></span>제작</button>
+        </div>
         <div class="tl2">
           <div class="tl2-labels">
             <div class="tl2-axis-spacer"></div>
@@ -300,54 +322,50 @@
               <div class="tl2-lr-top"><span class="cat-dot contract"></span><span class="tl2-title">계약 체결</span><span class="tl2-date">2026.03.25</span></div>
             </div>
             <div class="tl2-label-row" data-cat="contract">
-              <div class="tl2-lr-top"><span class="cat-dot contract"></span><span class="tl2-title">Novation 체결</span><span class="tl2-date">2026.08.14</span></div>
+              <div class="tl2-lr-top"><span class="cat-dot contract"></span><span class="tl2-title">Novation 체결</span><span class="tl2-date">2026.08.14</span><button class="tl2-acc-btn" aria-label="상세 보기">▾</button></div>
               <div class="tl2-sub">매수인 지위 이전: TPI메가라인 → KSF GLOBAL NO.48</div>
             </div>
             <div class="tl2-label-row" data-cat="build">
-              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Steel Cutting</span><span class="tl2-date">2026.08.19</span></div>
+              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Steel Cutting</span><span class="tl2-date">2026.08.19</span><button class="tl2-acc-btn" aria-label="상세 보기">▾</button></div>
               <div class="tl2-sub">2차 대금 인출 <b>USD 7,945,000</b> · 09.22 (RG 수령 후 지급)</div>
             </div>
             <div class="tl2-label-row" data-cat="contract">
               <div class="tl2-lr-top"><span class="cat-dot contract"></span><span class="tl2-title">Loan/BBCHP 체결</span><span class="tl2-date">2026.08.28</span></div>
             </div>
-            <div class="tl2-label-row" data-cat="design">
-              <div class="tl2-lr-top"><span class="cat-dot design"></span><span class="tl2-title">Kick Off</span><span class="tl2-date">2026.09.18</span></div>
-              <div class="tl2-sub">설계 Kick Off</div>
-            </div>
             <div class="tl2-label-row" data-cat="build">
-              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Keel Laying</span><span class="tl2-date">2026.12.18</span></div>
+              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Keel Laying</span><span class="tl2-date">2026.12.18</span><button class="tl2-acc-btn" aria-label="상세 보기">▾</button></div>
               <div class="tl2-sub">3차 대금 인출 <b>USD 7,945,000</b> · RG 수령 후 5일내 예정</div>
             </div>
             <div class="tl2-label-row" data-cat="build">
-              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Launching</span><span class="tl2-date">2027.07.16</span></div>
+              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Launching</span><span class="tl2-date">2027.07.16</span><button class="tl2-acc-btn" aria-label="상세 보기">▾</button></div>
               <div class="tl2-sub">4차 대금 인출 <b>USD 7,945,000</b> · RG 수령 후 5일내 예정</div>
             </div>
             <div class="tl2-label-row" data-cat="build">
-              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Delivery</span><span class="tl2-date">2027.12.28</span></div>
+              <div class="tl2-lr-top"><span class="cat-dot build"></span><span class="tl2-title">Delivery</span><span class="tl2-date">2027.12.28</span><button class="tl2-acc-btn" aria-label="상세 보기">▾</button></div>
               <div class="tl2-sub">잔금 <b>USD 3,972,500</b> · 선박 인도</div>
             </div>
+            <div class="tl2-empty" id="tl2Empty">선택한 구분에 해당하는 일정이 없음</div>
           </div>
 
-          <div class="tl2-chart">
+          <div class="tl2-chart" id="tl2Chart">
             <!-- date/row gridlines: pure CSS background-image layers on .tl2-chart (see the
                  stylesheet) — no gridline DOM elements needed at all -->
 
             <!-- today marker -->
             <div class="tl2-todayline" style="left:27.1%;"></div>
 
-            <svg class="tl2-svg" viewBox="0 0 100 510" preserveAspectRatio="none" id="tl2Svg">
+            <svg class="tl2-svg" viewBox="0 0 100 450" preserveAspectRatio="none" id="tl2Svg">
               <!-- step connectors only — sequential, colored by the category of the milestone being
                    entered (blue=계약/금융, green=설계, yellow=제작); dashed = 예정(pending) segment.
                    Kept deliberately thin (stroke-width 1) and semi-transparent so the bars carry the
                    visual weight, not the connecting line. -->
               <g fill="none" stroke-width="1" vector-effect="non-scaling-stroke" stroke-linecap="round" opacity=".75">
-                <path d="M3.2,60 V90 H21.8 V120" stroke="var(--blue-line)"></path>
-                <path d="M21.8,120 V150 H22.5 V180" stroke="var(--yellow-line)"></path>
-                <path d="M22.5,180 V210 H23.7 V240" stroke="var(--blue-line)"></path>
-                <path d="M23.7,240 V270 H26.4 V300" stroke="var(--green)"></path>
-                <path d="M26.4,300 V330 H38.4 V360" stroke="var(--yellow-line)" stroke-dasharray="1,4"></path>
-                <path d="M38.4,360 V390 H66.0 V420" stroke="var(--yellow-line)" stroke-dasharray="1,4"></path>
-                <path d="M66.0,420 V450 H87.6 V480" stroke="var(--yellow-line)" stroke-dasharray="1,4"></path>
+                <path data-cat="contract" d="M3.2,60 V90 H21.8 V120" stroke="var(--blue-line)"></path>
+                <path data-cat="build" d="M21.8,120 V150 H22.5 V180" stroke="var(--yellow-line)"></path>
+                <path data-cat="contract" d="M22.5,180 V210 H23.7 V240" stroke="var(--blue-line)"></path>
+                <path data-cat="build" d="M23.7,240 V270 H38.4 V300" stroke="var(--yellow-line)" stroke-dasharray="1,4"></path>
+                <path data-cat="build" d="M38.4,300 V330 H66.0 V360" stroke="var(--yellow-line)" stroke-dasharray="1,4"></path>
+                <path data-cat="build" d="M66.0,360 V390 H87.6 V420" stroke="var(--yellow-line)" stroke-dasharray="1,4"></path>
               </g>
             </svg>
 
@@ -365,20 +383,19 @@
 
             <!-- milestone bars: plain HTML divs (dependency-gantt style — colored bar + inline date,
                  not point markers), positioned via left:%/top:px so they stay undistorted -->
-            <div class="tl2-bar" style="left:3.2%;top:60px;background:var(--blue);" data-date="2026.03.25 (완료)" data-note="선박건조계약 체결 · Hull No. LH2603-25000-001 · USD 39,725,000"><span>03.25</span></div>
-            <div class="tl2-bar" style="left:21.8%;top:120px;background:var(--blue);" data-date="2026.08.14 (완료)" data-note="건조계약 매수인 지위 이전: TPI메가라인 → KSF GLOBAL NO.48 S.A.(SPC)"><span>08.14</span></div>
-            <div class="tl2-bar" style="left:22.5%;top:180px;background:var(--yellow);" data-date="2026.08.19 (완료)" data-note="주기관 Steel Cutting 완료 · 2차 대금 인출 USD 7,945,000 (09.22, RG 수령 후 지급)"><span>08.19</span></div>
-            <div class="tl2-bar" style="left:23.7%;top:240px;background:var(--blue);" data-date="2026.08.28 (완료)" data-note="선박금융 대출계약(Loan) 및 나용선계약(BBCHP) 체결"><span>08.28</span></div>
-            <div class="tl2-bar" style="left:26.4%;top:300px;background:var(--green);" data-date="2026.09.18 (완료)" data-note="설계 Kick Off"><span>09.18</span></div>
-            <div class="tl2-bar pending" style="left:38.4%;top:360px;color:var(--yellow-line);" data-date="2026.12.18 (예정)" data-note="Keel Laying · 3차 대금 인출 USD 7,945,000 (RG 수령 후 5일내 예정)"><span>12.18</span></div>
-            <div class="tl2-bar pending" style="left:66.0%;top:420px;color:var(--yellow-line);" data-date="2027.07.16 (예정)" data-note="Launching · 4차 대금 인출 USD 7,945,000 (RG 수령 후 5일내 예정)"><span>07.16</span></div>
-            <div class="tl2-bar pending" style="left:87.6%;top:480px;color:var(--yellow-line);" data-date="2027.12.28 (예정)" data-note="Delivery · 잔금 USD 3,972,500 지급 및 선박 인도"><span>12.28</span></div>
+            <div class="tl2-bar" data-cat="contract" style="left:3.2%;top:60px;background:var(--blue);" data-date="2026.03.25 (완료)" data-note="선박건조계약 체결 · Hull No. LH2603-25000-001 · USD 39,725,000"><span>03.25</span></div>
+            <div class="tl2-bar" data-cat="contract" style="left:21.8%;top:120px;background:var(--blue);" data-date="2026.08.14 (완료)" data-note="건조계약 매수인 지위 이전: TPI메가라인 → KSF GLOBAL NO.48 S.A.(SPC)"><span>08.14</span></div>
+            <div class="tl2-bar" data-cat="build" style="left:22.5%;top:180px;background:var(--yellow);" data-date="2026.08.19 (완료)" data-note="주기관 Steel Cutting 완료 · 2차 대금 인출 USD 7,945,000 (09.22, RG 수령 후 지급)"><span>08.19</span></div>
+            <div class="tl2-bar" data-cat="contract" style="left:23.7%;top:240px;background:var(--blue);" data-date="2026.08.28 (완료)" data-note="선박금융 대출계약(Loan) 및 나용선계약(BBCHP) 체결"><span>08.28</span></div>
+            <div class="tl2-bar pending" data-cat="build" style="left:38.4%;top:300px;color:var(--yellow-line);" data-date="2026.12.18 (예정)" data-note="Keel Laying · 3차 대금 인출 USD 7,945,000 (RG 수령 후 5일내 예정)"><span>12.18</span></div>
+            <div class="tl2-bar pending" data-cat="build" style="left:66.0%;top:360px;color:var(--yellow-line);" data-date="2027.07.16 (예정)" data-note="Launching · 4차 대금 인출 USD 7,945,000 (RG 수령 후 5일내 예정)"><span>07.16</span></div>
+            <div class="tl2-bar pending" data-cat="build" style="left:87.6%;top:420px;color:var(--yellow-line);" data-date="2027.12.28 (예정)" data-note="Delivery · 잔금 USD 3,972,500 지급 및 선박 인도"><span>12.28</span></div>
             <div class="tl2-today-label" style="left:27.1%;">Today 09.23</div>
           </div>
         </div>
         <div class="legend">
           <span><span class="sw" style="background:var(--blue);"></span>계약/금융</span>
-          <span><span class="sw" style="background:var(--green);"></span>설계</span>
+          <span><span class="sw" style="background:var(--green);"></span>설계 (현재 마일스톤 없음)</span>
           <span><span class="sw" style="background:var(--yellow);"></span>제작</span>
           <span><span class="sw" style="background:var(--red);opacity:.55;"></span>Today</span>
         </div>
@@ -472,7 +489,45 @@
             <div data-k="내용"><a href="https://drive.google.com/file/d/1n3Ypjt0U-KV8q93SOxBbEU0H4ufBpMjG/view?usp=drive_link" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;">📄 선박금융 계약서 원문 다운로드 (Google Drive) ↗</a></div>
           </div>
         </div>
-        <p class="src">출처: <a href="https://drive.google.com/file/d/1tfoVUYMrolRMozX7HsHyTwt7cuhx8B42/view?usp=drivesdk" target="_blank" rel="noopener">신조선도입금융 TermSheet_(TPI메가라인)_FINAL (26.06.29) ↗</a> · <a href="https://drive.google.com/file/d/18noRK3GdSHwJxhprbByiA-fEl9yPAj6P/view?usp=drivesdk" target="_blank" rel="noopener">2608_25K 계약서별 주요 내용 ↗</a> · <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">김규일 매니저 회신 메일 (26.09.21) ↗</a></p>
+        <p class="note" style="margin-top:10px;">참조 <sup class="fn"><a href="#fn1" style="color:inherit;text-decoration:none;">1</a></sup><sup class="fn"><a href="#fn3" style="color:inherit;text-decoration:none;">3</a></sup><sup class="fn"><a href="#fn5" style="color:inherit;text-decoration:none;">5</a></sup></p>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>누적 지급 비용 총 집계</h2>
+        <span class="meta">2026.09.28 기준 · 실제 송금 완료분만 집계</span>
+      </div>
+      <div class="card">
+        <div class="ctable-head" style="--cols:.8fr 1.3fr 1.3fr 1.5fr;"><div>통화</div><div>지급 총액</div><div>원화 환산</div><div>비고</div></div>
+        <div class="ctable">
+          <div class="crow" style="--cols:.8fr 1.3fr 1.3fr 1.5fr;">
+            <div class="main" data-k="통화">USD</div>
+            <div data-k="총액" style="font-family:var(--font-mono);">19,862,500</div>
+            <div data-k="환산" style="font-family:var(--font-mono);">₩26,893,000,000<span class="tt" tabindex="0" style="border:none;"><sup class="fn"><a href="#fn11" style="color:inherit;text-decoration:none;">11</a></sup></span></div>
+            <div data-k="비고">건조대금 1·2차 (RG + Steel Cutting)</div>
+          </div>
+          <div class="crow" style="--cols:.8fr 1.3fr 1.3fr 1.5fr;">
+            <div class="main" data-k="통화">JPY</div>
+            <div data-k="총액" style="font-family:var(--font-mono);">908,700,000</div>
+            <div data-k="환산" style="font-family:var(--font-mono);">₩7,826,000,000<sup class="fn"><a href="#fn11" style="color:inherit;text-decoration:none;">11</a></sup></div>
+            <div data-k="비고">엔진 계약금(30%) 기지급 + 조선소→한신 계약금 송금</div>
+          </div>
+          <div class="crow" style="--cols:.8fr 1.3fr 1.3fr 1.5fr;">
+            <div class="main" data-k="통화">KRW</div>
+            <div data-k="총액" style="font-family:var(--font-mono);">124,500,000</div>
+            <div data-k="환산" style="font-family:var(--font-mono);">₩124,500,000</div>
+            <div data-k="비고">Upfront Fee + Operating Fee(연)</div>
+          </div>
+          <div class="crow" style="--cols:.8fr 1.3fr 1.3fr 1.5fr;background:var(--bg-elev);border:1.5px solid var(--ink);">
+            <div class="main" data-k="통화">합계</div>
+            <div data-k="총액" style="font-family:var(--font-mono);color:var(--ink-faint);">—</div>
+            <div data-k="환산" style="font-family:var(--font-mono);font-weight:700;font-size:14px;">₩34,843,000,000</div>
+            <div data-k="비고">약 348.4억원 (환산 기준)</div>
+          </div>
+        </div>
+        <p class="note">※ 별도 집계: 한신→당사 계약금 환급(예정) JPY 209,700,000 (약 ₩1,806,000,000)은 입금 미확인 상태로 위 합계에서 <b>차감 반영하지 않음</b>. 입금 확인 시 순지출액에서 차감 예정.</p>
+        <p class="src">출처: 위 통화별 실지급 항목 <sup class="fn"><a href="#fn7" style="color:inherit;text-decoration:none;">7</a></sup><sup class="fn"><a href="#fn9" style="color:inherit;text-decoration:none;">9</a></sup><sup class="fn"><a href="#fn10" style="color:inherit;text-decoration:none;">10</a></sup> · 환산 환율 <sup class="fn"><a href="#fn11" style="color:inherit;text-decoration:none;">11</a></sup></p>
       </div>
     </section>
 
@@ -515,8 +570,7 @@
             <div data-k="상태"><span class="status warn"><span class="d"></span>예정</span></div>
           </div>
         </div>
-        <p class="note">※ 대금 지급 주체는 TPI메가라인이 아닌 SPC(KSF GLOBAL NO.48 S.A.)임 — 당사는 BBCHP 용선료 형태로 실질 비용을 부담함. 조선소와의 지급일정 조율에 따라 일정 변동 가능.</p>
-        <p class="src">출처: <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">김규일 매니저 회신 메일 (26.09.21) ↗</a> · <a href="https://drive.google.com/file/d/1tfoVUYMrolRMozX7HsHyTwt7cuhx8B42/view?usp=drivesdk" target="_blank" rel="noopener">TermSheet 26.06.29 ↗</a></p>
+        <p class="note">※ 대금 지급 주체는 TPI메가라인이 아닌 SPC(KSF GLOBAL NO.48 S.A.)임 — 당사는 BBCHP 용선료 형태로 실질 비용을 부담함. 조선소와의 지급일정 조율에 따라 일정 변동 가능. <sup class="fn"><a href="#fn5" style="color:inherit;text-decoration:none;">5</a></sup><sup class="fn"><a href="#fn1" style="color:inherit;text-decoration:none;">1</a></sup></p>
       </div>
     </section>
 
@@ -531,9 +585,9 @@
               <div data-k="상태"><span class="status ok"><span class="d"></span>기지급</span></div>
             </div>
             <div class="crow" style="--cols:1.6fr .9fr 1fr;">
-              <div class="main" data-k="항목">조선소→한신 잔금 송금</div>
-              <div data-k="금액">전액</div>
-              <div data-k="상태"><span class="status ok"><span class="d"></span>09.22 완료</span></div>
+              <div class="main" data-k="항목">조선소→한신 계약금 송금</div>
+              <div data-k="금액" style="font-family:var(--font-mono);">JPY 699,000,000</div>
+              <div data-k="상태"><span class="status ok"><span class="d"></span>09.23 완료</span></div>
             </div>
             <div class="crow" style="--cols:1.6fr .9fr 1fr;">
               <div class="main" data-k="항목">한신→당사 계약금 환급</div>
@@ -541,8 +595,8 @@
               <div data-k="상태"><span class="status warn"><span class="d"></span>송금신청 접수 (09.25) · 입금 확인중</span></div>
             </div>
           </div>
-          <p class="note">09.23 최용창 본부장 명의로 한신 앞 환급 요청 공문(TPI-BMD-2026-003) 발송함. 09.25 한신 측이 미쓰이스미토모은행(SMBC)을 통해 외화송금신청서(AFRD) 접수 완료(수취인: TPI메가라인, 수취 계좌: 한국산업은행/KDB, 송금목적: REFUND OF ADVANCE PAYMENT, JPY 209,700,000) — 당사 계좌 입금 완료 여부는 확인 중.</p>
-          <p class="src">출처: <a href="https://drive.google.com/file/d/1ENhUrnsRIPjGlz667LsOT7gzvkMJAljS/view?usp=drivesdk" target="_blank" rel="noopener">한신엔진 30% 대금 환급 요청 공문 (26.09.23) ↗</a> · <a href="https://drive.google.com/file/d/1x1hu5wRucSwjD-T08Fbg2wmeMqs2EjSA/view?usp=drivesdk" target="_blank" rel="noopener">발송 메일 (26.09.23) ↗</a> · <a href="https://drive.google.com/file/d/1ezqjFrnqAGgedism8_U2jh8JSCGWar16/view?usp=drivesdk" target="_blank" rel="noopener">SMBC 외화송금신청서 AFRD (26.09.25) ↗</a> · <a href="https://drive.google.com/file/d/1b7bCgYT6DlZDH3qU8QSxfe4hvU0Pntam/view?usp=drivesdk" target="_blank" rel="noopener">조선소→한신 송금확인증 (26.09.23) ↗</a> · <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">김규일 매니저 회신 메일 (26.09.21) ↗</a></p>
+          <p class="note">09.23 최용창 본부장 명의로 한신 앞 환급 요청 공문(TPI-BMD-2026-003) 발송함. 같은 날 조선소(APSSE)가 한신 앞 엔진 계약금 전액 JPY 699,000,000을 중국공상은행(ICBC)을 통해 송금 완료함(수취은행: SMBC, 용도: MAIN ENGINE). 09.25 한신 측이 SMBC를 통해 외화송금신청서(AFRD) 접수 완료(수취인: TPI메가라인, 수취 계좌: 한국산업은행/KDB, 송금목적: REFUND OF ADVANCE PAYMENT, JPY 209,700,000) — 당사 계좌 입금 완료 여부는 확인 중.</p>
+          <p class="src">출처 <sup class="fn"><a href="#fn7" style="color:inherit;text-decoration:none;">7</a></sup><sup class="fn"><a href="#fn8" style="color:inherit;text-decoration:none;">8</a></sup><sup class="fn"><a href="#fn9" style="color:inherit;text-decoration:none;">9</a></sup><sup class="fn"><a href="#fn10" style="color:inherit;text-decoration:none;">10</a></sup><sup class="fn"><a href="#fn5" style="color:inherit;text-decoration:none;">5</a></sup></p>
         </div>
         <div class="card">
           <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">부수 비용</h2></div>
@@ -563,8 +617,27 @@
               <div data-k="상태"><span class="status warn"><span class="d"></span>9월 마지막주 예정</span></div>
             </div>
           </div>
-          <p class="src">출처: <a href="https://drive.google.com/file/d/1S7mQMuQ209I_WxHWaAj47h8GUjL6cboM/view?usp=drivesdk" target="_blank" rel="noopener">[TPI-2026-BMD-0388] 25K 신조선 선박금융 계약 체결 품의서 (26.08.13) ↗</a> · <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">김규일 매니저 회신 메일 ↗</a></p>
+          <p class="src">출처 <sup class="fn"><a href="#fn6" style="color:inherit;text-decoration:none;">6</a></sup><sup class="fn"><a href="#fn5" style="color:inherit;text-decoration:none;">5</a></sup></p>
         </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="card" style="padding:16px 18px;">
+        <div style="font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:8px;">출처 (계약)</div>
+        <ol style="margin:0;padding-left:18px;font-size:11.5px;color:var(--ink-soft);line-height:1.9;">
+          <li id="fn1">신조선도입금융 TermSheet_(TPI메가라인)_FINAL (26.06.29) — <a href="https://drive.google.com/file/d/1tfoVUYMrolRMozX7HsHyTwt7cuhx8B42/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn2">260519 Megaline 25k Master Schedule — <a href="https://drive.google.com/file/d/1c1cwcMMP7NeKW5GWMOkomAf5v_RfjYL9/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn3">2608_25K 계약서별 주요 내용 — <a href="https://drive.google.com/file/d/18noRK3GdSHwJxhprbByiA-fEl9yPAj6P/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn4">선박금융 계약서 원문 — <a href="https://drive.google.com/file/d/1n3Ypjt0U-KV8q93SOxBbEU0H4ufBpMjG/view?usp=drive_link" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn5">김규일 매니저 회신 메일 (26.09.21) — <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn6">[TPI-2026-BMD-0388] 25K 신조선 선박금융 계약 체결 품의서 (26.08.13) — <a href="https://drive.google.com/file/d/1S7mQMuQ209I_WxHWaAj47h8GUjL6cboM/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn7">한신엔진 30% 대금 환급 요청 공문 (26.09.23) — <a href="https://drive.google.com/file/d/1ENhUrnsRIPjGlz667LsOT7gzvkMJAljS/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn8">한신엔진 환급 요청 발송 메일 (26.09.23) — <a href="https://drive.google.com/file/d/1x1hu5wRucSwjD-T08Fbg2wmeMqs2EjSA/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn9">SMBC 외화송금신청서 AFRD (26.09.25) — <a href="https://drive.google.com/file/d/1ezqjFrnqAGgedism8_U2jh8JSCGWar16/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn10">조선소→한신 계약금 송금확인증 · ICBC 전자회단 (26.09.23) — <a href="https://drive.google.com/file/d/1b7bCgYT6DlZDH3qU8QSxfe4hvU0Pntam/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
+          <li id="fn11">환산 환율: USD/KRW 1,353.96 · JPY/KRW 8.6123(100엔당 861.23) — <a href="https://www.xe.com/en-us/currencyconverter/" target="_blank" rel="noopener">XE.com 중간시장환율 ↗</a> (2026.09.27 조회, 실제 결제환율과 상이할 수 있음)</li>
+        </ol>
       </div>
     </section>
   </div>
@@ -667,7 +740,6 @@
         <div class="ctable-head" style="--cols:1.4fr 1fr 1fr;"><div>마일스톤</div><div>일자</div><div>상태</div></div>
         <div class="ctable">
           <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main" data-k="마일스톤">Steel Cutting</div><div data-k="일자" style="font-family:var(--font-mono);">2026.08.19</div><div data-k="상태"><span class="status ok"><span class="d"></span>완료</span></div></div>
-          <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main" data-k="마일스톤">Kick Off</div><div data-k="일자" style="font-family:var(--font-mono);">2026.09.18</div><div data-k="상태"><span class="status ok"><span class="d"></span>완료</span></div></div>
           <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main" data-k="마일스톤">Keel Laying</div><div data-k="일자" style="font-family:var(--font-mono);">2026.12.18</div><div data-k="상태"><span class="status warn"><span class="d"></span>예정</span></div></div>
           <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main" data-k="마일스톤">Launching</div><div data-k="일자" style="font-family:var(--font-mono);">2027.07.16</div><div data-k="상태"><span class="status warn"><span class="d"></span>예정</span></div></div>
           <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main" data-k="마일스톤">Delivery</div><div data-k="일자" style="font-family:var(--font-mono);">2027.12.28</div><div data-k="상태"><span class="status warn"><span class="d"></span>예정</span></div></div>
@@ -778,7 +850,46 @@
   document.addEventListener('click', function(e){
     if(!tip.contains(e.target) && !e.target.classList.contains('tl2-bar')) tip.classList.remove('show');
   });
+
+  // ---- timeline: category filter (계약·금융 / 설계 / 제작) ----
+  var tlFilters = document.querySelectorAll('.tl2-filter');
+  var tlRows = document.querySelectorAll('.tl2-label-row[data-cat]');
+  var tlBars = document.querySelectorAll('.tl2-bar[data-cat]');
+  var tlPaths = document.querySelectorAll('#tl2Svg path[data-cat]');
+  var tlEmpty = document.getElementById('tl2Empty');
+  tlFilters.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tlFilters.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var f = btn.dataset.filter;
+      var visibleCount = 0;
+      tlRows.forEach(function(r){
+        var match = (f === 'all' || r.dataset.cat === f);
+        r.classList.toggle('tl2-hidden', !match);
+        if(match) visibleCount++;
+      });
+      tlBars.forEach(function(bar){
+        var match = (f === 'all' || bar.dataset.cat === f);
+        bar.style.opacity = match ? '1' : '0';
+        bar.style.pointerEvents = match ? 'auto' : 'none';
+      });
+      tlPaths.forEach(function(p){
+        var match = (f === 'all' || p.dataset.cat === f);
+        p.style.opacity = match ? '' : '0';
+      });
+      tlEmpty.classList.toggle('show', visibleCount === 0);
+    });
+  });
+
+  // ---- timeline: accordion (row detail expand/collapse) ----
+  document.querySelectorAll('.tl2-acc-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      btn.closest('.tl2-label-row').classList.toggle('expanded');
+    });
+  });
 })();
 </script>
+
 </body>
 </html>
