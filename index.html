@@ -262,12 +262,180 @@
     .pill{border:1px solid #999;}
     .top-left::after{content:"— 출력용 PDF (전체 탭 포함) —";display:block;font-size:11px;color:#666;margin-top:6px;font-family:var(--font-mono);}
   }
+
+/* ===================== 조직도 (조직도 탭) — scoped embed styles ===================== */
+#orgchart-embed{
+  --oc-bg:#f5f5f4; --oc-surface:#ffffff; --oc-surface-2:#fafafa; --oc-line:#d4d4d4; --oc-line-2:#e7e7e7;
+  --oc-text:#171717; --oc-text-2:#525252; --oc-text-3:#8a8a8a; --oc-accent:#171717; --oc-accent-ink:#ffffff;
+  --oc-c1:#a7c7e7; --oc-c2:#bfe3d6; --oc-c3:#d3ddee; --oc-c4:#8ecfb5;
+  --oc-c1-ink:#1f4f7a; --oc-c2-ink:#1f5e48; --oc-c3-ink:#2c4e85; --oc-c4-ink:#2a6650;
+  --oc-shadow:0 1px 2px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.04);
+  --oc-radius:12px;
+  background:var(--oc-bg);color:var(--oc-text);font-family:"Inter","Noto Sans KR",system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  display:block;
+}
+@media (prefers-color-scheme: dark){
+  html:not([data-theme="light"]) #orgchart-embed{
+    --oc-bg:#0e0e0f; --oc-surface:#18181a; --oc-surface-2:#1f1f22; --oc-line:#3a3a3e; --oc-line-2:#2a2a2d;
+    --oc-text:#f2f2f2; --oc-text-2:#b4b4b8; --oc-text-3:#7d7d83; --oc-accent:#f2f2f2; --oc-accent-ink:#111;
+    --oc-c1:#6f9fc9; --oc-c2:#8fc2ae; --oc-c3:#9aa8c0; --oc-c4:#5fae8f;
+    --oc-c1-ink:#0f2233; --oc-c2-ink:#0f2a20; --oc-c3-ink:#161d2b; --oc-c4-ink:#0c261c;
+    --oc-shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+html[data-theme="dark"] #orgchart-embed{
+  --oc-bg:#0e0e0f; --oc-surface:#18181a; --oc-surface-2:#1f1f22; --oc-line:#3a3a3e; --oc-line-2:#2a2a2d;
+  --oc-text:#f2f2f2; --oc-text-2:#b4b4b8; --oc-text-3:#7d7d83; --oc-accent:#f2f2f2; --oc-accent-ink:#111;
+  --oc-c1:#6f9fc9; --oc-c2:#8fc2ae; --oc-c3:#9aa8c0; --oc-c4:#5fae8f;
+  --oc-c1-ink:#0f2233; --oc-c2-ink:#0f2a20; --oc-c3-ink:#161d2b; --oc-c4-ink:#0c261c;
+  --oc-shadow:0 1px 2px rgba(0,0,0,.3);
+}
+#orgchart-embed *{box-sizing:border-box}
+#orgchart-embed a{color:inherit}
+#orgchart-embed .wrap{max-width:1280px;margin:0 auto;padding:24px 0 8px}
+
+/* language modes */
+#orgchart-embed.lang-ko .en{display:none!important}
+#orgchart-embed.lang-en .ko{display:none!important}
+#orgchart-embed.lang-both .en.sub{display:block}
+#orgchart-embed .sub{font-size:.78em;color:var(--oc-text-3);font-weight:500;line-height:1.3}
+#orgchart-embed.lang-en .en.sub{font-size:1em;color:inherit;font-weight:inherit}
+
+/* header */
+#orgchart-embed header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--oc-line);padding-bottom:18px;margin-bottom:22px}
+#orgchart-embed .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--oc-text-3);font-weight:600}
+#orgchart-embed h1{font-size:clamp(22px,3vw,30px);margin:4px 0 2px;letter-spacing:-.01em}
+#orgchart-embed h1 .sub{font-size:.55em;margin-top:2px}
+#orgchart-embed .company{color:var(--oc-text-2);font-size:14px}
+#orgchart-embed .controls{display:flex;gap:8px;flex-wrap:wrap}
+#orgchart-embed .seg{display:inline-flex;border:1px solid var(--oc-line);border-radius:999px;background:var(--oc-surface);padding:3px}
+#orgchart-embed .seg button{border:0;background:transparent;color:var(--oc-text-2);font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer}
+#orgchart-embed .seg button[aria-pressed="true"]{background:var(--oc-accent);color:var(--oc-accent-ink)}
+
+/* KPI */
+#orgchart-embed .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
+#orgchart-embed .kpi{background:var(--oc-surface);border:1px solid var(--oc-line-2);border-radius:var(--oc-radius);padding:14px 16px;box-shadow:var(--oc-shadow)}
+#orgchart-embed .kpi .v{font-size:26px;font-weight:700;letter-spacing:-.02em}
+#orgchart-embed .kpi .v small{font-size:13px;color:var(--oc-text-3);font-weight:500;margin-left:3px}
+#orgchart-embed .kpi .l{font-size:13px;color:var(--oc-text-2)}
+
+#orgchart-embed section{margin-bottom:34px}
+#orgchart-embed h2{font-size:18px;margin:0 0 14px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+#orgchart-embed h2 .sub{display:inline!important;font-size:13px}
+#orgchart-embed.lang-en h2 .sub{font-size:inherit}
+
+/* ORG CHART */
+#orgchart-embed .org{background:var(--oc-surface);border:1px solid var(--oc-line-2);border-radius:16px;padding:28px 20px 24px;box-shadow:var(--oc-shadow)}
+#orgchart-embed .node{background:var(--oc-surface);border:1.5px solid var(--oc-text);border-radius:10px;padding:10px 14px;text-align:center;position:relative;min-width:180px}
+#orgchart-embed .node .t{font-weight:700;font-size:15px}
+#orgchart-embed .node .who{font-size:12px;color:var(--oc-text-2);margin-top:4px}
+#orgchart-embed .node.exec{background:var(--oc-accent);color:var(--oc-accent-ink);border-color:var(--oc-accent)}
+#orgchart-embed .node.exec .sub,#orgchart-embed .node.exec .who{color:inherit;opacity:.72}
+#orgchart-embed .lvl{display:flex;justify-content:center;position:relative}
+#orgchart-embed .vline{width:1.5px;height:22px;background:var(--oc-text);margin:0 auto}
+#orgchart-embed .mgmt{display:flex;justify-content:center;align-items:center;gap:0}
+#orgchart-embed .mgmt .hl{width:40px;height:1.5px;background:var(--oc-text)}
+#orgchart-embed .mgmt .spacer{min-width:180px;visibility:hidden}
+#orgchart-embed .bus{position:relative;height:22px}
+#orgchart-embed .centers{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative}
+#orgchart-embed .centers::before{content:"";position:absolute;top:-22px;left:12.5%;right:12.5%;height:1.5px;background:var(--oc-text)}
+#orgchart-embed .center{position:relative;display:flex;flex-direction:column}
+#orgchart-embed .center::before{content:"";position:absolute;top:-22px;left:50%;width:1.5px;height:22px;background:var(--oc-text)}
+#orgchart-embed .chead{border-radius:10px;padding:10px 12px;text-align:center;font-weight:700;border:1.5px solid transparent}
+#orgchart-embed .chead .cnt{font-size:12px;font-weight:600;opacity:.8;margin-top:3px}
+#orgchart-embed .center[data-c="1"] .chead{background:var(--oc-c1);color:var(--oc-c1-ink)}
+#orgchart-embed .center[data-c="2"] .chead{background:var(--oc-c2);color:var(--oc-c2-ink)}
+#orgchart-embed .center[data-c="3"] .chead{background:var(--oc-c3);color:var(--oc-c3-ink)}
+#orgchart-embed .center[data-c="4"] .chead{background:var(--oc-c4);color:var(--oc-c4-ink)}
+#orgchart-embed .chead .sub{color:inherit;opacity:.8}
+#orgchart-embed .depts{list-style:none;margin:0;padding:10px 0 0 16px;position:relative}
+#orgchart-embed .depts::before{content:"";position:absolute;left:6px;top:0;bottom:22px;width:1.5px;background:var(--oc-line)}
+#orgchart-embed .dept{position:relative;margin-bottom:8px}
+#orgchart-embed .dept::before{content:"";position:absolute;left:-10px;top:22px;width:10px;height:1.5px;background:var(--oc-line)}
+#orgchart-embed .dcard{width:100%;text-align:left;font:inherit;color:inherit;background:var(--oc-surface-2);border:1px solid var(--oc-line);border-radius:10px;padding:9px 11px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:flex-start;transition:border-color .15s,transform .15s}
+#orgchart-embed .dcard:hover,#orgchart-embed .dcard:focus-visible{border-color:var(--oc-text);outline:none}
+#orgchart-embed .dcard .dn{font-weight:600;font-size:14px}
+#orgchart-embed .dcard .dh{font-size:12px;color:var(--oc-text-2);margin-top:2px}
+#orgchart-embed .pill{flex:none;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;background:var(--oc-surface);border:1px solid var(--oc-line);color:var(--oc-text-2);white-space:nowrap}
+#orgchart-embed .center[data-c="1"] .dcard{border-left:4px solid var(--oc-c1)}
+#orgchart-embed .center[data-c="2"] .dcard{border-left:4px solid var(--oc-c2)}
+#orgchart-embed .center[data-c="3"] .dcard{border-left:4px solid var(--oc-c3)}
+#orgchart-embed .center[data-c="4"] .dcard{border-left:4px solid var(--oc-c4)}
+#orgchart-embed.lang-both .pill .en{display:none}
+#orgchart-embed .legend-note{font-size:12px;color:var(--oc-text-3);margin-top:14px;text-align:right}
+
+/* tooltip (appended to body, not scoped under #orgchart-embed in DOM, but class name is unique) */
+.oc-tip{position:fixed;z-index:50;max-width:300px;background:var(--oc-accent,#171717);color:var(--oc-accent-ink,#fff);border-radius:10px;padding:12px 14px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.oc-tip.show{opacity:1;transform:none;pointer-events:auto}
+.oc-tip .tt{font-weight:700;font-size:14px}
+.oc-tip .zh{opacity:.65;font-size:12px}
+.oc-tip dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:8px 0 0}
+.oc-tip dt{opacity:.6}
+.oc-tip dd{margin:0}
+.oc-tip a{color:#bfe0fb;text-decoration:underline}
+html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
+@media (prefers-color-scheme: dark){html:not([data-theme="light"]) .oc-tip a{color:#2f6fb0}}
+
+/* chart */
+#orgchart-embed .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+#orgchart-embed .card{background:var(--oc-surface);border:1px solid var(--oc-line-2);border-radius:var(--oc-radius);padding:16px;box-shadow:var(--oc-shadow)}
+#orgchart-embed .card h3{margin:0 0 10px;font-size:14px;color:var(--oc-text-2);font-weight:600}
+#orgchart-embed .chart-box{position:relative;height:380px}
+#orgchart-embed .chart-box.sm{height:300px}
+
+/* contact table */
+#orgchart-embed .tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--oc-surface);border:1px solid var(--oc-line-2);border-radius:var(--oc-radius);overflow:hidden;box-shadow:var(--oc-shadow);font-size:14px}
+#orgchart-embed .tbl th{background:var(--oc-accent);color:var(--oc-accent-ink);text-align:left;font-weight:600;padding:10px 12px;font-size:13px;white-space:nowrap}
+#orgchart-embed .tbl th .sub{color:inherit;opacity:.65;font-size:11px}
+#orgchart-embed .tbl td{padding:10px 12px;border-top:1px solid var(--oc-line-2);vertical-align:top}
+#orgchart-embed .tbl tr:nth-child(even) td{background:var(--oc-surface-2)}
+#orgchart-embed .tbl td a{text-decoration:none;border-bottom:1px dotted var(--oc-text-3)}
+#orgchart-embed .tbl .muted{color:var(--oc-text-3)}
+#orgchart-embed .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+#orgchart-embed footer{border-top:1px solid var(--oc-line);padding-top:14px;font-size:12px;color:var(--oc-text-3)}
+#orgchart-embed footer ol{padding-left:18px;margin:6px 0}
+#orgchart-embed sup a{text-decoration:none;color:var(--oc-text-3);font-weight:600}
+
+/* responsive */
+@media (max-width:1024px){
+  #orgchart-embed .centers{grid-template-columns:repeat(2,1fr);row-gap:40px}
+  #orgchart-embed .centers::before{display:none}
+  #orgchart-embed .center::before{display:none}
+  #orgchart-embed .bus{height:10px}
+  #orgchart-embed .grid2{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  #orgchart-embed .kpis{grid-template-columns:repeat(2,1fr)}
+  #orgchart-embed .mgmt{flex-direction:column}
+  #orgchart-embed .mgmt .hl{width:1.5px;height:18px}
+  #orgchart-embed .mgmt .spacer{display:none}
+  #orgchart-embed .node{min-width:0;width:100%;max-width:320px}
+  #orgchart-embed .centers{grid-template-columns:1fr;row-gap:22px}
+  #orgchart-embed .org{padding:20px 14px}
+  /* contact cards */
+  #orgchart-embed .tbl,#orgchart-embed .tbl tbody,#orgchart-embed .tbl tr,#orgchart-embed .tbl td{display:block;width:100%}
+  #orgchart-embed .tbl{border:0;background:transparent;box-shadow:none}
+  #orgchart-embed .tbl thead{display:none}
+  #orgchart-embed .tbl tr{background:var(--oc-surface);border:1px solid var(--oc-line-2);border-radius:var(--oc-radius);margin-bottom:10px;padding:6px 0;box-shadow:var(--oc-shadow)}
+  #orgchart-embed .tbl tr:nth-child(even) td{background:transparent}
+  #orgchart-embed .tbl td{border:0;padding:5px 14px;display:grid;grid-template-columns:110px 1fr;gap:8px}
+  #orgchart-embed .tbl td::before{content:attr(data-l);color:var(--oc-text-3);font-size:12px;font-weight:600}
+  #orgchart-embed .tbl td.org-cell{font-weight:700;font-size:15px;display:block}
+  #orgchart-embed .tbl td.org-cell::before{display:none}
+  #orgchart-embed .tbl td.empty{display:none}
+  #orgchart-embed .chart-box{height:460px}
+}
+@media print{
+  #orgchart-embed .controls{display:none}
+}
+
 </style>
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 </head>
 <body>
@@ -325,6 +493,7 @@
     <div class="tab" data-panel="contract">금융</div>
     <div class="tab" data-panel="design">설계</div>
     <div class="tab" data-panel="build">제작</div>
+    <div class="tab" data-panel="orgchart">조직도</div>
     <div class="tab" data-panel="issues">현안 종합</div>
   </nav>
 
@@ -884,9 +1053,9 @@
       <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
         <div>
           <div style="font-weight:600;font-size:14px;">Anhui Port &amp; Shipping Sealand Equipment Co., Ltd. 조직도</div>
-          <div class="note" style="margin-top:4px;">회장·총경리·부총경리 및 4개 센터(경영관리·안전·구매영업·생산기술) 산하 11개 부서·작업장 구성, 부서별 책임자 연락처 포함</div>
+          <div class="note" style="margin-top:4px;">회장·총경리·부총경리 및 4개 센터(경영관리·안전·구매영업·생산기술) 산하 11개 부서·작업장 구성, 부서별 책임자 연락처 포함. 별도 접속 없이 본 대시보드 내 "조직도" 탭에서 바로 확인 가능함.</div>
         </div>
-        <a href="https://claude.ai/artifact/BFSYtVXW2FDTgvrxPAZN7Q" target="_blank" rel="noopener" style="flex:none;font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--blue);border:1px solid var(--blue-line);border-radius:999px;padding:8px 16px;text-decoration:none;">🏢 조직도 바로보기 ↗</a>
+        <span class="goto-orgchart" data-goto-panel="orgchart" style="flex:none;cursor:pointer;font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--blue);border:1px solid var(--blue-line);border-radius:999px;padding:8px 16px;text-decoration:none;">🏢 조직도 탭 바로가기 →</span>
       </div>
       <p class="src">출처: 조선소 제공 원본 조직도 문서 (사내 수령본, 외부 공개 링크 없음)</p>
     </section>
@@ -967,6 +1136,90 @@
   </div>
 
   <!-- ===================== 현안 종합 ===================== -->
+  <div class="panel" id="orgchart">
+    <section class="block">
+      <div class="block-head">
+        <h2>조선소 조직도</h2>
+        <span class="meta">APSSE 조직 구성 · 부서별 인원 · 연락처 (탭 내 임베드)</span>
+      </div>
+      <div id="orgchart-embed" class="lang-both">
+        <div class="wrap">
+
+          <header class="top">
+            <div>
+              <div class="eyebrow">Organization Chart</div>
+              <h1><span class="ko">조선소 조직도</span><span class="en sub">Shipyard Organization Chart</span></h1>
+              <div class="company"><span class="ko">안휘항항육해장비유한공사 · </span>Anhui Port &amp; Shipping Sealand Equipment Co., Ltd. <sup><a href="#oc-fn1">[1]</a></sup></div>
+            </div>
+            <div class="controls">
+              <div class="seg" role="group" aria-label="Language">
+                <button data-lang="both" aria-pressed="true">KO + EN</button>
+                <button data-lang="ko" aria-pressed="false">한국어</button>
+                <button data-lang="en" aria-pressed="false">English</button>
+              </div>
+            </div>
+          </header>
+
+          <div class="kpis" id="ocKpis"></div>
+
+          <section>
+            <h2><span class="ko">조직 구성도</span><span class="en sub">Organization Structure</span></h2>
+            <div class="org">
+              <div class="lvl"><div class="node exec" id="oc-n-chair"></div></div>
+              <div class="vline"></div>
+              <div class="mgmt">
+                <div class="spacer node"></div><div class="hl" style="visibility:hidden"></div>
+                <div class="node exec" id="oc-n-gm"></div>
+                <div class="hl"></div>
+                <div class="node" id="oc-n-dgm"></div>
+              </div>
+              <div class="vline"></div>
+              <div class="bus"></div>
+              <div class="centers" id="ocCenters"></div>
+              <div class="legend-note"><span class="ko">※ 부서 카드에 마우스를 올리거나 탭하면 부서장·연락처 표시 · 인원은 개략치(約)</span><span class="en sub">Hover or tap a department to see head &amp; contact · Headcounts are approximate</span></div>
+            </div>
+          </section>
+
+          <section>
+            <h2><span class="ko">부서별 인원 현황</span><span class="en sub">Headcount by Department</span></h2>
+            <div class="grid2">
+              <div class="card"><h3><span class="ko">부서별 인원 (약, 명)</span><span class="en sub">Approx. headcount by department</span></h3><div class="chart-box"><canvas id="ocBarChart"></canvas></div></div>
+              <div class="card"><h3><span class="ko">센터별 인원 비중</span><span class="en sub">Share by center</span></h3><div class="chart-box sm"><canvas id="ocDonutChart"></canvas></div></div>
+            </div>
+          </section>
+
+          <section>
+            <h2><span class="ko">조직 연락처</span><span class="en sub">Organization Contact List</span> <sup><a href="#oc-fn1">[1]</a></sup></h2>
+            <table class="tbl">
+              <thead><tr>
+                <th><span class="ko">조직</span><span class="en sub">Organization</span></th>
+                <th><span class="ko">담당자</span><span class="en sub">Name</span></th>
+                <th><span class="ko">연락처</span><span class="en sub">Contact</span></th>
+                <th><span class="ko">프로젝트 담당</span><span class="en sub">Project Member</span></th>
+                <th><span class="ko">연락처</span><span class="en sub">Contact</span></th>
+                <th><span class="ko">이메일</span><span class="en sub">Email</span></th>
+              </tr></thead>
+              <tbody id="ocContactBody"></tbody>
+            </table>
+          </section>
+
+          <footer>
+            <div><span class="ko">출처 및 주석</span><span class="en sub">Sources &amp; Notes</span></div>
+            <ol>
+              <li id="oc-fn1"><span class="ko">원본: 조선소 제공 「Shipyard_Organization_Chart5.docx」 (SHIPYARD ORGANIZATION CHART / 船厂组织架构图, Organization Contact List / 组织联系表). 외부 공개 링크 없음 — 사내 수령 문서 기준.</span><span class="en sub">Source: shipyard-supplied document "Shipyard_Organization_Chart5.docx". No public URL — internally received document.</span></li>
+              <li id="oc-fn2"><span class="ko">한국어 직함·부서명은 중문 원문(董事长·总经理·副总经理 등) 기준 번역이며, 중국 기업 관행상 总经理는 '총경리(사장)'로 표기함.</span><span class="en sub">Korean titles translated from the Chinese originals; 总经理 rendered as "총경리 (President)".</span></li>
+              <li id="oc-fn3"><span class="ko">'Project Manager (项目经理)'는 원본 조직도에는 없고 연락처 목록에만 기재되어 있어 연락처 표에만 반영함. 원문 "Deputy Geneal Manager" 오기는 수정 표기함.</span><span class="en sub">"Project Manager" appears only in the contact list, not in the chart. Typo "Geneal" corrected.</span></li>
+            </ol>
+          </footer>
+        </div>
+      </div>
+      <p class="src">출처: 조선소 제공 원본 조직도 문서 (사내 수령본, 외부 공개 링크 없음)</p>
+    </section>
+
+    <div class="oc-tip" id="ocTip" role="tooltip"></div>
+
+  </div>
+
   <div class="panel" id="issues">
     <section class="block">
       <div class="block-head">
@@ -1043,6 +1296,7 @@
       var next = cur === 'dark' ? 'light' : (cur === 'light' ? null : 'dark');
       if(next){ root.setAttribute('data-theme', next); } else { root.removeAttribute('data-theme'); }
       try{ localStorage.setItem('nb25k-theme', next || ''); }catch(e){}
+      try{ if(window.__orgchartRebuildCharts) window.__orgchartRebuildCharts(); }catch(e){}
     });
   }catch(e){}
 
@@ -1058,6 +1312,20 @@
       document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
       t.classList.add('active');
       document.getElementById(t.dataset.panel).classList.add('active');
+    });
+  });
+
+  // ---- jump buttons (e.g. "조직도 탭 바로가기") that switch to another tab programmatically ----
+  document.querySelectorAll('[data-goto-panel]').forEach(function(g){
+    g.addEventListener('click', function(){
+      var target = g.dataset.gotoPanel;
+      tabs.forEach(function(x){x.classList.remove('active');});
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+      var tabEl = document.querySelector('.tab[data-panel="'+target+'"]');
+      if(tabEl) tabEl.classList.add('active');
+      var panelEl = document.getElementById(target);
+      if(panelEl) panelEl.classList.add('active');
+      if(panelEl) panelEl.scrollIntoView({behavior:'smooth', block:'start'});
     });
   });
 
@@ -1123,6 +1391,201 @@
     });
   });
 })();
+</script>
+<script>
+
+  // ---- 조직도 (조직도 탭) embedded component ----
+  (function(){
+  var wrap = document.getElementById('orgchart-embed');
+  if(!wrap) return;
+  var root = document.documentElement;
+
+  var EXEC = {
+    chair:{ko:"회장 (이사회 의장)", en:"Chairman of the Board", zh:"董事长"},
+    gm:{ko:"총경리 (사장)", en:"General Manager", zh:"总经理", name:"Zhang Nian", tel:"+86-186-6339-3018", mail:"zhangnian0921@163.com"},
+    dgm:{ko:"부총경리 (부사장)", en:"Deputy General Manager", zh:"副总经理", name:"Xu Lei", tel:"+86-189-0633-5985", mail:"18906335985@163.com"}
+  };
+  var CENTERS = [
+    {c:1, ko:"경영관리센터", en:"Corporate Management Center", zh:"企业管理中心", depts:[
+      {ko:"총무부", en:"General Affairs Dept.", zh:"综合部", n:5, head:"Hu Tiansheng", tel:"19956266282"},
+      {ko:"재무부", en:"Finance Dept.", zh:"财务部", n:3, head:"Tao Wenting", tel:"18756206703"}
+    ]},
+    {c:2, ko:"안전센터", en:"Safety Center", zh:"安全中心", depts:[
+      {ko:"안전환경부", en:"Safety & Environmental Protection Dept.", zh:"安全环保部", n:8, head:"Yang Haijun", tel:"15605452217", pm:"He Zhen", pmTel:"13034061134"},
+      {ko:"품질관리부", en:"Quality Control Dept.", zh:"质量部", n:8, head:"Li Ming", tel:"13705535271", pm:"Zhou Yang", pmTel:"18855616717", mail:"13035480827@163.com"},
+      {ko:"지원부", en:"Support Dept.", zh:"保障部", n:9, head:"Yao Chunfeng", tel:"13780993680"}
+    ]},
+    {c:3, ko:"구매영업센터", en:"Procurement & Marketing Center", zh:"采购营销中心", depts:[
+      {ko:"구매부", en:"Purchasing Dept.", zh:"采购部", n:13, head:"Fang Jun", tel:"15005625652", mail:"pd@ahsealand.com"},
+      {ko:"영업부", en:"Business Dept.", zh:"经营部", n:3, head:"Zhao Yucheng", tel:"18263341393", pm:"Zhu Zhuo", pmTel:"17754118976", mail:"anhuisealand_bd@163.com"}
+    ]},
+    {c:4, ko:"생산기술센터", en:"Production Technology Center", zh:"生产技术中心", depts:[
+      {ko:"생산부", en:"Production Dept.", zh:"生产部", n:36, head:"Hu Xiaoming", tel:"13376332722", pm:"Yang Wei", pmTel:"18908632998"},
+      {ko:"기술부", en:"Technology Dept.", zh:"技术部", n:9, head:"Huang Xiaochuan", tel:"17729633790", pm:"Wang Kunjun", pmTel:"19163379651", mail:"dd@ahsealand.com"},
+      {ko:"선체 작업장", en:"Hull Workshop", zh:"船体车间", n:28, head:"Ji Dabin", tel:"18763358877"},
+      {ko:"기전 작업장", en:"Mechanical & Electrical Workshop", zh:"机电车间", n:19, head:"Lai Qingzhong", tel:"18063392398"},
+      {ko:"도장 작업장", en:"Painting Workshop", zh:"涂装车间", n:17, head:"Liang Junhua", tel:"13857221622"}
+    ]}
+  ];
+  var PM = {ko:"프로젝트 매니저", en:"Project Manager", zh:"项目经理", head:"Shen Songhong", tel:"18362308396"};
+
+  var esc = function(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); };
+  var bi = function(ko,en,tag){ tag = tag||"div"; return "<"+tag+' class="ko">'+esc(ko)+"</"+tag+"><"+tag+' class="en sub">'+esc(en)+"</"+tag+">"; };
+  var telLink = function(t){ return t ? '<a href="tel:'+t.replace(/[^\d+]/g,"")+'">'+esc(t)+"</a>" : ""; };
+  var mailLink = function(m){ return m ? '<a href="mailto:'+esc(m)+'">'+esc(m)+"</a>" : ""; };
+
+  /* exec nodes */
+  document.getElementById("oc-n-chair").innerHTML = '<div class="t">'+bi(EXEC.chair.ko,EXEC.chair.en)+"</div>";
+  ["gm","dgm"].forEach(function(k){
+    var e=EXEC[k], el=document.getElementById("oc-n-"+k);
+    el.innerHTML = '<div class="t">'+bi(e.ko,e.en)+'</div><div class="who">'+esc(e.name)+"</div>";
+    el.tabIndex=0; el.dataset.tip=JSON.stringify({ko:e.ko,en:e.en,zh:e.zh,head:e.name,tel:e.tel,mail:e.mail});
+  });
+
+  /* centers */
+  var total = CENTERS.reduce(function(s,c){ return s+c.depts.reduce(function(a,d){return a+d.n;},0); },0);
+  document.getElementById("ocCenters").innerHTML = CENTERS.map(function(c){
+    var sum=c.depts.reduce(function(a,d){return a+d.n;},0);
+    return '<div class="center" data-c="'+c.c+'">'
+      +'<div class="chead">'+bi(c.ko,c.en)+'<div class="cnt"><span class="ko">약 '+sum+'명 · '+c.depts.length+'개 부서</span></div></div>'
+      +'<ul class="depts">'+c.depts.map(function(d){
+        return '<li class="dept"><button class="dcard" data-tip=\''+esc(JSON.stringify(d))+'\'>'
+          +'<span><span class="dn">'+bi(d.ko,d.en,"span")+'</span><span class="dh" style="display:block">'+esc(d.head)+'</span></span>'
+          +'<span class="pill"><span class="ko">약 '+d.n+'명</span><span class="en">~'+d.n+'</span></span></button></li>';
+      }).join("")+'</ul>'
+      +'</div>';
+  }).join("");
+  /* center count English label */
+  wrap.querySelectorAll(".chead .cnt").forEach(function(el,i){
+    var c=CENTERS[i], sum=c.depts.reduce(function(a,d){return a+d.n;},0);
+    el.innerHTML = '<span class="ko">약 '+sum+'명 · '+c.depts.length+'개 부서</span><span class="en"> '+(wrap.classList.contains("lang-both")?"· ":"")+'~'+sum+' staff · '+c.depts.length+' depts</span>';
+  });
+
+  /* KPIs */
+  var nDept = CENTERS.reduce(function(a,c){return a+c.depts.length;},0);
+  var kp = [
+    [total,"명","", "총 인원 (약)","Total headcount (approx.)"],
+    [CENTERS.length,"개","","센터","Centers"],
+    [nDept,"개","","부서 / 작업장","Departments / workshops"],
+    [36,"명","","최대 부서: 생산부","Largest: Production Dept."]
+  ];
+  document.getElementById("ocKpis").innerHTML = kp.map(function(k){
+    return '<div class="kpi"><div class="v">'+k[0]+'<small class="ko">'+k[1]+'</small></div><div class="l">'+bi(k[3],k[4])+'</div></div>';
+  }).join("");
+
+  /* contact table */
+  var rows = [
+    {ko:EXEC.gm.ko,en:EXEC.gm.en,head:EXEC.gm.name,tel:EXEC.gm.tel,mail:EXEC.gm.mail,c:0},
+    {ko:EXEC.dgm.ko,en:EXEC.dgm.en,head:EXEC.dgm.name,tel:EXEC.dgm.tel,mail:EXEC.dgm.mail,c:0}
+  ];
+  CENTERS.forEach(function(c){ c.depts.forEach(function(d){
+    var row={}; for(var k in d){ row[k]=d[k]; } row.c=c.c;
+    rows.push(row);
+    if(d.zh==="生产部"){ var pmRow={}; for(var k2 in PM){ pmRow[k2]=PM[k2]; } pmRow.c=4; pmRow.pmNote=true; rows.push(pmRow); }
+  }); });
+  var cVar = function(c){ return c? "var(--oc-c"+c+")" : "var(--oc-text)"; };
+  var L = function(ko,en){ return ko+" / "+en; };
+  document.getElementById("ocContactBody").innerHTML = rows.map(function(r){
+    return "<tr>"
+      +'<td class="org-cell" data-l=""><span class="dot" style="background:'+cVar(r.c)+'"></span>'+bi(r.ko,r.en,"span")+(r.pmNote?' <sup><a href="#oc-fn3">[3]</a></sup>':'')+"</td>"
+      +'<td data-l="'+L("담당자","Name")+'">'+esc(r.head)+"</td>"
+      +'<td data-l="'+L("연락처","Contact")+'">'+telLink(r.tel)+"</td>"
+      +'<td data-l="'+L("프로젝트 담당","Project")+'" class="'+(r.pm?'':'empty')+'">'+(r.pm?esc(r.pm):'<span class="muted">–</span>')+"</td>"
+      +'<td data-l="'+L("연락처","Contact")+'" class="'+(r.pmTel?'':'empty')+'">'+(r.pmTel?telLink(r.pmTel):'<span class="muted">–</span>')+"</td>"
+      +'<td data-l="'+L("이메일","Email")+'" class="'+(r.mail?'':'empty')+'">'+(r.mail?mailLink(r.mail):'<span class="muted">–</span>')+"</td>"
+      +"</tr>";
+  }).join("");
+
+  /* tooltip */
+  var tip = document.getElementById("ocTip");
+  var pinned=null;
+  function showTip(el){
+    var d = JSON.parse(el.dataset.tip);
+    var lang = wrap.dataset.lang||"both";
+    var title = lang==="en"? d.en : lang==="ko"? d.ko : (d.ko+" · "+d.en);
+    tip.innerHTML = '<div class="tt">'+esc(title)+'</div><div class="zh">'+esc(d.zh)+(d.n?(" · "+(lang==="en"?"~"+d.n+" staff":"약 "+d.n+"명")):"")+'</div>'
+      +'<dl>'
+      +'<dt>'+(lang==="en"?"Head":"책임자")+'</dt><dd>'+esc(d.head)+'</dd>'
+      +(d.tel?('<dt>'+(lang==="en"?"Tel":"연락처")+'</dt><dd>'+telLink(d.tel)+'</dd>'):"")
+      +(d.pm?('<dt>'+(lang==="en"?"Project":"프로젝트")+'</dt><dd>'+esc(d.pm)+' · '+telLink(d.pmTel)+'</dd>'):"")
+      +(d.mail?('<dt>Email</dt><dd>'+mailLink(d.mail)+'</dd>'):"")
+      +'</dl>';
+    var r = el.getBoundingClientRect();
+    tip.classList.add("show");
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var x = Math.min(Math.max(8, r.left + r.width/2 - tw/2), innerWidth - tw - 8);
+    var y = r.bottom + 8; if (y + th > innerHeight - 8) y = r.top - th - 8;
+    tip.style.left = x+"px"; tip.style.top = y+"px";
+  }
+  function hideTip(){ tip.classList.remove("show"); }
+  wrap.querySelectorAll("[data-tip]").forEach(function(el){
+    el.addEventListener("mouseenter",function(){ if(!pinned) showTip(el); });
+    el.addEventListener("mouseleave",function(){ if(!pinned) hideTip(); });
+    el.addEventListener("focus",function(){ showTip(el); });
+    el.addEventListener("blur",function(){ if(!pinned) hideTip(); });
+    el.addEventListener("click",function(e){ e.stopPropagation(); if(pinned===el){pinned=null;hideTip();} else {pinned=el;showTip(el);} });
+  });
+  document.addEventListener("click",function(e){ if(!tip.contains(e.target)){pinned=null;hideTip();} });
+  var ocRz; addEventListener("resize",function(){ clearTimeout(ocRz); ocRz=setTimeout(buildCharts,200); });
+  addEventListener("scroll",function(){ if(tip.classList.contains("show")){pinned=null;hideTip();} },{passive:true});
+
+  /* language */
+  function setLang(l){
+    wrap.classList.remove("lang-both","lang-ko","lang-en");
+    wrap.classList.add("lang-"+l);
+    wrap.dataset.lang=l;
+    wrap.querySelectorAll(".seg button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.lang===l); });
+    wrap.querySelectorAll(".chead .cnt .en").forEach(function(s){ s.textContent = s.textContent.replace(/^\s*·?\s*/, l==="both"?" · ":""); });
+    buildCharts();
+    try{ localStorage.setItem("orgLang",l); }catch(e){}
+  }
+  wrap.querySelectorAll(".seg button").forEach(function(b){ b.addEventListener("click",function(){ setLang(b.dataset.lang); }); });
+
+  /* charts (theme follows host: reads data-theme off <html>, same attribute the dashboard's own theme toggle sets) */
+  var bar, donut;
+  function isNarrow(){ return innerWidth<760; }
+  function cssv(n){ return getComputedStyle(wrap).getPropertyValue(n).trim(); }
+  function buildCharts(){
+    if(!window.Chart) return;
+    if(!document.getElementById("ocBarChart")) return;
+    var lang = wrap.dataset.lang||"both";
+    var narrow = isNarrow();
+    var lab = function(o){
+      if(lang==="en") return o.en.replace(" Dept.","").replace("Mechanical & Electrical","M&E");
+      if(lang==="ko"||narrow) return o.ko;
+      return o.ko+" ("+o.en.replace(" Dept.","").replace(" Workshop"," WS").replace("Safety & Environmental Protection","SHE").replace("Mechanical & Electrical","M&E")+")";
+    };
+    var list = CENTERS.reduce(function(acc,c){ return acc.concat(c.depts.map(function(d){ var o={}; for(var k in d){o[k]=d[k];} o.c=c.c; return o; })); },[]).sort(function(a,b){return b.n-a.n;});
+    var col = function(c){ return cssv("--oc-c"+c); };
+    var text=cssv("--oc-text-2"), grid=cssv("--oc-line-2");
+    Chart.defaults.font.family='"Inter","Noto Sans KR",sans-serif';
+    Chart.defaults.color=text;
+    if(bar) bar.destroy();
+    if(donut) donut.destroy();
+    bar = new Chart(document.getElementById("ocBarChart"),{
+      type:"bar",
+      data:{labels:list.map(lab),datasets:[{data:list.map(function(d){return d.n;}),backgroundColor:list.map(function(d){return col(d.c);}),borderRadius:4,barThickness:"flex",maxBarThickness:22}]},
+      options:{indexAxis:"y",maintainAspectRatio:false,animation:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){ return (lang==="en"?"~":"약 ")+c.raw+(lang==="en"?" staff":"명"); }}}},
+        scales:{x:{grid:{color:grid},border:{display:false},ticks:{precision:0}},y:{grid:{display:false},border:{color:grid},ticks:{autoSkip:false,font:{size:11.5}}}}}
+    });
+    donut = new Chart(document.getElementById("ocDonutChart"),{
+      type:"doughnut",
+      data:{labels:CENTERS.map(function(c){return lang==="en"?c.en:c.ko;}),datasets:[{data:CENTERS.map(function(c){return c.depts.reduce(function(a,d){return a+d.n;},0);}),backgroundColor:CENTERS.map(function(c){return col(c.c);}),borderColor:cssv("--oc-surface"),borderWidth:2}]},
+      options:{maintainAspectRatio:false,animation:false,cutout:"62%",
+        plugins:{legend:{position:"bottom",labels:{boxWidth:10,boxHeight:10,padding:12}},
+          tooltip:{callbacks:{label:function(c){ return c.label+": "+c.raw+" ("+Math.round(c.raw/total*100)+"%)"; }}}}}
+    });
+  }
+
+  /* init */
+  var initLang="both"; try{ initLang=localStorage.getItem("orgLang")||"both"; }catch(e){}
+  setLang(initLang);
+
+  /* expose so the host's theme toggle can re-render charts with correct colors */
+  window.__orgchartRebuildCharts = buildCharts;
+  })();
+
 </script>
 
 </body>
