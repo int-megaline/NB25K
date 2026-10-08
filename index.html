@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>25K 신조 PM 대시보드</title>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>25K 신조 PM 대시보드</title>
 <style>
   :root{
@@ -430,20 +425,100 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
   #orgchart-embed .controls{display:none}
 }
 
-</style>
 
+/* ===== weekly update (2026.10.08) additions ===== */
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.chg-card{border-left:3px solid var(--blue-line);padding:14px 18px;}
+.chg-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;}
+.chg-tag{font-size:11px;font-weight:700;letter-spacing:.04em;background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-line);border-radius:999px;padding:2px 10px;}
+.chg-period{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+.chg-list{margin:0;padding-left:18px;font-size:12.5px;line-height:1.75;color:var(--ink-soft);}
+.chg-list b{color:var(--ink);font-weight:600;}
+.chg-none{font-size:12.5px;color:var(--ink-faint);}
+.dlt{font-family:var(--font-mono);font-size:10.5px;font-weight:600;margin-left:3px;white-space:nowrap;}
+.dlt.up{color:var(--green);} .dlt.dn{color:var(--red);} .dlt.eq{color:var(--ink-faint);font-weight:500;}
+.kdelta{font-size:11px;color:var(--ink-faint);margin-top:6px;}
+.kdelta .dlt{margin-left:0;margin-right:3px;}
+.badge-new{display:inline-block;font-family:var(--font-mono);font-size:9px;font-weight:700;background:var(--blue-soft);color:var(--blue);border-radius:999px;padding:1px 6px;margin-left:4px;vertical-align:1px;}
+.crow.total{background:var(--bg-elev);border-style:dashed;}
+.crow.total .main{font-weight:700;}
+.pos{color:var(--green);} .neg{color:var(--red);}
+.subh{font-size:12.5px;font-weight:600;color:var(--ink);margin:0 0 8px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+
+/* issues control */
+.iss-ctrl{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.tl2-filter .cnt{font-family:var(--font-mono);font-weight:500;opacity:.75;}
+.iss-sort{font-size:11.5px;color:var(--ink-faint);display:inline-flex;align-items:center;gap:6px;}
+.iss-sort select{font-family:var(--font-body);font-size:11.5px;color:var(--ink);background:var(--bg-sunken);border:1px solid var(--border);border-radius:8px;padding:5px 8px;}
+.crow.iss.done{opacity:.78;}
+.crow.iss.done .main{text-decoration:none;}
+
+/* action plan / maker kpis */
+.ap-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media (max-width:760px){.ap-kpis{grid-template-columns:repeat(2,1fr);}}
+.ap-k{background:var(--bg-sunken);border:1px solid var(--border-soft);border-radius:10px;padding:10px 12px;}
+.ap-k .l{font-size:11px;color:var(--ink-faint);}
+.ap-k .v{font-family:var(--font-mono);font-size:22px;font-weight:600;margin-top:2px;}
+.ap-k .s{font-size:10.5px;color:var(--ink-faint);margin-top:2px;}
+.ap-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.linkbtn{font-size:12px;font-weight:600;text-decoration:none;color:var(--accent-ink);background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:7px 14px;}
+.linkbtn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--border);}
+.linkbtn:hover{opacity:.88;}
+.mk-scroll{max-height:460px;overflow-y:auto;padding-right:2px;}
+
+/* gantt */
+.gantt{position:relative;margin-top:4px;}
+.g-axis{position:relative;height:22px;margin-left:var(--glab,170px);border-bottom:1px solid var(--border);}
+.g-axis span{position:absolute;top:4px;transform:translateX(2px);font-family:var(--font-mono);font-size:9.5px;color:var(--ink-faint);white-space:nowrap;}
+.g-axis span.yr{font-weight:700;color:var(--ink);}
+.g-row{display:grid;grid-template-columns:var(--glab,170px) 1fr;align-items:center;min-height:34px;border-bottom:1px solid var(--border-soft);}
+.g-lab{font-size:12px;font-weight:600;padding-right:10px;line-height:1.3;}
+.g-lab small{display:block;font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--ink-faint);}
+.g-track{position:relative;height:34px;}
+.g-plan{position:absolute;top:10px;height:14px;border-radius:4px;background:var(--blue-soft);border:1px solid var(--blue-line);overflow:hidden;}
+.g-act{position:absolute;left:0;top:0;bottom:0;background:var(--green);opacity:.85;min-width:2px;}
+.g-tbd{position:absolute;top:10px;left:0;font-size:10.5px;color:var(--ink-faint);font-style:italic;}
+.g-today{position:absolute;top:0;bottom:0;border-left:1px dashed var(--red);opacity:.7;pointer-events:none;z-index:2;}
+.g-msline{position:absolute;top:0;bottom:0;border-left:1px solid color-mix(in srgb,var(--ink-faint) 45%,transparent);pointer-events:none;}
+.gantt-ms{position:relative;height:26px;margin-left:var(--glab,170px);}
+.gantt-ms .ms{position:absolute;top:2px;transform:translateX(-50%);font-family:var(--font-mono);font-size:9.5px;color:var(--ink-soft);white-space:nowrap;text-align:center;}
+.gantt-ms .ms i{display:block;width:8px;height:8px;margin:2px auto 0;background:var(--ink);transform:rotate(45deg);}
+.gantt-ms .ms b{font-weight:500;} .gantt-ms .ms .sh{display:none;}
+.gantt-ms .ms.warn{color:var(--red);} .gantt-ms .ms.warn i{background:var(--red);}
+.gantt-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-faint);margin-top:10px;}
+.gantt-legend .lg{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0;}
+.lg.plan{background:var(--blue-soft);border:1px solid var(--blue-line);} .lg.act{background:var(--green);}
+.lg.today{border-left:1px dashed var(--red);width:1px;height:10px;border-radius:0;} .lg.ms{width:7px;height:7px;background:var(--ink);transform:rotate(45deg);}
+@media (max-width:560px){.gantt-ms .ms .nm{display:none;} .gantt-ms .ms .sh{display:inline;} .gantt,.gantt-ms{--glab:96px;} .g-lab{font-size:10.5px;} .gantt-ms .ms{font-size:8px;}}
+
+/* waterfall */
+.wf{margin-top:14px;display:flex;flex-direction:column;gap:6px;}
+.wf-row{display:grid;grid-template-columns:118px 1fr 70px;gap:8px;align-items:center;font-size:11px;}
+.wf-row .wl{color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wf-row .wt{position:relative;height:14px;background:var(--bg-sunken);border-radius:3px;}
+.wf-row .wb{position:absolute;top:0;bottom:0;border-radius:3px;}
+.wf-row .wb.inc{background:var(--blue-soft);border:1px solid var(--blue-line);}
+.wf-row .wb.dec{background:var(--green-soft);border:1px solid var(--green-line);}
+.wf-row .wb.tot{background:var(--ink-faint);opacity:.55;}
+.wf-row .wv{font-family:var(--font-mono);text-align:right;color:var(--ink-soft);}
+
+/* org update log */
+.oc-log{display:flex;flex-direction:column;gap:6px;}
+.oc-log .r{display:grid;grid-template-columns:96px 1fr auto;gap:10px;font-size:12.5px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--border-soft);}
+.oc-log .r:last-child{border-bottom:none;}
+.oc-log .d{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+@media (max-width:560px){.oc-log .r{grid-template-columns:1fr;gap:2px;}}
+</style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-</head>
-<body>
 <div class="wrap">
 
   <div class="draft-banner">
     <span>🗂</span>
-    <div>접수된 자료 기준으로 구성함. 금융(최용창)·설계(스케줄 사이트 연동 + SMC Biweekly PA Report)·제작(이홍정 현장감독 Weekly Report) 자료 반영됨. 제작 탭은 <b style="font-family:var(--font-mono);">2026.10.02</b> 기준 최신이며, 조선소 측 ITP·PM 체계 등 일부 항목은 여전히 진행 중(OPEN) 상태임.</div>
+    <div>접수된 자료 기준으로 구성함. 금융(최용창)·설계(스케줄 사이트 연동 + SMC Biweekly PA Report)·제작(이홍정 현장감독 Weekly Report) 자료 반영됨. <b style="font-family:var(--font-mono);">2026.10.08</b> 주간 업데이트 반영 — 각 탭 상단 "전주 대비 변동" 카드에 변경 사항 표기함. 제작 탭에 생산 일정·Action Plan·Maker 선정 현황 카드 신규 추가, 금융 탭에 MOA 기반 건조대금 예상 추가 예산 반영함.</div>
   </div>
 
   <header class="top">
@@ -454,7 +529,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     </div>
     <div class="top-right">
       <span class="pill"><span class="dot"></span>인계 예정: <span style="font-family:var(--font-mono);">2026.11</span></span>
-      <span class="pill"><span class="dot"></span>제작 자료 접수 완료 (10.02)</span>
+      <span class="pill"><span class="dot"></span>주간 업데이트 (10.08)</span>
       <button class="themebtn" id="printBtn" title="PDF로 저장 / 인쇄" aria-label="PDF로 저장">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8.5V3h12v5.5"/><path d="M6 17.5H4.8A1.8 1.8 0 0 1 3 15.7v-4.4A1.8 1.8 0 0 1 4.8 9.5h14.4A1.8 1.8 0 0 1 21 11.3v4.4a1.8 1.8 0 0 1-1.8 1.8H18"/><path d="M6 14.5h12V21H6v-6.5Z"/></svg>
       </button>
@@ -473,18 +548,18 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     </div>
     <div class="kpi">
       <div class="label">설계 도면 제출률</div>
-      <div class="value">45<small>% (66/146)</small></div>
-      <div class="delta warn">미제출 80건</div>
+      <div class="value">47<small>% (69/146)</small></div>
+      <div class="delta warn">▲ 전주 대비 +3건 · 지연 43건</div>
     </div>
     <div class="kpi">
       <div class="label">설계 도면 승인율</div>
-      <div class="value">21<small>% (30/146)</small></div>
-      <div class="delta muted">PRD 포함 31%</div>
+      <div class="value">25<small>% (36/146)</small></div>
+      <div class="delta up">▲ 전주 대비 +6건 · PRD 포함 36%</div>
     </div>
     <div class="kpi">
       <div class="label">강재 입고 (누적)</div>
       <div class="value">2,088<small>톤</small></div>
-      <div class="delta warn">ITP·PM 체계 등 OPEN 8건</div>
+      <div class="delta warn">H03 절단 82% · OPEN 이슈 10건</div>
     </div>
   </div>
 
@@ -503,7 +578,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     <section class="block">
       <div class="block-head">
         <h2>통합 마스터 일정</h2>
-        <span class="meta">2026.03 — 2028.03 · Today: 2026.10.02</span>
+        <span class="meta">2026.03 — 2028.03 · Today: 2026.10.08</span>
       </div>
       <div class="card">
         <div class="tl2-filters" id="tl2Filters">
@@ -557,7 +632,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
                  stylesheet) — no gridline DOM elements needed at all -->
 
             <!-- today marker -->
-            <div class="tl2-todayline" style="left:28.3%;"></div>
+            <div class="tl2-todayline" style="left:29.0%;"></div>
 
             <svg class="tl2-svg" viewBox="0 0 100 570" preserveAspectRatio="none" id="tl2Svg">
               <!-- step connectors only — sequential, colored by the category of the milestone being
@@ -599,7 +674,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
             <div class="tl2-bar pending" data-cat="build" style="left:66.0%;top:420px;color:var(--yellow-line);" data-date="2027.07.16 (예정)" data-note="Launching · 4차 대금 인출 USD 7,945,000 (RG 수령 후 5일내 예정)"><span>07.16</span></div>
             <div class="tl2-bar pending" data-cat="build" style="left:81.6%;top:480px;color:var(--yellow-line);" data-date="2027.11.12 (예정)" data-note="Sea Trial · 시운전 예정 (SMC Biweekly PA Progress Report 기준)"><span>11.12</span></div>
             <div class="tl2-bar pending" data-cat="build" style="left:87.6%;top:540px;color:var(--yellow-line);" data-date="2027.12.28 (예정)" data-note="Delivery · 잔금 USD 3,972,500 지급 및 선박 인도"><span>12.28</span></div>
-            <div class="tl2-today-label" style="left:28.3%;">Today 10.02</div>
+            <div class="tl2-today-label" style="left:29.0%;">Today 10.08</div>
           </div>
         </div>
         <div class="legend">
@@ -618,23 +693,23 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
         <div class="card tl-card">
           <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">부서별 설계 도면 제출 현황</h2></div>
           <div class="barlist">
-            <div class="barrow"><div>Accom</div><div class="bt"><span style="width:60%;background:var(--green-soft);border:1px solid var(--green);"></span></div><div class="num">9 / 15</div></div>
+            <div class="barrow"><div>Accom</div><div class="bt"><span style="width:73%;background:var(--green-soft);border:1px solid var(--green);"></span></div><div class="num">11 / 15 <span class="dlt up">▲2</span></div></div>
             <div class="barrow"><div>Elec</div><div class="bt"><span style="width:11%;background:var(--red-soft);border:1px solid var(--red);"></span></div><div class="num">2 / 18</div></div>
-            <div class="barrow"><div>Gen</div><div class="bt"><span style="width:50%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">11 / 22</div></div>
+            <div class="barrow"><div>Gen</div><div class="bt"><span style="width:55%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">12 / 22 <span class="dlt up">▲1</span></div></div>
             <div class="barrow"><div>Hull</div><div class="bt"><span style="width:60%;background:var(--green-soft);border:1px solid var(--green);"></span></div><div class="num">15 / 25</div></div>
             <div class="barrow"><div>Mach</div><div class="bt"><span style="width:41%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">13 / 32</div></div>
             <div class="barrow"><div>Outfit</div><div class="bt"><span style="width:47%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">16 / 34</div></div>
           </div>
-          <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">schultemarineconcept 설계도면 승인 시스템 ↗</a> (2026.09.23 조회)</p>
+          <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">schultemarineconcept 설계도면 승인 시스템 ↗</a> (2026.10.08 조회)</p>
         </div>
 
         <div class="card tl-card">
           <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">향후 90일 주요 일정</h2></div>
           <div class="ctable compact">
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main" data-k="항목">한신엔진 환급 예정</div>
+              <div class="main" data-k="항목">한신엔진 계약금 환급 (JPY 209,700,000)</div>
               <div data-k="담당">금융</div>
-              <div data-k="예정일" style="font-family:var(--font-mono);">09.25~30</div>
+              <div data-k="예정일" style="font-family:var(--font-mono);">10.02 (입금 완료)</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
               <div class="main" data-k="항목">Upfront/Operating Fee 지급</div>
@@ -666,6 +741,16 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
 
   <!-- ===================== 계약 ===================== -->
   <div class="panel" id="contract">
+    <section class="block">
+      <div class="card chg-card">
+        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">2026.10.02 → 2026.10.08</span></div>
+        <ul class="chg-list">
+          <li><b>건조대금 예상 추가 예산 신규 반영</b> — 조선소 MOA 결과 보고 Rev.2 기준 USD +285,278 (M/E 환차 +245,008 · M/E 제외 3종 +50,000 · Maker 변경 +41,550 · G/E 환차 −40,000 · Fixed Maker Credit −11,280) → "항목별 예산 대비 실적" 카드에 추가</li>
+          <li><b>그 외 금융 항목</b> (지급 집계·지급 스케줄·엔진 비용·부수 비용·신조 추가비용) — 변동 사항 없음</li>
+        </ul>
+      </div>
+    </section>
+
     <section class="block">
       <div class="block-head">
         <h2>금융 개요</h2>
@@ -852,6 +937,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
           <div class="ctable-head" style="--cols:1.5fr 1fr 1fr .8fr;"><div>항목</div><div>예산</div><div>실적</div><div>진행률</div></div>
           <div class="ctable compact">
             <div class="crow" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main" data-k="항목">건조대금 (USD)</div><div data-k="예산" style="font-family:var(--font-mono);">39,725,000</div><div data-k="실적" style="font-family:var(--font-mono);">19,862,500</div><div data-k="진행률" style="font-family:var(--font-mono);">50%</div></div>
+            <div class="crow new-row" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main tt" data-k="항목" tabindex="0">└ 건조대금 예상 추가 예산 (USD) <span class="badge-new">NEW</span><span class="tt-box">조선소 MOA 결과 보고 Rev.2 기준 추정 — M/E 환차 +245,008 · M/E 공급범위 제외 3종 선주 구매 +50,000 · Maker 변경 Extra +41,550 · G/E 환차 −40,000 · Fixed Maker Extra&amp;Credit −11,280. 상세는 제작 탭 "Maker 선정에 따른 예산 변경" 참고</span></div><div data-k="예산" style="font-family:var(--font-mono);color:var(--red);">+285,278</div><div data-k="실적" style="font-family:var(--font-mono);">0</div><div data-k="진행률" style="font-family:var(--font-mono);">미집행</div></div>
             <div class="crow" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main" data-k="항목">법률자문·영국/마샬 (USD)</div><div data-k="예산" style="font-family:var(--font-mono);">5,000</div><div data-k="실적" style="font-family:var(--font-mono);">5,050</div><div data-k="진행률" style="font-family:var(--font-mono);">101%</div></div>
             <div class="crow" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main" data-k="항목">도면관리·SMC (USD)</div><div data-k="예산" style="font-family:var(--font-mono);">27,000</div><div data-k="실적" style="font-family:var(--font-mono);">13,500</div><div data-k="진행률" style="font-family:var(--font-mono);">50%</div></div>
             <div class="crow" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main" data-k="항목">현장관리 (USD)</div><div data-k="예산" style="font-family:var(--font-mono);">372,600</div><div data-k="실적" style="font-family:var(--font-mono);">6,332</div><div data-k="진행률" style="font-family:var(--font-mono);">1.7%</div></div>
@@ -859,8 +945,8 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
             <div class="crow" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main" data-k="항목">Upfront/Operating Fee (KRW)</div><div data-k="예산" style="font-family:var(--font-mono);">149,000,000</div><div data-k="실적" style="font-family:var(--font-mono);">124,500,000</div><div data-k="진행률" style="font-family:var(--font-mono);">84%</div></div>
             <div class="crow" style="--cols:1.5fr 1fr 1fr .8fr;"><div class="main" data-k="항목">법률자문·한국(광장) (KRW)</div><div data-k="예산" style="font-family:var(--font-mono);">20,000,000</div><div data-k="실적" style="font-family:var(--font-mono);">0</div><div data-k="진행률" style="font-family:var(--font-mono);">0%</div></div>
           </div>
-          <p class="note">사업타당성 보고서(회계법인 창천)는 해진공 부담으로 당사 예산 비집계 · 현장관리·법률자문(한국)은 초기 단계로 진행률 낮음 — 향후 월별 집행 예정</p>
-          <p class="src">출처: <sup class="fn"><a href="#fn12" style="color:inherit;text-decoration:none;">12</a></sup></p>
+          <p class="note">건조대금 예상 추가 예산 반영 시 건조대금 예산은 USD 39,725,000 → 40,010,278 (+0.72%)로 증가 예상 — 환차분은 결제 시점 환율에 따라 변동 가능, MSBD 견적 미확정 · 사업타당성 보고서(회계법인 창천)는 해진공 부담으로 당사 예산 비집계 · 현장관리·법률자문(한국)은 초기 단계로 진행률 낮음 — 향후 월별 집행 예정</p>
+          <p class="src">출처: <sup class="fn"><a href="#fn12" style="color:inherit;text-decoration:none;">12</a></sup><sup class="fn"><a href="#fn13" style="color:inherit;text-decoration:none;">13</a></sup></p>
         </div>
       </div>
     </section>
@@ -903,6 +989,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
           <li id="fn10">조선소→한신 계약금 송금확인증 · ICBC 전자회단 (26.09.23) — <a href="https://drive.google.com/file/d/1b7bCgYT6DlZDH3qU8QSxfe4hvU0Pntam/view?usp=drivesdk" target="_blank" rel="noopener">Google Drive ↗</a></li>
           <li id="fn11">환산 환율: USD/KRW 1,353.96 · JPY/KRW 8.6123(100엔당 861.23) — <a href="https://www.xe.com/en-us/currencyconverter/" target="_blank" rel="noopener">XE.com 중간시장환율 ↗</a> (2026.09.27 조회, 실제 결제환율과 상이할 수 있음)</li>
           <li id="fn12">25K 예산 - 실적 관리시트 (2026.09.30 갱신) — <a href="https://docs.google.com/spreadsheets/d/1wF55p0PC10E5cpzycGwDuL6Fop7gzjxz6yFOVszDjaU/edit" target="_blank" rel="noopener">Google Sheets ↗</a></li>
+          <li id="fn13">조선소 MOA 결과 보고 Rev.2 (2026.08.18 MOA, 건조대금 예상 추가 예산 산정 근거) — <a href="https://docs.google.com/document/d/1TfKtOX0257OwikC_7xYvURB-YYV4w3zOQv9-LcUs5sY/edit" target="_blank" rel="noopener">Google Docs ↗</a></li>
         </ol>
       </div>
     </section>
@@ -911,62 +998,82 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
   <!-- ===================== 설계 ===================== -->
   <div class="panel" id="design">
     <section class="block">
+      <div class="card chg-card">
+        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">2026.09.25 → 2026.10.08 (Plan Approval 시스템 실시간 조회)</span></div>
+        <ul class="chg-list">
+          <li><b>도면 제출</b> 66 → 69건 <span class="dlt up">▲3</span> — Accom +2, Gen +1 (Elec·Hull·Mach·Outfit 변동 없음)</li>
+          <li><b>승인(Approved)</b> 30 → 36건 <span class="dlt up">▲6</span> — Outfit +3, Accom·Gen·Mach 각 +1 · 승인 PRD 16건 변동 없음</li>
+          <li><b>제출 지연</b> 32 → 43건 <span class="dlt dn">▲11</span> — 계획 제출일 도래분 증가로 지연율 22% → 30%로 악화됨</li>
+          <li><b>심사중·Open DWG</b> 각 9건·11건 → 0건 — SMC 심사 대기 도면 전량 검토 완료 처리됨</li>
+          <li><b>도면 코멘트</b> 514 → 564건 <span class="dlt dn">▲50</span>, Open 35 → 55건 <span class="dlt dn">▲20</span> — Outfit Open 13 → 24건으로 최대 증가</li>
+          <li><b>미결 논의</b> SMC 측 8 → 3건 <span class="dlt up">▼5</span>, 조선소 측 3 → 10건 <span class="dlt dn">▲7</span> — 대응 주체가 조선소로 이동함</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block">
       <div class="block-head">
         <h2>도면 제출·승인 현황</h2>
-        <span class="meta">2026.09.25 기준 · 총 146건</span>
+        <span class="meta">2026.10.08 기준 · 총 146건</span>
       </div>
       <div class="grid-4">
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">제출</div>
-          <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;">66<small style="font-size:13px;color:var(--ink-soft);"> / 146 (45%)</small></div>
+          <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;">69<small style="font-size:13px;color:var(--ink-soft);"> / 146 (47%)</small></div>
+          <div class="kdelta"><span class="dlt up">▲3</span> 전주 66건</div>
         </div>
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">제출 지연 (계획 대비)</div>
-          <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;color:var(--red);">32<small style="font-size:13px;color:var(--ink-soft);"> (22%)</small></div>
+          <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;color:var(--red);">43<small style="font-size:13px;color:var(--ink-soft);"> (30%)</small></div>
+          <div class="kdelta"><span class="dlt dn">▲11</span> 전주 32건 (22%)</div>
         </div>
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">승인 (Approved)</div>
-          <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;">30<small style="font-size:13px;color:var(--ink-soft);"> (21%)</small></div>
+          <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;">36<small style="font-size:13px;color:var(--ink-soft);"> (25%)</small></div>
+          <div class="kdelta"><span class="dlt up">▲6</span> 전주 30건 (21%)</div>
         </div>
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">승인 PRD (조건부)</div>
           <div class="value" style="font-family:var(--font-mono);font-size:24px;margin-top:4px;">16<small style="font-size:13px;color:var(--ink-soft);"> (11%)</small></div>
+          <div class="kdelta"><span class="dlt eq">–</span> 변동 없음</div>
         </div>
       </div>
-      <p class="src">출처: <a href="https://drive.google.com/file/d/14fOQaday3ULDYKAXU16qQ41yaEWa_-r1/view?usp=drivesdk" target="_blank" rel="noopener">SMC Biweekly PA Progress Report WR-39 (2026.09.11~25) ↗</a></p>
+      <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">SMC Plan Approval 시스템 Project Dashboard ↗</a> (2026.10.08 조회) · 전주 수치: <a href="https://drive.google.com/file/d/14fOQaday3ULDYKAXU16qQ41yaEWa_-r1/view?usp=drivesdk" target="_blank" rel="noopener">SMC Biweekly PA Progress Report WR-39 (09.25) ↗</a></p>
     </section>
 
     <section class="block">
-      <div class="block-head" style="margin-bottom:10px;"><h2>부서별 도면 심사 현황</h2></div>
+      <div class="block-head" style="margin-bottom:10px;"><h2>부서별 도면 심사 현황</h2><span class="meta">괄호 안 = 전주 대비 증감</span></div>
       <div class="card">
-        <div class="ctable-head" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div>부서</div><div>Total</div><div>제출</div><div>심사중</div><div>검토완료</div><div>Open DWG</div><div>Approved</div></div>
+        <div class="ctable-head" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div>부서</div><div>Total</div><div>제출</div><div>심사중</div><div>검토완료</div><div>Open DWG</div><div>PRD</div><div>Approved</div></div>
         <div class="ctable">
-          <div class="crow" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div class="main" data-k="부서">Accom</div><div data-k="Total" style="font-family:var(--font-mono);">15</div><div data-k="제출" style="font-family:var(--font-mono);">9</div><div data-k="심사중" style="font-family:var(--font-mono);">2</div><div data-k="검토완료" style="font-family:var(--font-mono);">7</div><div data-k="Open" style="font-family:var(--font-mono);">1</div><div data-k="Appr" style="font-family:var(--font-mono);">5</div></div>
-          <div class="crow" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div class="main" data-k="부서">Elec</div><div data-k="Total" style="font-family:var(--font-mono);">18</div><div data-k="제출" style="font-family:var(--font-mono);">2</div><div data-k="심사중" style="font-family:var(--font-mono);">0</div><div data-k="검토완료" style="font-family:var(--font-mono);">2</div><div data-k="Open" style="font-family:var(--font-mono);">0</div><div data-k="Appr" style="font-family:var(--font-mono);">0</div></div>
-          <div class="crow" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div class="main" data-k="부서">Gen</div><div data-k="Total" style="font-family:var(--font-mono);">22</div><div data-k="제출" style="font-family:var(--font-mono);">11</div><div data-k="심사중" style="font-family:var(--font-mono);">0</div><div data-k="검토완료" style="font-family:var(--font-mono);">11</div><div data-k="Open" style="font-family:var(--font-mono);">2</div><div data-k="Appr" style="font-family:var(--font-mono);">7</div></div>
-          <div class="crow" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div class="main" data-k="부서">Hull</div><div data-k="Total" style="font-family:var(--font-mono);">25</div><div data-k="제출" style="font-family:var(--font-mono);">15</div><div data-k="심사중" style="font-family:var(--font-mono);">0</div><div data-k="검토완료" style="font-family:var(--font-mono);">15</div><div data-k="Open" style="font-family:var(--font-mono);">0</div><div data-k="Appr" style="font-family:var(--font-mono);">13</div></div>
-          <div class="crow" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div class="main" data-k="부서">Mach</div><div data-k="Total" style="font-family:var(--font-mono);">32</div><div data-k="제출" style="font-family:var(--font-mono);">13</div><div data-k="심사중" style="font-family:var(--font-mono);">1</div><div data-k="검토완료" style="font-family:var(--font-mono);">12</div><div data-k="Open" style="font-family:var(--font-mono);">5</div><div data-k="Appr" style="font-family:var(--font-mono);">3</div></div>
-          <div class="crow" style="--cols:.9fr .6fr .6fr .7fr .7fr .6fr .6fr;"><div class="main" data-k="부서">Outfit</div><div data-k="Total" style="font-family:var(--font-mono);">34</div><div data-k="제출" style="font-family:var(--font-mono);">16</div><div data-k="심사중" style="font-family:var(--font-mono);">6</div><div data-k="검토완료" style="font-family:var(--font-mono);">10</div><div data-k="Open" style="font-family:var(--font-mono);">3</div><div data-k="Appr" style="font-family:var(--font-mono);">2</div></div>
+          <div class="crow" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">Accom</div><div data-k="Total" class="mono">15</div><div data-k="제출" class="mono">11 <span class="dlt up">▲2</span></div><div data-k="심사중" class="mono">0 <span class="dlt up">▼2</span></div><div data-k="검토완료" class="mono">6</div><div data-k="Open DWG" class="mono">0 <span class="dlt up">▼1</span></div><div data-k="PRD" class="mono">0</div><div data-k="Approved" class="mono">6 <span class="dlt up">▲1</span></div></div>
+          <div class="crow" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">Elec</div><div data-k="Total" class="mono">18</div><div data-k="제출" class="mono">2 <span class="dlt eq">–</span></div><div data-k="심사중" class="mono">0</div><div data-k="검토완료" class="mono">2</div><div data-k="Open DWG" class="mono">0</div><div data-k="PRD" class="mono">2</div><div data-k="Approved" class="mono">0 <span class="dlt eq">–</span></div></div>
+          <div class="crow" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">Gen</div><div data-k="Total" class="mono">22</div><div data-k="제출" class="mono">12 <span class="dlt up">▲1</span></div><div data-k="심사중" class="mono">0</div><div data-k="검토완료" class="mono">10</div><div data-k="Open DWG" class="mono">0 <span class="dlt up">▼2</span></div><div data-k="PRD" class="mono">2</div><div data-k="Approved" class="mono">8 <span class="dlt up">▲1</span></div></div>
+          <div class="crow" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">Hull</div><div data-k="Total" class="mono">25</div><div data-k="제출" class="mono">15 <span class="dlt eq">–</span></div><div data-k="심사중" class="mono">0</div><div data-k="검토완료" class="mono">15</div><div data-k="Open DWG" class="mono">0</div><div data-k="PRD" class="mono">2</div><div data-k="Approved" class="mono">13 <span class="dlt eq">–</span></div></div>
+          <div class="crow" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">Mach</div><div data-k="Total" class="mono">32</div><div data-k="제출" class="mono">13 <span class="dlt eq">–</span></div><div data-k="심사중" class="mono">0 <span class="dlt up">▼1</span></div><div data-k="검토완료" class="mono">9</div><div data-k="Open DWG" class="mono">0 <span class="dlt up">▼5</span></div><div data-k="PRD" class="mono">5</div><div data-k="Approved" class="mono">4 <span class="dlt up">▲1</span></div></div>
+          <div class="crow" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">Outfit</div><div data-k="Total" class="mono">34</div><div data-k="제출" class="mono">16 <span class="dlt eq">–</span></div><div data-k="심사중" class="mono">0 <span class="dlt up">▼6</span></div><div data-k="검토완료" class="mono">10</div><div data-k="Open DWG" class="mono">0 <span class="dlt up">▼3</span></div><div data-k="PRD" class="mono">5</div><div data-k="Approved" class="mono">5 <span class="dlt up">▲3</span></div></div>
+          <div class="crow total" style="--cols:.9fr .6fr .7fr .6fr .8fr .6fr .6fr .7fr;"><div class="main" data-k="부서">합계</div><div data-k="Total" class="mono">146</div><div data-k="제출" class="mono">69 <span class="dlt up">▲3</span></div><div data-k="심사중" class="mono">0 <span class="dlt up">▼9</span></div><div data-k="검토완료" class="mono">52</div><div data-k="Open DWG" class="mono">0 <span class="dlt up">▼11</span></div><div data-k="PRD" class="mono">16</div><div data-k="Approved" class="mono">36 <span class="dlt up">▲6</span></div></div>
         </div>
-        <p class="note">Coat / Pipe / Technical Specification / Vent 부서는 도면 등록 0건 (해당 없음) · "검토완료" = Open DWG + 승인PRD + Approved 합계</p>
-        <p class="src">출처: <a href="https://drive.google.com/file/d/14fOQaday3ULDYKAXU16qQ41yaEWa_-r1/view?usp=drivesdk" target="_blank" rel="noopener">SMC Biweekly PA Progress Report WR-39 ↗</a> (부서별 심사현황 표, 2026.09.25 기준)</p>
+        <p class="note">Coat / Pipe / Technical Specification / Vent 부서는 도면 등록 0건 (해당 없음) · "검토완료" = 승인 PRD + Approved 합계 (금주 Open DWG 0건) · 제출 69건 중 검토완료 52건 외 17건은 시스템상 Returned/재제출 대기 상태로 추정됨 — SMC 확인 필요. 가장 진행이 느린 부서는 여전히 Elec (18건 중 2건 제출, 16건 미제출) — 2주 연속 변동 없음.</p>
+        <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">Plan Approval — Drawing review status, Department wise ↗</a> (2026.10.08 조회)</p>
       </div>
     </section>
 
     <section class="block">
       <div class="grid-2">
         <div class="card">
-          <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">Bi-weekly PA 진행 현황 (2026.09.11~25)</h2></div>
+          <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">Bi-weekly PA 진행 현황 (2026.09.11~25)</h2><span class="status muted"><span class="d"></span>변동 사항 없음</span></div>
           <div class="ctable">
             <div class="crow" style="--cols:1.6fr 1.4fr;"><div class="main" data-k="항목">금기 신규 제출 도면</div><div data-k="내용">ARR'T OF CO2 ROOM · ARR'T OF OX &amp; AC ROOM (2건)</div></div>
-            <div class="crow" style="--cols:1.6fr 1.4fr;"><div class="main" data-k="항목">PA Start Date</div><div data-k="내용" style="font-family:var(--font-mono);">2026.06.10</div></div>
-            <div class="crow" style="--cols:1.6fr 1.4fr;"><div class="main" data-k="항목">Kick-off Meeting</div><div data-k="내용" style="font-family:var(--font-mono);">2026.06.02</div></div>
+            <div class="crow" style="--cols:1.6fr 1.4fr;"><div class="main" data-k="항목">PA Start Date</div><div data-k="내용" class="mono">2026.06.10</div></div>
+            <div class="crow" style="--cols:1.6fr 1.4fr;"><div class="main" data-k="항목">Kick-off Meeting</div><div data-k="내용" class="mono">2026.06.02</div></div>
             <div class="crow" style="--cols:1.6fr 1.4fr;"><div class="main" data-k="항목">Extra-cost / Credit 청구</div><div data-k="내용">현재 청구 건 없음</div></div>
           </div>
+          <p class="note">WR-39 이후 신규 Biweekly Report 미접수 — 차기 보고서(WR-41 예상) 수령 시 갱신 예정.</p>
           <p class="src">출처: <a href="https://drive.google.com/file/d/14fOQaday3ULDYKAXU16qQ41yaEWa_-r1/view?usp=drivesdk" target="_blank" rel="noopener">SMC WR-39 Biweekly PA Progress Report ↗</a></p>
         </div>
         <div class="card">
-          <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">SMC 주요 담당자 (Plan Approval Organogram)</h2></div>
+          <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">SMC 주요 담당자 (Plan Approval Organogram)</h2><span class="status muted"><span class="d"></span>변동 사항 없음</span></div>
           <div class="ctable compact">
             <div class="crow" style="--cols:1.1fr 1.1fr .9fr;"><div class="main" data-k="분야">Project Manager</div><div data-k="성명">Mr. Jack Lu</div><div data-k="비고">총괄</div></div>
             <div class="crow" style="--cols:1.1fr 1.1fr .9fr;"><div class="main" data-k="분야">PA Coordinator</div><div data-k="성명">Mr. Zhou Chun Lin</div><div data-k="비고">총괄</div></div>
@@ -985,64 +1092,126 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     <section class="block">
       <div class="grid-2">
         <div class="card">
-          <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">도면 코멘트 현황</h2></div>
-          <div class="ctable-head" style="--cols:1fr .8fr .8fr .8fr;"><div>부서</div><div>전체</div><div>Open</div><div>Closed</div></div>
+          <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">도면 코멘트 현황</h2><span class="meta">Closed = Closed + Closed PRD</span></div>
+          <div class="ctable-head" style="--cols:1fr .9fr .9fr .9fr;"><div>부서</div><div>전체</div><div>Open</div><div>Closed</div></div>
           <div class="ctable">
-            <div class="crow" style="--cols:1fr .8fr .8fr .8fr;"><div class="main" data-k="부서">Gen</div><div data-k="전체" style="font-family:var(--font-mono);">136</div><div data-k="Open"><span class="status warn"><span class="d"></span>5</span></div><div data-k="Closed" style="font-family:var(--font-mono);">117+14</div></div>
-            <div class="crow" style="--cols:1fr .8fr .8fr .8fr;"><div class="main" data-k="부서">Mach</div><div data-k="전체" style="font-family:var(--font-mono);">113</div><div data-k="Open"><span class="status risk"><span class="d"></span>15</span></div><div data-k="Closed" style="font-family:var(--font-mono);">78+20</div></div>
-            <div class="crow" style="--cols:1fr .8fr .8fr .8fr;"><div class="main" data-k="부서">Outfit</div><div data-k="전체" style="font-family:var(--font-mono);">83</div><div data-k="Open"><span class="status warn"><span class="d"></span>13</span></div><div data-k="Closed" style="font-family:var(--font-mono);">55+15</div></div>
-            <div class="crow" style="--cols:1fr .8fr .8fr .8fr;"><div class="main" data-k="부서">Accom</div><div data-k="전체" style="font-family:var(--font-mono);">84</div><div data-k="Open"><span class="status ok"><span class="d"></span>2</span></div><div data-k="Closed" style="font-family:var(--font-mono);">78+4</div></div>
-            <div class="crow" style="--cols:1fr .8fr .8fr .8fr;"><div class="main" data-k="부서">Hull</div><div data-k="전체" style="font-family:var(--font-mono);">60</div><div data-k="Open"><span class="status ok"><span class="d"></span>0</span></div><div data-k="Closed" style="font-family:var(--font-mono);">58+2</div></div>
-            <div class="crow" style="--cols:1fr .8fr .8fr .8fr;"><div class="main" data-k="부서">Elec</div><div data-k="전체" style="font-family:var(--font-mono);">38</div><div data-k="Open"><span class="status ok"><span class="d"></span>0</span></div><div data-k="Closed" style="font-family:var(--font-mono);">30+8</div></div>
+            <div class="crow" style="--cols:1fr .9fr .9fr .9fr;"><div class="main" data-k="부서">Gen</div><div data-k="전체" class="mono">140 <span class="dlt eq">+4</span></div><div data-k="Open"><span class="status warn"><span class="d"></span>4</span> <span class="dlt up">▼1</span></div><div data-k="Closed" class="mono">129+7</div></div>
+            <div class="crow" style="--cols:1fr .9fr .9fr .9fr;"><div class="main" data-k="부서">Mach</div><div data-k="전체" class="mono">123 <span class="dlt eq">+10</span></div><div data-k="Open"><span class="status risk"><span class="d"></span>18</span> <span class="dlt dn">▲3</span></div><div data-k="Closed" class="mono">90+15</div></div>
+            <div class="crow" style="--cols:1fr .9fr .9fr .9fr;"><div class="main" data-k="부서">Outfit</div><div data-k="전체" class="mono">109 <span class="dlt eq">+26</span></div><div data-k="Open"><span class="status risk"><span class="d"></span>24</span> <span class="dlt dn">▲11</span></div><div data-k="Closed" class="mono">73+12</div></div>
+            <div class="crow" style="--cols:1fr .9fr .9fr .9fr;"><div class="main" data-k="부서">Accom</div><div data-k="전체" class="mono">90 <span class="dlt eq">+6</span></div><div data-k="Open"><span class="status warn"><span class="d"></span>5</span> <span class="dlt dn">▲3</span></div><div data-k="Closed" class="mono">85+0</div></div>
+            <div class="crow" style="--cols:1fr .9fr .9fr .9fr;"><div class="main" data-k="부서">Hull</div><div data-k="전체" class="mono">60 <span class="dlt eq">–</span></div><div data-k="Open"><span class="status ok"><span class="d"></span>0</span> <span class="dlt eq">–</span></div><div data-k="Closed" class="mono">58+2</div></div>
+            <div class="crow" style="--cols:1fr .9fr .9fr .9fr;"><div class="main" data-k="부서">Elec</div><div data-k="전체" class="mono">42 <span class="dlt eq">+4</span></div><div data-k="Open"><span class="status warn"><span class="d"></span>4</span> <span class="dlt dn">▲4</span></div><div data-k="Closed" class="mono">30+8</div></div>
           </div>
-          <p class="note">전체 514건 중 Open 35건 / Closed 416건 / Closed PRD 63건</p>
+          <p class="note">전체 564건 (전주 514) 중 Open 55건 (전주 35) / Closed 465건 (전주 416) / Closed PRD 44건 (전주 63) — Closed PRD 감소분은 PRD 조건 해소에 따른 Closed 전환으로 추정됨.</p>
+          <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">Plan Approval — Drawing review comment status ↗</a> (2026.10.08 조회)</p>
         </div>
         <div class="card">
           <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">미결 도면 논의 (책임 주체별)</h2></div>
           <div class="ctable">
             <div class="crow" style="--cols:1.6fr .9fr;">
-              <div class="main tt" data-k="구분" tabindex="0">SMC(선주감독) 측 미결<span class="tt-box">Mach 3건, Outfit 3건, Accom 1건, Gen 1건 — SMC(Schulte Marine Concept, 선주측 감독법인) 대응 대기</span></div>
-              <div data-k="건수"><span class="status warn"><span class="d"></span>8건</span></div>
+              <div class="main tt" data-k="구분" tabindex="0">조선소(Builder) 측 미결<span class="tt-box">Mach 4건, Outfit 4건, Gen 2건 — 조선소 회신·도면 수정 대기 (전주 3건)</span></div>
+              <div data-k="건수"><span class="status risk"><span class="d"></span>10건</span> <span class="dlt dn">▲7</span></div>
             </div>
             <div class="crow" style="--cols:1.6fr .9fr;">
-              <div class="main" data-k="구분">조선소(Builder) 측 미결</div>
-              <div data-k="건수"><span class="status warn"><span class="d"></span>3건</span></div>
+              <div class="main tt" data-k="구분" tabindex="0">SMC(선주감독) 측 미결<span class="tt-box">Outfit 2건, Accom 1건 — SMC(Schulte Marine Concept, 선주측 감독법인) 대응 대기 (전주 8건)</span></div>
+              <div data-k="건수"><span class="status warn"><span class="d"></span>3건</span> <span class="dlt up">▼5</span></div>
             </div>
             <div class="crow" style="--cols:1.6fr .9fr;">
               <div class="main" data-k="구분">당사(Buyer) 측 미결</div>
-              <div data-k="건수"><span class="status ok"><span class="d"></span>0건</span></div>
+              <div data-k="건수"><span class="status ok"><span class="d"></span>0건</span> <span class="dlt eq">–</span></div>
             </div>
           </div>
-          <p class="note">가장 진행이 느린 부서: Elec (18건 중 2건만 제출, 16건 미제출) — 모니터링 필요</p>
-          <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">schultemarineconcept 설계도면 승인 시스템 ↗</a> (실시간 조회, 2026.09.23)</p>
+          <p class="note">SMC 측 검토 완료분이 조선소 회신 대기로 넘어가며 미결 주체가 조선소로 이동함 — 조선소 기술부(Huang Xiaochuan / 담당 Wang Kunjun) 회신 독촉 필요.</p>
+          <p class="src">출처: <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">Plan Approval — Open drawing discussion status ↗</a> (2026.10.08 조회)</p>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- ===================== 제작 (미접수) ===================== -->
+  <!-- ===================== 제작 ===================== -->
   <div class="panel" id="build">
+    <section class="block">
+      <div class="card chg-card">
+        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">WN40 (09.25~10.01) → WN41 (10.02~10.08)</span></div>
+        <ul class="chg-list">
+          <li><b>국경절 연휴</b> — 현장 생산만 일부 지속, 기술·영업 업무 중단으로 10.07(수) 정기 Weekly Meeting 미실시. 기존 Open 이슈 대부분 진척 없음</li>
+          <li><b>H03 Line Block Steel Cutting</b> — 10.08 기준 계획 절단 물량의 약 82% 완료, 잔여분 금주 완료 예정 · 추가 강재 입고 확인(10.05~06)</li>
+          <li><b>신규 이슈 2건</b> — ① 연휴 前 Observation 미조치분 금주 내 미착수 시 NCR 전환 ② 연휴 後 25K 본격 생산 착수 여부 및 계획 대비 실적 모니터링</li>
+          <li><b>신규 카드</b> — 생산 일정(Production Progress), Action Plan 요약, Maker 선정 현황, MOA 예산 변경 추가</li>
+          <li><b>일정 상이 확인</b> — 조선소 Production Progress상 Launching <b>2027.08.20</b>으로 마스터 일정(2027.07.16) 대비 35일 늦음 → 조선소 확인 필요</li>
+        </ul>
+      </div>
+    </section>
+
     <section class="block">
       <div class="block-head">
         <h2>제작 현황</h2>
-        <span class="meta">담당: 김용빈 팀장</span>
+        <span class="meta">담당: 김용빈 팀장 · 2026.10.08 기준</span>
       </div>
-      <div class="grid-3">
+      <div class="grid-4">
         <div class="card">
-          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">강재 입고</div>
+          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">강재 입고 (누적)</div>
           <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">약 2,088톤</div>
+          <div class="kdelta">10.05~06 추가 입고 확인 (수량 미기재)</div>
         </div>
         <div class="card">
-          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">Steel Cutting (H03B~S, 정정치)</div>
-          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">약 150톤</div>
+          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">H03 Steel Cutting 진척</div>
+          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">약 82%</div>
+          <div class="kdelta"><span class="dlt up">NEW</span> 계획 절단 물량 대비 (WN41)</div>
         </div>
         <div class="card">
-          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">조선소 PM 지정</div>
-          <div class="value" style="font-size:15px;margin-top:8px;"><span class="status ok"><span class="d"></span>완료 (09.16)</span> Shen Songhong</div>
+          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">전체 공정률 (조선소 산정)</div>
+          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">0.1%</div>
+          <div class="kdelta">Block Fab. 0.3% · 09.14 보고 기준</div>
+        </div>
+        <div class="card">
+          <div class="label" style="font-size:11.5px;color:var(--ink-faint);">조선소 PM</div>
+          <div class="value" style="font-size:15px;margin-top:8px;">Shen Songhong</div>
+          <div class="kdelta"><span class="status warn"><span class="d"></span>교체 검토 중 (미확정)</span></div>
         </div>
       </div>
-      <p class="note">※ 기존 주간보고(WN38)상 H03B~S Steel Cutting 실적 315톤은 조선소 PM 재검토 결과 약 150톤으로 정정 확인됨(WN39). NCR-01(No.3·4 Plasma Cutting Table 정비)은 2026.09.30 최종 완료되어 Close 처리됨 — 입고 지연되었던 강재가 도착해 같은 날부터 Steel Cutting 재개함. 국경절(중국 공휴일) 중에도 H03 Block 강재 절단은 10.02·10.04 진행 예정이며, 조선소는 연휴 이후 25K 생산을 본격 가속화하겠다고 밝힘 — 현재 조선소 생산 우선순위는 타사(9,800 Project) 위주로 확인됨.</p>
-      <p class="src">출처: <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 신조감독 Weekly Report (09.25~10.01) ↗</a> · <a href="https://drive.google.com/file/d/11xcbMk89sJ2V7KOvaGHaLOyI0Pl9-hnA/view?usp=drivesdk" target="_blank" rel="noopener">WN39 ↗</a></p>
+      <p class="note">※ 국경절 기간 중 H03 Line Block 강재 절단은 지속 진행되어 계획 물량 약 82% 완료됨. 금주 절단 완료 후 Block Fabrication 공정 연계 여부 확인 예정. 조선소는 연휴 이후 25K 생산을 본격 진행하겠다고 재차 밝혔으며, 금주부터 Block별 착수 현황과 계획 대비 실적을 집중 확인할 예정임 (기존 생산 우선순위는 타사 9,800 Project 위주).</p>
+      <p class="src">출처: <a href="https://drive.google.com/file/d/1B5sbLB7hfS13_F4xKwRXCWODUvwTCKLz/view?usp=drivesdk" target="_blank" rel="noopener">WN41 신조감독 Weekly Report (10.02~08) ↗</a> · <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 ↗</a> · <a href="https://drive.google.com/file/d/1MmrK9waE5-PxGsfvtjilUIHHqp02vxb3/view?usp=drivesdk" target="_blank" rel="noopener">25K HCC Production Progress ↗</a></p>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>생산 일정 (Production Progress)</h2>
+        <span class="meta">조선소 Visual Progress Board · Reporting Date 2026.09.14</span>
+      </div>
+      <div class="card">
+        <div class="gantt-ms" id="ganttMs"></div>
+        <div class="gantt" id="gantt"></div>
+        <div class="gantt-legend">
+          <span><i class="lg plan"></i>계획 구간</span>
+          <span><i class="lg act"></i>실적(공정률)</span>
+          <span><i class="lg today"></i>Today (10.08)</span>
+          <span><i class="lg ms"></i>마일스톤 (SC 강재절단 · KL 기공 · LC 진수 · DL 인도)</span>
+        </div>
+        <div class="grid-2" style="margin-top:16px;">
+          <div>
+            <div class="subh">H03 Block Steel Cutting (블록별 누계)</div>
+            <div class="barlist">
+              <div class="barrow"><div>H03B</div><div class="bt"><span style="width:90%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">90%</div></div>
+              <div class="barrow"><div>H03C</div><div class="bt"><span style="width:90%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">90%</div></div>
+              <div class="barrow"><div>H03P</div><div class="bt"><span style="width:30%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">30%</div></div>
+              <div class="barrow"><div>H03S</div><div class="bt"><span style="width:30%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">30%</div></div>
+            </div>
+            <p class="note">공정표 상 09.20주 H03P/S 계획 60% 대비 실적 미입력 상태 — WN41 기준 H03 전체 약 82%로 공정표 미갱신분 존재.</p>
+          </div>
+          <div>
+            <div class="subh">공정 구성 · 가중치</div>
+            <div class="ctable compact">
+              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">총 블록 수</div><div data-k="값" class="mono">126</div><div data-k="비고">진행 4 / 미착수 122</div></div>
+              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">Block Fab. 내 가중치</div><div data-k="값" class="mono">15·70·15</div><div data-k="비고">절단·제작·도장(%)</div></div>
+              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">강재 입고 (공정표)</div><div data-k="값" class="mono">900t</div><div data-k="비고">09.06 이후 미입력</div></div>
+              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">FAT 계획일</div><div data-k="값" class="mono">미정</div><div data-k="비고">Baseline 확정 후 입력</div></div>
+            </div>
+          </div>
+        </div>
+        <p class="note">⚠ 조선소 공정표상 Launching 2027.08.20은 마스터 일정(2027.07.16)과 35일 차이 — Erection 종료일과 동일하게 설정됨. Keel Laying(12.18)·Delivery(12.28)는 일치. 공정표상 강재 입고 누계(900t)는 Weekly Report 확인치(약 2,088t)와 상이하여 공정표 갱신 요청 필요.</p>
+        <p class="src">출처: <a href="https://drive.google.com/file/d/1MmrK9waE5-PxGsfvtjilUIHHqp02vxb3/view?usp=drivesdk" target="_blank" rel="noopener">25K HCC Production Progress.xlsx (Sheet 01·02·03·06·10) ↗</a> · <a href="https://drive.google.com/drive/folders/1tRAi1J5Oup0_93d7-hxkP2QD4D9kyeiJ" target="_blank" rel="noopener">Schedule - Production progress 폴더 ↗</a></p>
+      </div>
     </section>
 
     <section class="block">
@@ -1053,29 +1222,169 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
       <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
         <div>
           <div style="font-weight:600;font-size:14px;">Anhui Port &amp; Shipping Sealand Equipment Co., Ltd. 조직도</div>
-          <div class="note" style="margin-top:4px;">회장·총경리·부총경리 및 4개 센터(경영관리·안전·구매영업·생산기술) 산하 11개 부서·작업장 구성, 부서별 책임자 연락처 포함. 별도 접속 없이 본 대시보드 내 "조직도" 탭에서 바로 확인 가능함.</div>
+          <div class="note" style="margin-top:4px;">회장·총경리·부총경리 및 4개 센터(경영관리·안전·구매영업·생산기술) 산하 11개 부서·작업장 구성, 부서별 책임자 연락처 포함. 10.08 원본 대조 결과 변동 사항 없음.</div>
         </div>
         <span class="goto-orgchart" data-goto-panel="orgchart" style="flex:none;cursor:pointer;font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--blue);border:1px solid var(--blue-line);border-radius:999px;padding:8px 16px;text-decoration:none;">🏢 조직도 탭 바로가기 →</span>
       </div>
-      <p class="src">출처: 조선소 제공 원본 조직도 문서 (사내 수령본, 외부 공개 링크 없음)</p>
     </section>
 
     <section class="block">
-      <div class="block-head"><h2>조선소 주요 이슈 (Open)</h2><span class="meta">이홍정 현장감독 Weekly Report 기준 · 2026.10.02 반영</span></div>
+      <div class="block-head"><h2>조선소 주요 이슈</h2><span class="meta">이홍정 현장감독 Weekly Report 기준 · 2026.10.08 반영 · 기간 = 발생~해결 (Open은 10.08까지 경과일)</span></div>
       <div class="card">
-        <div class="ctable-head" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div>분야</div><div>내용</div><div>요청기한</div><div>상태</div></div>
-        <div class="ctable">
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">PM/Coordination</div><div data-k="내용">현 조선소 PM, 타부서 지원 부족을 생산부 상부에 보고 → 신규 PM 선임 검토 중(공식 확정 사항 없음)</div><div data-k="기한">ASAP</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN (모니터링 필요)</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">QC</div><div data-k="내용">ITP(검사시험계획서) 제출 지연 — 담당자 출장으로 금주 제출 무산</div><div data-k="기한">ASAP</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">Design/Purchasing</div><div data-k="내용">Maker Drawing 확보 지연(구매 협상 병목) → Production Drawing 발행 지연</div><div data-k="기한">ASAP</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">Design/Production</div><div data-k="내용">Run-on/off Tab Plate 적용방안 조선소 내부(Design↔Production) 협의 미완료</div><div data-k="기한">2026.10.09</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">Production</div><div data-k="내용">H05 생산도면 제출 지연 (H01~H02만 접수)</div><div data-k="기한">금주 내</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">Production</div><div data-k="내용">Hull Production Plan(계획 대비 실적 관리 기준) 미제출</div><div data-k="기한">2026.10.15</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">HSSE</div><div data-k="내용">Forklift/Truck/Slipway Crane 이동 시 Signal Man 미배치 반복 확인 — 조선소는 연휴 이후 인력 충원과 함께 추가 배치 예정이라고 밝힘</div><div data-k="기한">연휴 이후</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">Hull/QC</div><div data-k="내용">Tap Plate 용접 표준 미준수 사례 반복 — 현장 재교육 필요</div><div data-k="기한">Ongoing</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow" style="--cols:1.3fr 1.7fr .8fr .9fr;"><div class="main" data-k="분야">HSSE</div><div data-k="내용">중대재해 발생시 생산중단 비상절차서 — 조선소로부터 절차서 수령 확인(1~2명 규모 사고 시 전체 생산 약 2~3일 중단 가능, 정부 조사관 파견)</div><div data-k="기한">-</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+        <div class="iss-ctrl">
+          <div class="tl2-filters" id="issFilter" style="margin-bottom:0;">
+            <button class="tl2-filter active" data-f="all">전체 <span class="cnt" id="cntAll"></span></button>
+            <button class="tl2-filter" data-f="open"><span class="cat-dot" style="background:var(--red);"></span>Open <span class="cnt" id="cntOpen"></span></button>
+            <button class="tl2-filter" data-f="done"><span class="cat-dot" style="background:var(--green);"></span>Done <span class="cnt" id="cntDone"></span></button>
+          </div>
+          <label class="iss-sort">정렬
+            <select id="issSort">
+              <option value="status">상태 (Open 우선)</option>
+              <option value="start-desc">발생일 최신순</option>
+              <option value="start-asc">발생일 오래된순</option>
+              <option value="dur-desc">기간 긴 순</option>
+            </select>
+          </label>
         </div>
-        <p class="note">참고: 조선소 PM 지정(09.16, Shen Songhong)은 공식 완료(DONE) 상태이나, WN40 보고서상 신규 PM 선임 검토 사실이 새로 확인되어 별도 이슈로 추적함. NCR-01(Plasma Cutting Table 정비)은 09.30 Close 처리 완료. 조선소 프로젝트 조직도는 10.02 수령 확인되어 본 Open 이슈 목록에서 제외함(상단 &quot;조선소 조직도&quot; 섹션 참고).</p>
+        <div class="ctable-head" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div>분야</div><div>내용</div><div>발생</div><div>해결/기한</div><div>기간</div><div>상태</div></div>
+        <div class="ctable" id="issList">
+          <div class="crow iss" data-status="open" data-start="2026-10-08" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC/HSSE/Prod. <span class="badge-new">NEW</span></div><div data-k="내용">연휴 前 발행 Observation 미조치 — 금주 내 시정조치 미착수 항목은 NCR로 전환해 공식 관리 예정</div><div data-k="발생" class="mono">2026.10.08</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">신규</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-01" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">연휴 後 25K 본격 생산 착수 확인 및 계획 대비 실적 모니터링 — 생산 우선순위 9,800 Project 위주(WN40), 금주부터 인력·작업 투입 집중 확인(WN41)</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-01" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">PM/Coordination</div><div data-k="내용">현 조선소 PM, 타부서 지원 부족을 생산부 상부에 보고 → 신규 PM 선임 검토 중 (공식 확정 없음, 연휴로 진전 없음)</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-01" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Production</div><div data-k="내용">Run-on/off Tab Plate 적용방안 조선소 내부(Design↔Production) 협의 미완료 — 10.09 최종 Confirm 예정</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">2026.10.09</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-01" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Tech./Production</div><div data-k="내용">H05 생산도면 제출 지연 (H01~H02만 접수, WN40 금주 제출 예정분 미확인)</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">기한 경과</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-24" data-dur="14" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC</div><div data-k="내용">Tap Plate 용접 표준(조선소 Practice) 미준수 사례 반복 — 현장 작업자 재교육·관리 강화 요청</div><div data-k="발생" class="mono">2026.09.24</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">14일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="22" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC</div><div data-k="내용">ITP(검사시험계획서) 제출 지연 — 당초 09.23 기한, 담당자 출장으로 미제출 (Action Plan #12 Delay)</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">22일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="22" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Purchasing</div><div data-k="내용">Maker Drawing 확보 지연(조선소 구매 협상 병목) → 선행의장 Production Drawing 발행 지연</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">22일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="22" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">HSSE</div><div data-k="내용">Forklift/Truck/Slipway Crane·Transporter 이동 시 Signal Man 미배치 반복 — 연휴 이후 인력 충원과 함께 추가 배치 예정</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">연휴 이후</div><div data-k="기간" class="mono">22일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-08-20" data-dur="49" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production</div><div data-k="내용">Hull Production Plan(계획 대비 실적 관리 기준) 미제출 — 08.20부터 요청, 10.15 제출 예정</div><div data-k="발생" class="mono">2026.08.20</div><div data-k="해결/기한" class="mono">2026.10.15</div><div data-k="기간" class="mono">49일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-09-24" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">HSSE</div><div data-k="내용">중대재해 발생 시 생산중단 비상절차서 수령 (1~2명 사고 시 전체 생산 약 2~3일 중단, 정부 조사관 파견)</div><div data-k="발생" class="mono">2026.09.24</div><div data-k="해결/기한" class="mono">2026.10.01</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-09-24" data-dur="6" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./Purchasing</div><div data-k="내용">H03B~S 미입고 강재(Wuhu 전처리 업체) 입고 완료 → 09.30부터 Steel Cutting 재개</div><div data-k="발생" class="mono">2026.09.24</div><div data-k="해결/기한" class="mono">2026.09.30</div><div data-k="기간" class="mono">6일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-09-16" data-dur="16" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Business</div><div data-k="내용">조선소 Project 조직도(부서별 담당자·연락처 포함) 수정본 수령</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">2026.10.02</div><div data-k="기간" class="mono">16일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-09-14" data-dur="16" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production</div><div data-k="내용">NCR-01 No.3·4 Plasma Cutting Table 정비 완료 → NCR Close</div><div data-k="발생" class="mono">2026.09.14</div><div data-k="해결/기한" class="mono">2026.09.30</div><div data-k="기간" class="mono">16일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-08-10" data-dur="37" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main tt" data-k="분야" tabindex="0">PM/Coordination<span class="tt-box">발생일은 현장감독 착수일(08.10) 기준 — PM 미지정 상태로 착수하여 Action Plan #1로 요청, 09.16 지정됨</span></div><div data-k="내용">조선소 25K Project PM 지정 (Shen Songhong)</div><div data-k="발생" class="mono">2026.08.10</div><div data-k="해결/기한" class="mono">2026.09.16</div><div data-k="기간" class="mono">37일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+        </div>
+        <div class="tl2-empty" id="issEmpty">해당 상태의 이슈 없음</div>
+        <p class="note">발생일 = Weekly Report·Action Plan 최초 기록일 · Done 항목은 해결 이력 관리를 위해 목록에 유지함 · Steel Cutting 실적 정정(315t → 150t, WN39)은 데이터 정정 사항으로 이슈 목록에서 제외함.</p>
+        <p class="src">출처: <a href="https://drive.google.com/file/d/1B5sbLB7hfS13_F4xKwRXCWODUvwTCKLz/view?usp=drivesdk" target="_blank" rel="noopener">WN41 ↗</a> · <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 ↗</a> · <a href="https://drive.google.com/file/d/11xcbMk89sJ2V7KOvaGHaLOyI0Pl9-hnA/view?usp=drivesdk" target="_blank" rel="noopener">WN39 ↗</a> · <a href="https://drive.google.com/file/d/1asPnjYirLPA9gj9mVK4yY4791SoYoRWN/view?usp=drivesdk" target="_blank" rel="noopener">WN38 ↗</a> · <a href="https://drive.google.com/file/d/1aBKpQ-NwvMWgafij4aEVqWMQmj_Mcsk-/view?usp=drivesdk" target="_blank" rel="noopener">25K Newbuilding Action Plan (09.29) ↗</a></p>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>Production Action Plan 요약</h2>
+        <span class="meta">현장감독 → 조선소 Observation/NCR 관리대장 · Update 2026.09.29</span>
+      </div>
+      <div class="card">
+        <div class="ap-kpis">
+          <div class="ap-k"><div class="l">전체</div><div class="v">18</div><div class="s">Observation 17 · NCR 1</div></div>
+          <div class="ap-k"><div class="l">Open</div><div class="v" style="color:var(--red);">14</div><div class="s">78%</div></div>
+          <div class="ap-k"><div class="l">Delay</div><div class="v" style="color:var(--amber);">1</div><div class="s">ITP (#12)</div></div>
+          <div class="ap-k"><div class="l">Done</div><div class="v" style="color:var(--green);">3</div><div class="s">#1 · #8 · #10</div></div>
+        </div>
+        <div class="grid-2" style="margin-top:14px;">
+          <div>
+            <div class="subh">부서별 항목 수 (Open/Delay 포함)</div>
+            <div class="barlist">
+              <div class="barrow"><div>생산</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">9</div></div>
+              <div class="barrow"><div>상무</div><div class="bt"><span style="width:33%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">3</div></div>
+              <div class="barrow"><div>안전환경</div><div class="bt"><span style="width:22%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">2</div></div>
+              <div class="barrow"><div>구매</div><div class="bt"><span style="width:22%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">2</div></div>
+              <div class="barrow"><div>품질</div><div class="bt"><span style="width:11%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">1</div></div>
+              <div class="barrow"><div>기술</div><div class="bt"><span style="width:11%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">1</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="subh">주요 Open 항목</div>
+            <div class="plist">
+              <div class="prow"><span class="pdate">#3</span><span class="plabel">Production Plan 미제출 (08.20부터 요청)</span><span class="ptag">생산</span></div>
+              <div class="prow"><span class="pdate">#9</span><span class="plabel tt" tabindex="0">NCR — 절단대 슬래그 누적으로 절단면 불량<span class="tt-box">조선소 회신: 09.29까지 절단대 청소, QC가 전체 NCR 후속 회신 예정 — 결과 미확인</span></span><span class="ptag">생산</span></div>
+              <div class="prow"><span class="pdate">#15</span><span class="plabel">H03 블록 부족 강판 26매 납기 확인</span><span class="ptag">구매</span></div>
+              <div class="prow"><span class="pdate">#16~18</span><span class="plabel">자재 입고·생산도면·강재 절단 지연 재발방지 대책 제출</span><span class="ptag">구매/기술/생산</span></div>
+              <div class="prow"><span class="pdate">#2·#6</span><span class="plabel">부서별 Project 담당자 지정 및 인력 충원 일정 확정</span><span class="ptag">생산/상무</span></div>
+              <div class="prow"><span class="pdate">#5·#11</span><span class="plabel">최신 3D 모델 · 중국 국가 작업표준 제출</span><span class="ptag">생산</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="note">※ Action Plan 파일은 09.29 기준으로, 이후 해결된 #4(조직도, 10.02 수령)·#14(중대재해 절차서, 10.01 수령)는 아직 Open으로 남아 있음 — 차기 갱신 시 Close 반영 요청 필요.</p>
+        <div class="ap-links">
+          <a class="linkbtn" href="https://drive.google.com/file/d/1aBKpQ-NwvMWgafij4aEVqWMQmj_Mcsk-/view?usp=drivesdk" target="_blank" rel="noopener">📄 원본 파일 열기 (25K_Newbuilding Action Plan 260929.xlsx) ↗</a>
+          <a class="linkbtn ghost" href="https://drive.google.com/drive/folders/1G0IjylJwrE8EOfbigmEA5v21hrWaMffR" target="_blank" rel="noopener">📁 Status - Production action plan 폴더 ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>Maker 선정 현황</h2>
+        <span class="meta">Equipment Quotation &amp; Information Table · 2026.09.14 작성 (선주 09.04 회신 반영)</span>
+      </div>
+      <div class="card">
+        <div class="ap-kpis">
+          <div class="ap-k"><div class="l">대상 품목</div><div class="v">49</div><div class="s">Outfit 11 · Mach 25 · Elec 13</div></div>
+          <div class="ap-k"><div class="l">확정</div><div class="v" style="color:var(--green);">40</div><div class="s">82%</div></div>
+          <div class="ap-k"><div class="l">협의중 (Pending)</div><div class="v" style="color:var(--amber);">5</div><div class="s">MSBD·Pumps·통신 등</div></div>
+          <div class="ap-k"><div class="l">견적 대기</div><div class="v" style="color:var(--red);">4</div><div class="s">구명정·구명뗏목·소화기구·공기탱크</div></div>
+        </div>
+        <div class="iss-ctrl" style="margin-top:14px;">
+          <div class="tl2-filters" id="mkFilter" style="margin-bottom:0;">
+            <button class="tl2-filter active" data-f="all">전체</button>
+            <button class="tl2-filter" data-f="확정">확정</button>
+            <button class="tl2-filter" data-f="pend">미확정</button>
+          </div>
+          <div class="tl2-filters" id="mkCat" style="margin-bottom:0;">
+            <button class="tl2-filter active" data-c="all">전 분야</button>
+            <button class="tl2-filter" data-c="O">Outfit</button>
+            <button class="tl2-filter" data-c="M">Mach</button>
+            <button class="tl2-filter" data-c="E">Elec</button>
+          </div>
+        </div>
+        <div class="ctable-head" style="--cols:.55fr 1.5fr 1.2fr 1fr .7fr;"><div>No.</div><div>품목</div><div>Maker</div><div>금액</div><div>상태</div></div>
+        <div class="ctable compact mk-scroll" id="mkList"></div>
+        <p class="note">금액은 견적표 기준 원 견적가 또는 최종 합의가이며 MOA Rev.2 현재가와 일부 상이함(예: Propeller &amp; Shaft 817,500 vs 840,000, VRC 705,000 vs 830,000) — 계약 반영가는 MOA 기준으로 관리함. 품목명에 커서를 올리면 비고 확인 가능.</p>
+        <p class="src">출처: <a href="https://docs.google.com/spreadsheets/d/1dN19hUlz_u7orciy6NVpFY-dkWfAtqhHlQF3ts9GlUA/edit" target="_blank" rel="noopener">25K Maker Quotation status_260914 ↗</a> · <a href="https://drive.google.com/drive/folders/1o7fWAb2iVOBNF1WNhgtaTdNEdfZFtryU" target="_blank" rel="noopener">Status - Maker list 폴더 ↗</a> (Original source 폴더는 동일 파일로 제외)</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>Maker 선정에 따른 예산 변경 (MOA Rev.2)</h2>
+        <span class="meta">2026.08.18 조선소 MOA 결과 보고 · 단위 USD</span>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="subh">Fixed Maker Extra &amp; Credit <span class="mono" style="color:var(--green);">순 Credit +11,280</span></div>
+          <div class="ctable-head" style="--cols:1.3fr .9fr .9fr .9fr;"><div>품목</div><div>계약</div><div>현재가</div><div>변동</div></div>
+          <div class="ctable compact">
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main tt" data-k="품목" tabindex="0">MSBD<span class="tt-box">견적 산출 지연 — 최종가 미확정</span></div><div data-k="계약" class="mono">360,000</div><div data-k="현재가" class="mono">360,000</div><div data-k="변동" class="mono">0</div></div>
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main" data-k="품목">Air Cond.</div><div data-k="계약" class="mono">195,000</div><div data-k="현재가" class="mono">156,000</div><div data-k="변동" class="mono pos">+39,000</div></div>
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main" data-k="품목">Ventilation Fan</div><div data-k="계약" class="mono">68,000</div><div data-k="현재가" class="mono">39,600</div><div data-k="변동" class="mono pos">+28,400</div></div>
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main tt" data-k="품목" tabindex="0">Propeller &amp; Shaft<span class="tt-box">원자재 가격 상승 및 환율 하락 영향</span></div><div data-k="계약" class="mono">680,000</div><div data-k="현재가" class="mono">840,000</div><div data-k="변동" class="mono neg">−160,000</div></div>
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main" data-k="품목">BWTS</div><div data-k="계약" class="mono">760,000</div><div data-k="현재가" class="mono">650,000</div><div data-k="변동" class="mono pos">+110,000</div></div>
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main tt" data-k="품목" tabindex="0">VRC<span class="tt-box">밸브 수량 증가</span></div><div data-k="계약" class="mono">820,000</div><div data-k="현재가" class="mono">830,000</div><div data-k="변동" class="mono neg">−10,000</div></div>
+            <div class="crow" style="--cols:1.3fr .9fr .9fr .9fr;"><div class="main" data-k="품목">Loading Computer</div><div data-k="계약" class="mono">46,000</div><div data-k="현재가" class="mono">42,120</div><div data-k="변동" class="mono pos">+3,880</div></div>
+          </div>
+          <div class="subh" style="margin-top:14px;">Maker 변경에 따른 Extra <span class="mono" style="color:var(--red);">선주 부담 −41,550</span></div>
+          <div class="ctable compact">
+            <div class="crow" style="--cols:1.3fr 1.6fr .9fr;"><div class="main tt" data-k="품목" tabindex="0">Steering Gear<span class="tt-box">SAMBU는 관공선 납품 위주 → 상선 실적 많은 FLUTEK으로 변경</span></div><div data-k="변경">SAMBU 106,000 → FLUTEK 116,000</div><div data-k="차액" class="mono neg">−10,000</div></div>
+            <div class="crow" style="--cols:1.3fr 1.6fr .9fr;"><div class="main tt" data-k="품목" tabindex="0">Window Wiper<span class="tt-box">서비스 네트워크 부족 우려 → 국내 업체로 교체</span></div><div data-k="변경">ZHEJIANG KYLIN 5,200 → JUNG GONG 5,900</div><div data-k="차액" class="mono neg">−700</div></div>
+            <div class="crow" style="--cols:1.3fr 1.6fr .9fr;"><div class="main tt" data-k="품목" tabindex="0">Provision Crane<span class="tt-box">서비스 네트워크 부족 우려 → 국내 업체로 교체 · 견적표상 차액은 24,850(HAITE 56,000 기준)으로 MOA 수치와 상이</span></div><div data-k="변경">YANCHENG HAITE 50,000 → ORIENTAL 80,850</div><div data-k="차액" class="mono neg">−30,850</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="subh">건조대금 예상 추가 예산 (선주 부담 기준)</div>
+          <div class="ctable compact">
+            <div class="crow" style="--cols:1.7fr 1fr;"><div class="main tt" data-k="항목" tabindex="0">M/E 공급범위 제외 3종 선주 구매<span class="tt-box">F.O Flowmeter · Main Air Compressor · Air Reservoir — 차감액은 선주 귀속, 구매비 선주 부담 (추정치)</span></div><div data-k="금액" class="mono neg">+50,000</div></div>
+            <div class="crow" style="--cols:1.7fr 1fr;"><div class="main tt" data-k="항목" tabindex="0">메인엔진 환차 (JPY)<span class="tt-box">기준환율 USD/JPY 145.48 (2025.06.20) · 08.12 환율 기준 · 환차손익 선주·조선소 50:50 분담</span></div><div data-k="금액" class="mono neg">+245,008</div></div>
+            <div class="crow" style="--cols:1.7fr 1fr;"><div class="main tt" data-k="항목" tabindex="0">발전기 엔진 환차 (CNY)<span class="tt-box">기준환율 USD/CNY 7.17 · 계약 CNY 8,500,000 · 08.18 환율 기준</span></div><div data-k="금액" class="mono pos">−40,000</div></div>
+            <div class="crow" style="--cols:1.7fr 1fr;"><div class="main" data-k="항목">Fixed Maker Extra &amp; Credit</div><div data-k="금액" class="mono pos">−11,280</div></div>
+            <div class="crow" style="--cols:1.7fr 1fr;"><div class="main" data-k="항목">Maker 변경 Extra</div><div data-k="금액" class="mono neg">+41,550</div></div>
+            <div class="crow total" style="--cols:1.7fr 1fr;"><div class="main" data-k="항목">예상 추가 예산 합계</div><div data-k="금액" class="mono neg" style="font-weight:700;">+285,278</div></div>
+          </div>
+          <div class="wf" id="moaWf"></div>
+          <p class="note">+ = 선주 추가 부담, − = 절감/Credit · 환차 금액은 MOA 작성 시점 환율 기준 추정치로 실제 결제 시점에 변동 가능 · MSBD 견적 미확정으로 추가 변동 여지 있음 · 금융 탭 "항목별 예산 대비 실적"에 동일 금액 반영함.</p>
+          <p class="src">출처: <a href="https://docs.google.com/document/d/1TfKtOX0257OwikC_7xYvURB-YYV4w3zOQv9-LcUs5sY/edit" target="_blank" rel="noopener">조선소 MOA 결과 보고 Rev.2 ↗</a></p>
+        </div>
       </div>
     </section>
 
@@ -1111,11 +1420,11 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
         <div class="card">
           <div class="block-head" style="margin-bottom:10px;"><h2 style="font-size:16px;">Change Order</h2></div>
           <div class="empty-state" style="padding:24px 16px;">
-            <div class="sm">현재까지 접수된 Change Order / Extra-cost 청구 건 없음 (2026.10.02 기준)</div>
+            <div class="sm">현재까지 접수된 Change Order / Extra-cost 청구 건 없음 (2026.10.08 기준, 변동 사항 없음)</div>
           </div>
         </div>
       </div>
-      <p class="src">출처: <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 ↗</a> · <a href="https://drive.google.com/file/d/11xcbMk89sJ2V7KOvaGHaLOyI0Pl9-hnA/view?usp=drivesdk" target="_blank" rel="noopener">WN39 ↗</a> · <a href="https://drive.google.com/file/d/1X6UsZqcaqFyIDAE8GroTBMewd4vD1uIr/view?usp=drivesdk" target="_blank" rel="noopener">WN38 ↗</a> · <a href="https://drive.google.com/file/d/1asPnjYirLPA9gj9mVK4yY4791SoYoRWN/view?usp=drivesdk" target="_blank" rel="noopener">WN37 ↗</a> · <a href="https://drive.google.com/file/d/1GqGJgKR4AWjRh1LK2xgj8KasYnEDLeiX/view?usp=drivesdk" target="_blank" rel="noopener">WN36 ↗</a> · <a href="https://drive.google.com/file/d/1Bo0vS1rReBJa3985jJCBFF9veed4mH2s/view?usp=drivesdk" target="_blank" rel="noopener">Shipyard-Owner-SMC Meeting Memo (09.16) ↗</a></p>
+      <p class="src">출처: <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 ↗</a> · <a href="https://drive.google.com/file/d/11xcbMk89sJ2V7KOvaGHaLOyI0Pl9-hnA/view?usp=drivesdk" target="_blank" rel="noopener">WN39 ↗</a> · <a href="https://drive.google.com/file/d/1asPnjYirLPA9gj9mVK4yY4791SoYoRWN/view?usp=drivesdk" target="_blank" rel="noopener">WN38 ↗</a> · <a href="https://drive.google.com/file/d/1X6UsZqcaqFyIDAE8GroTBMewd4vD1uIr/view?usp=drivesdk" target="_blank" rel="noopener">WN37 ↗</a> · <a href="https://drive.google.com/file/d/1GqGJgKR4AWjRh1LK2xgj8KasYnEDLeiX/view?usp=drivesdk" target="_blank" rel="noopener">WN36 ↗</a> · <a href="https://drive.google.com/file/d/1Bo0vS1rReBJa3985jJCBFF9veed4mH2s/view?usp=drivesdk" target="_blank" rel="noopener">Shipyard-Owner-SMC Meeting Memo (09.16) ↗</a></p>
     </section>
 
     <section class="block">
@@ -1129,7 +1438,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
           <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main tt" data-k="마일스톤" tabindex="0">Sea Trial<span class="tt-box">SMC Biweekly PA Progress Report 기준 예정일. 계약/BBCHP 기준 마스터 스케줄에는 별도 명시 없음</span></div><div data-k="일자" style="font-family:var(--font-mono);">2027.11.12</div><div data-k="상태"><span class="status warn"><span class="d"></span>예정</span></div></div>
           <div class="crow" style="--cols:1.4fr 1fr 1fr;"><div class="main" data-k="마일스톤">Delivery</div><div data-k="일자" style="font-family:var(--font-mono);">2027.12.28</div><div data-k="상태"><span class="status warn"><span class="d"></span>예정</span></div></div>
         </div>
-        <p class="note">※ SMC Biweekly Report 일반정보표는 Delivery를 2027.12.24로 기재하고 있어 계약 기준일(12.28)과 4일 차이가 있음 — 계약서 원문 기준일을 유지하고 추후 조선소 확인 시 정정 예정.</p>
+        <p class="note">※ 조선소 Production Progress(09.14)는 Launching을 <b>2027.08.20</b>으로 설정하여 본 마스터 일정(07.16) 대비 35일 늦음 — 조선소 확인 필요. ※ SMC Biweekly Report 일반정보표는 Delivery를 2027.12.24로 기재하고 있어 계약 기준일(12.28)과 4일 차이가 있음 — 계약서 원문 기준일을 유지하고 추후 조선소 확인 시 정정 예정.</p>
         <p class="src">출처: <a href="https://drive.google.com/file/d/1c1cwcMMP7NeKW5GWMOkomAf5v_RfjYL9/view?usp=drivesdk" target="_blank" rel="noopener">260519. Megaline 25k milestone_rev (2026.05 기준 마스터 스케줄) ↗</a> · <a href="https://drive.google.com/file/d/14fOQaday3ULDYKAXU16qQ41yaEWa_-r1/view?usp=drivesdk" target="_blank" rel="noopener">SMC Biweekly PA Progress Report WR-39 ↗</a></p>
       </div>
     </section>
@@ -1137,6 +1446,18 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
 
   <!-- ===================== 현안 종합 ===================== -->
   <div class="panel" id="orgchart">
+    <section class="block">
+      <div class="card chg-card">
+        <div class="chg-head"><span class="chg-tag">조직도 업데이트 이력</span><span class="chg-period">원본: 00 일반 / 04 Organization chart</span></div>
+        <div class="oc-log">
+          <div class="r"><span class="d">2026.10.08</span><span>「Shipyard Organization Chart(5).docx」 재수령분 대조 — 조직 구성(4개 센터·11개 부서), 부서별 인원, 책임자·프로젝트 담당자, 연락처·이메일 모두 기존과 동일</span><span class="status muted"><span class="d"></span>업데이트 사항 없음</span></div>
+          <div class="r"><span class="d">2026.10.02</span><span>조선소 Project 조직도(부서별 담당자·연락처 포함) 최초 수령 및 대시보드 반영</span><span class="status ok"><span class="d"></span>최초 반영</span></div>
+        </div>
+        <p class="note" style="margin-bottom:0;">참고: 원본 연락처표에서 dd@ahsealand.com은 생산부 행, pd@ahsealand.com은 구매부 프로젝트 담당자 열에 기재되어 있음 — 기존 대시보드 표기(기술부·구매부)는 메일 도메인 성격 기준 배치로, 원본 의도 확인 시 정정 예정.</p>
+        <p class="src">출처: <a href="https://drive.google.com/file/d/1LdcSNa_Ab9U84siYu8_R4wxOzvZDoBGC/view?usp=drivesdk" target="_blank" rel="noopener">Shipyard Organization Chart(5).docx ↗</a> · <a href="https://drive.google.com/drive/folders/1ddXzGC3XfSIyUOmHCKlOAdjXTCWdR9bq" target="_blank" rel="noopener">04 Organization chart 폴더 ↗</a></p>
+      </div>
+    </section>
+
     <section class="block">
       <div class="block-head">
         <h2>조선소 조직도</h2>
@@ -1213,7 +1534,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
           </footer>
         </div>
       </div>
-      <p class="src">출처: 조선소 제공 원본 조직도 문서 (사내 수령본, 외부 공개 링크 없음)</p>
+      <p class="src">출처: <a href="https://drive.google.com/file/d/1LdcSNa_Ab9U84siYu8_R4wxOzvZDoBGC/view?usp=drivesdk" target="_blank" rel="noopener">조선소 제공 원본 조직도 (Shipyard Organization Chart(5).docx) ↗</a></p>
     </section>
 
     <div class="oc-tip" id="ocTip" role="tooltip"></div>
@@ -1224,7 +1545,7 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     <section class="block">
       <div class="block-head">
         <h2>주요 현안 종합</h2>
-        <span class="meta">신임 임원 브리핑용 · 2026.10.02 기준</span>
+        <span class="meta">신임 임원 브리핑용 · 2026.10.08 기준</span>
       </div>
       <div class="card">
         <div class="ctable-head" style="--cols:1.7fr .9fr .8fr 1.2fr;"><div>현안</div><div>분야</div><div>영향도</div><div>대응 현황</div></div>
@@ -1266,10 +1587,28 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
             <div data-k="대응">당초 09.23 제출 예정이었으나 담당자 출장으로 지연 — 조기 제출 재요청함</div>
           </div>
           <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
-            <div class="main" data-k="현안">Mach 부서 코멘트 Open 15건</div>
+            <div class="main" data-k="현안">도면 코멘트 Open 55건 (전주 35) · 제출 지연 43건</div>
             <div data-k="분야">설계</div>
-            <div data-k="영향도"><span class="status ok"><span class="d"></span>저</span></div>
-            <div data-k="대응">SMC/조선소 협의 진행중</div>
+            <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
+            <div data-k="대응">Outfit 24건·Mach 18건 집중 — 조선소 측 미결 논의 10건(전주 3) 회신 독촉 필요</div>
+          </div>
+          <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
+            <div class="main" data-k="현안">건조대금 예상 추가 예산 USD +285,278 <span class="badge-new">NEW</span></div>
+            <div data-k="분야">금융/구매</div>
+            <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
+            <div data-k="대응">MOA Rev.2 기준 — M/E 엔화 환차(+245,008)가 대부분, MSBD 견적 미확정으로 추가 변동 가능</div>
+          </div>
+          <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
+            <div class="main" data-k="현안">Launching 일정 상이 (조선소 08.20 vs 마스터 07.16) <span class="badge-new">NEW</span></div>
+            <div data-k="분야">제작</div>
+            <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
+            <div data-k="대응">조선소 Production Progress 공정표 기준 35일 차이 — 10.15 Hull Production Plan 수령 시 확인 요청</div>
+          </div>
+          <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
+            <div class="main" data-k="현안">Maker 미확정 9건 (협의중 5 · 견적대기 4) <span class="badge-new">NEW</span></div>
+            <div data-k="분야">구매/설계</div>
+            <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
+            <div data-k="대응">MSBD·Pumps·내부통신·Cyber Security·구명설비 등 — Maker Drawing 확보 지연 이슈와 직결</div>
           </div>
         </div>
       </div>
@@ -1277,8 +1616,8 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
   </div>
 
   <footer class="foot">
-    <span>출처: <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">최진욱 팀장 요청 메일(26.09.21) 회신 자료 종합 ↗</a> · <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">설계 도면 승인 시스템 ↗</a> · 이홍정 현장감독 Weekly Report (WN36~40)</span>
-    <span>Last updated · 2026.10.02</span>
+    <span>출처: <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">최진욱 팀장 요청 메일(26.09.21) 회신 자료 종합 ↗</a> · <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">설계 도면 승인 시스템 ↗</a> · 이홍정 현장감독 Weekly Report (WN36~41) · 조선소 Production Progress · Action Plan · Maker Quotation · MOA Rev.2</span>
+    <span>Last updated · 2026.10.08</span>
   </footer>
 
 </div>
@@ -1588,5 +1927,183 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
 
 </script>
 
-</body>
-</html>
+<script>
+(function(){
+  /* ---------- 조선소 주요 이슈: Open/Done 필터 + 정렬 ---------- */
+  try{
+    var list=document.getElementById('issList');
+    if(list){
+      var rows=[].slice.call(list.querySelectorAll('.crow.iss'));
+      var nOpen=rows.filter(function(r){return r.dataset.status==='open';}).length;
+      document.getElementById('cntAll').textContent=rows.length;
+      document.getElementById('cntOpen').textContent=nOpen;
+      document.getElementById('cntDone').textContent=rows.length-nOpen;
+      var filt='all';
+      var apply=function(){
+        var shown=0;
+        rows.forEach(function(r){var ok=(filt==='all'||r.dataset.status===filt);r.style.display=ok?'':'none';if(ok)shown++;});
+        document.getElementById('issEmpty').classList.toggle('show',shown===0);
+      };
+      var sortRows=function(mode){
+        var s=rows.slice();
+        s.sort(function(a,b){
+          var sa=a.dataset.start, sb=b.dataset.start, da=+a.dataset.dur, db=+b.dataset.dur;
+          if(mode==='start-desc') return sb.localeCompare(sa);
+          if(mode==='start-asc') return sa.localeCompare(sb);
+          if(mode==='dur-desc') return db-da;
+          var oa=a.dataset.status==='open'?0:1, ob=b.dataset.status==='open'?0:1;
+          return oa-ob || sb.localeCompare(sa);
+        });
+        s.forEach(function(r){list.appendChild(r);});
+      };
+      document.querySelectorAll('#issFilter .tl2-filter').forEach(function(b){
+        b.addEventListener('click',function(){
+          document.querySelectorAll('#issFilter .tl2-filter').forEach(function(x){x.classList.remove('active');});
+          b.classList.add('active'); filt=b.dataset.f; apply();
+        });
+      });
+      document.getElementById('issSort').addEventListener('change',function(e){sortRows(e.target.value);});
+      sortRows('status'); apply();
+    }
+  }catch(e){}
+
+  /* ---------- 생산 일정 Gantt ---------- */
+  try{
+    var g=document.getElementById('gantt');
+    if(g){
+      var T0=Date.UTC(2026,7,1), T1=Date.UTC(2028,0,1);
+      var pct=function(s){var p=s.split('-');var t=Date.UTC(+p[0],+p[1]-1,+p[2]);return ((t-T0)/(T1-T0)*100);};
+      var rowsG=[
+        {n:'Block Fabrication',w:'40%',s:'2026-08-19',e:'2027-04-15',a:0.3},
+        {n:'Erection (126 blocks)',w:'30%',s:'2026-12-18',e:'2027-08-20',a:0},
+        {n:'Outfitting',w:'11%',s:'2026-09-14',e:'2027-11-30',a:0},
+        {n:'FAT',w:'4%',s:null,e:null,a:0},
+        {n:'Commissioning',w:'5%',s:'2027-03-11',e:'2027-12-17',a:0},
+        {n:'Mooring & Sea Trial',w:'10%',s:'2027-08-12',e:'2027-12-03',a:0},
+        {n:'Overall',w:'100%',s:'2026-08-19',e:'2027-12-28',a:0.1}
+      ];
+      var ms=[
+        {n:'Steel Cutting',k:'SC',d:'2026-08-19'},
+        {n:'Keel Laying',k:'KL',d:'2026-12-18'},
+        {n:'Launching',k:'LC',d:'2027-08-20',warn:1,tip:'마스터 일정 2027.07.16'},
+        {n:'Delivery',k:'DL',d:'2027-12-28'}
+      ];
+      var today=pct('2026-10-08');
+      var ax='<div class="g-axis">';
+      for(var y=2026;y<=2027;y++){for(var m=(y===2026?8:1);m<=12;m++){
+        var lbl=(m===1||(y===2026&&m===8))?('<span class="yr" style="left:'+pct(y+'-'+m+'-1')+'%">'+String(y).slice(2)+'.'+('0'+m).slice(-2)+'</span>'):(m%3===1?'<span style="left:'+pct(y+'-'+m+'-1')+'%">'+('0'+m).slice(-2)+'</span>':'');
+        ax+=lbl;
+      }}
+      ax+='</div>';
+      var html=ax;
+      rowsG.forEach(function(r){
+        var bar;
+        if(!r.s){bar='<span class="g-tbd">계획일 미정 (Baseline 확정 후 반영)</span>';}
+        else{
+          var l=pct(r.s), w=pct(r.e)-l;
+          bar='<div class="g-plan" style="left:'+l+'%;width:'+w+'%" title="'+r.s+' ~ '+r.e+' · 실적 '+r.a+'%"><div class="g-act" style="width:'+Math.max(r.a,0)+'%"></div></div>';
+        }
+        var lines=ms.map(function(x){return '<div class="g-msline" style="left:'+pct(x.d)+'%"></div>';}).join('');
+        html+='<div class="g-row"><div class="g-lab">'+r.n+'<small>가중 '+r.w+' · 실적 '+r.a+'%'+(r.s?' · '+r.s.slice(2).replace(/-/g,'.')+'~'+r.e.slice(2).replace(/-/g,'.'):'')+'</small></div><div class="g-track">'+lines+bar+'<div class="g-today" style="left:'+today+'%"></div></div></div>';
+      });
+      g.innerHTML=html;
+      document.getElementById('ganttMs').innerHTML=ms.map(function(x){
+        var pp=pct(x.d), tr=pp>85?'translateX(-90%)':(pp<8?'translateX(-10%)':'translateX(-50%)');
+        return '<span class="ms'+(x.warn?' warn':'')+'" style="left:'+pp+'%;transform:'+tr+'"'+(x.tip?' title="'+x.tip+'"':'')+'><b class="nm">'+x.n+' '+x.d.slice(2).replace(/-/g,'.')+'</b><b class="sh">'+x.k+'</b>'+(x.warn?' ⚠':'')+'<i></i></span>';
+      }).join('');
+    }
+  }catch(e){}
+
+  /* ---------- Maker 선정 현황 ---------- */
+  try{
+    var mk=document.getElementById('mkList');
+    if(mk){
+      var D=[
+        ['O-01','Paint','JOTUN','USD 990,900','확정','선주 09.04 승인 (HEMPEL 대안 Pending 종료)'],
+        ['O-02','Steering Gear','FLUTEK','USD 116,000','확정','조선소안 SAMBU 대비 +10,000 선주 부담 · DWG 승인 후 7개월'],
+        ['O-03','Windlass / Mooring Winch','FLUTEK','USD 509,000','확정','DWG 승인 후 9개월 납기'],
+        ['O-04','Provision Crane','ORIENTAL','USD 80,850','확정','조선소안 YANCHENG HAITE 대비 차액 선주 부담 (견적표 24,850 / MOA 30,850)'],
+        ['O-05','Air Cond. / Ref. Plant','JOSUN','USD 156,000','확정','Fixed maker(HI-AIR 194,000) 대비 차액 선주 Credit'],
+        ['O-06','Ventilation Fans','JOSUN','USD 39,600','확정','Fixed maker(HI-AIR 49,600) 대비 차액 선주 Credit'],
+        ['O-07A','Life Boat & Davit','—','견적 대기','견적대기','후보: JIANGYIN BEIHAI · NINGBO NEW MARINE(조선소 추가, A/S 우수) · JIANGSU JIAOYAN'],
+        ['O-07B','Life Raft','—','견적 대기','견적대기','구명정 Maker 미생산으로 분리 · 후보 LINGJACK · ZHONGWEI'],
+        ['O-08','Galley & Laundry','SHANGHAI BAIHAO','USD 31,000','확정',''],
+        ['O-09','Loose Fire Fighting Appl.','—','견적 대기','견적대기','후보: LINGJACK · ZHONGWEI · HUAYAN (FANGZHAN 삭제: 국내 A/S 부재)'],
+        ['O-10','Window Wiper & CVS','JUNG GONG','USD 5,900','확정','조선소안 ZHEJIANG KYLIN 대비 +700 선주 부담'],
+        ['M-01','Main Engine (incl. SCR)','HANSHIN (MAN B&W)','JPY 699,000,000','확정','환율 적용 계약 · 환차손익 50:50 분담 (MOA)'],
+        ['M-02','Propeller & Shafting','HAEYANG METAL','USD 817,500','확정','선주 09.04 승인 · MOA 현재가 840,000 · 10.01 당사 직접 협의, 계약문구 정리 중'],
+        ['M-03','Aux. Boiler','MIURA','USD 128,000','확정','선주 선호 Maker'],
+        ['M-04','Aux. Generator Set','DAIHATSU','CNY 8,500,000','확정','납기 단축 추가비용 조선소 부담 · 환차 50:50 분담'],
+        ['M-05',"Em'cy Generator",'CUMMINS (CMXD)','USD 38,500','확정',''],
+        ['M-06','Air Compressor','SPERRE','USD 52,500','확정','M/E 공급범위 제외분 선주 구매 대상(MOA)'],
+        ['M-07','Air Reservoir','—','견적 대기','견적대기','후보 3사 회신 대기 · M/E 공급범위 제외분 선주 구매 대상(MOA)'],
+        ['M-08','Pumps','SHIN SHIN','USD 423,000','협의중','선주 09.04 승인 · 조선소 견적 갱신 대기'],
+        ['M-09','Electric Heater','WOOGYEONG','USD 50,000','확정',''],
+        ['M-10','Cooler','DHP','USD 34,800','확정',''],
+        ['M-11A','Purifier','TBG','USD 89,600','확정','Mitsubishi Licensee'],
+        ['M-11B','ME FO Supply Unit','—','삭제','삭제','유닛 삭제 — 개별 장비로 설치 (집계 제외)'],
+        ['M-12','Oily Water Separator','GEORIM','USD 16,900','확정',''],
+        ['M-13','Sewage Treatment','IL-SEUNG','USD 10,200','확정',''],
+        ['M-14','Hot Water Calorifier','SAMKUN','USD 6,000','확정',''],
+        ['M-15','Control Air Dryer','SAMKUN','USD 2,400','확정',''],
+        ['M-16','Viscosity Ctrl & Flowmeter','AQUAMETRO','USD 31,000','확정',''],
+        ['M-17','ICCP & MGPS','RONGDE','USD 23,620','확정',''],
+        ['M-18','Bow Thruster','WARTSILA','USD 253,000','확정','납기 2027.05말'],
+        ['M-19','VRC (incl. vent W/T valve)','HOPPE KOREA','USD 705,000','확정','MOA 현재가 830,000 (밸브 수량 증가)'],
+        ['M-20','FW Generator','IL-SEUNG','USD 35,000','확정',''],
+        ['M-20','Remote Sounding / Draft Gauge','HOPPE KOREA','USD 125,000','확정',''],
+        ['M-21','BWTS','TECHROSS','USD 650,000','확정','Fixed maker 가격 대비 Credit 110,000 (MOA)'],
+        ['M-22','Fixed CO2 / Local FF','SEA PLUS (KN TECH)','USD 90,000','확정','수정 견적 반영'],
+        ['M-23','Sewage Macerator','CK TECH','USD 9,000','확정',''],
+        ['M-24','SCR for G/E with GMS','PANASIA','USD 298,000','확정',''],
+        ['E-01','ME Control System','HANSHIN (M/E 포함)','M/E 포함','확정',''],
+        ['E-02','Alarm Monitoring','S&SYS','USD 48,000','확정',''],
+        ['E-03','Fire Detection & Alarm','CONSILLUM','USD 15,800','확정',''],
+        ['E-04','Whistle System','SOUTHEAST','USD 5,900','확정',''],
+        ['E-05','Transformer','JIANGSU HAIDE','USD 11,400','확정',''],
+        ['E-06','MSBD / Console / Starter','HD HYUNDAI ELECTRIC','USD 360,000 (예산가)','협의중','견적 산출 지연 · 최종가 미확정 (MOA 변동 0)'],
+        ['E-07','Lighting Fixture','HULE','USD 67,000','확정',''],
+        ['E-08','Internal Communication','KEXUN / HANSHIN','USD 68,436 / 106,400','협의중','조선소 KEXUN 제안 vs 선주 HANSHIN 승인(09.04) — 미합의'],
+        ['E-08-01','VHF Voice Recording Unit','HANSHIN ELECTRONICS','USD 5,500','협의중','Pending'],
+        ['E-09','Navigation / Radio','JRC','USD 374,800','확정',''],
+        ['E-10','Auto Pilot / Gyro','YOKOGAWA (YDK)','USD 50,300','확정',''],
+        ['E-11','Loading Computer','SECURELOAD (HOPPE)','USD 42,340','확정','Fixed maker 대비 Credit (MOA 현재가 42,120)'],
+        ['E-12','Cyber Security','SEANET (조선소안)','USD 69,500','협의중','시스템 구성 제출 대기 · 후보 SAFEAMETA / YAGENA']
+      ];
+      var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+      var cls={'확정':'ok','협의중':'warn','견적대기':'risk','삭제':'muted'};
+      mk.innerHTML=D.map(function(d){
+        var name=d[5]?'<span class="tt" tabindex="0">'+esc(d[1])+'<span class="tt-box">'+esc(d[5])+'</span></span>':esc(d[1]);
+        return '<div class="crow mk" data-st="'+d[4]+'" data-cat="'+d[0].charAt(0)+'" style="--cols:.55fr 1.5fr 1.2fr 1fr .7fr;"><div class="mono" data-k="No." style="font-size:11.5px;">'+d[0]+'</div><div class="main" data-k="품목">'+name+'</div><div data-k="Maker">'+esc(d[2])+'</div><div class="mono" data-k="금액" style="font-size:12px;">'+esc(d[3])+'</div><div data-k="상태"><span class="status '+cls[d[4]]+'"><span class="d"></span>'+d[4]+'</span></div></div>';
+      }).join('');
+      var fS='all', fC='all';
+      var applyMk=function(){
+        mk.querySelectorAll('.crow.mk').forEach(function(r){
+          var st=r.dataset.st, okS=(fS==='all')||(fS==='확정'&&st==='확정')||(fS==='pend'&&(st==='협의중'||st==='견적대기'));
+          var okC=(fC==='all')||r.dataset.cat===fC;
+          r.style.display=(okS&&okC)?'':'none';
+        });
+      };
+      document.querySelectorAll('#mkFilter .tl2-filter').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#mkFilter .tl2-filter').forEach(function(x){x.classList.remove('active');});b.classList.add('active');fS=b.dataset.f;applyMk();});});
+      document.querySelectorAll('#mkCat .tl2-filter').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#mkCat .tl2-filter').forEach(function(x){x.classList.remove('active');});b.classList.add('active');fC=b.dataset.c;applyMk();});});
+    }
+  }catch(e){}
+
+  /* ---------- MOA 예산 Waterfall ---------- */
+  try{
+    var wf=document.getElementById('moaWf');
+    if(wf){
+      var W=[['M/E 제외 3종',50000],['M/E 환차(JPY)',245008],['G/E 환차(CNY)',-40000],['Fixed Maker 조정',-11280],['Maker 변경',41550]];
+      var max=295008+41550, run=0, out='';
+      W.forEach(function(w){
+        var a=run, b=run+w[1]; run=b;
+        var l=Math.min(a,b)/max*100, wd=Math.abs(w[1])/max*100;
+        out+='<div class="wf-row"><div class="wl">'+w[0]+'</div><div class="wt"><div class="wb '+(w[1]>=0?'inc':'dec')+'" style="left:'+l+'%;width:'+Math.max(wd,.6)+'%"></div></div><div class="wv">'+(w[1]>=0?'+':'−')+Math.abs(w[1]).toLocaleString('en-US')+'</div></div>';
+      });
+      out+='<div class="wf-row"><div class="wl" style="font-weight:600;color:var(--ink);">합계</div><div class="wt"><div class="wb tot" style="left:0;width:'+(run/max*100)+'%"></div></div><div class="wv" style="font-weight:700;color:var(--ink);">+'+run.toLocaleString('en-US')+'</div></div>';
+      wf.innerHTML=out;
+    }
+  }catch(e){}
+})();
+</script>
+</body></html>
