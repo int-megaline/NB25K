@@ -1,5 +1,23 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>25K 신조 PM 대시보드</title>
+<meta name="description" content="MEGALINE 25K HCC 신조 프로젝트 PM 대시보드">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#f7f7f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101012" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NB25K">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>body{margin:0;}img{max-width:100%}</style>
+</head>
+<body>
 <style>
   :root{
     --bg:#f7f7f6;
@@ -522,28 +540,93 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
 .oc-log .r:last-child{border-bottom:none;}
 .oc-log .d{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
 @media (max-width:560px){.oc-log .r{grid-template-columns:1fr;gap:2px;}}
+
+/* ===== PWA · 햄버거 메뉴 (2026.11.05) ===== */
+.nav-fab{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));z-index:900;width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:color-mix(in srgb,var(--bg-elev) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s;}
+.nav-fab.show,.nav-fab.always{opacity:1;transform:none;pointer-events:auto;}
+.nav-fab svg{width:20px;height:20px;}
+.nav-fab .cur{position:absolute;right:50px;top:50%;transform:translateY(-50%);font-size:11.5px;font-weight:600;white-space:nowrap;background:var(--bg-elev);border:1px solid var(--border);border-radius:999px;padding:4px 10px;color:var(--ink-soft);box-shadow:var(--shadow);}
+.nav-scrim{position:fixed;inset:0;z-index:950;background:rgba(10,10,12,.38);opacity:0;pointer-events:none;transition:opacity .2s;}
+.nav-scrim.open{opacity:1;pointer-events:auto;}
+.nav-drawer{position:fixed;top:0;right:0;bottom:0;z-index:960;width:min(320px,86vw);background:var(--bg-elev);border-left:1px solid var(--border);box-shadow:-12px 0 32px -12px rgba(0,0,0,.25);transform:translateX(102%);transition:transform .24s ease;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 0 calc(12px + env(safe-area-inset-bottom,0px));}
+.nav-drawer.open{transform:none;}
+.nd-head{display:flex;align-items:center;gap:10px;padding:0 16px 12px;border-bottom:1px solid var(--border-soft);}
+.nd-head img{width:30px;height:30px;border-radius:8px;border:1px solid var(--border-soft);background:#fff;}
+.nd-head .t{flex:1;min-width:0;}
+.nd-head .t b{display:block;font-size:14px;color:var(--ink);}
+.nd-head .t small{font-size:11px;color:var(--ink-faint);}
+.nd-close{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink);cursor:pointer;font-size:18px;line-height:1;}
+.nd-list{flex:1;overflow-y:auto;padding:8px 8px;-webkit-overflow-scrolling:touch;}
+.nd-tab{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;text-align:left;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--ink-soft);padding:11px 10px;border-radius:10px;cursor:pointer;}
+.nd-tab .n{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);width:18px;}
+.nd-tab .c{margin-left:auto;font-size:10.5px;font-weight:500;color:var(--ink-faint);}
+.nd-tab:hover{background:var(--bg-sunken);}
+.nd-tab.active{background:var(--blue-soft);color:var(--ink);box-shadow:inset 3px 0 0 var(--blue-line);}
+.nd-secs{margin:2px 0 8px 38px;display:none;flex-direction:column;border-left:1px solid var(--border-soft);}
+.nd-tab.active + .nd-secs{display:flex;}
+.nd-sec{border:0;background:transparent;text-align:left;font-family:var(--font-body);font-size:12.5px;color:var(--ink-soft);padding:7px 10px;cursor:pointer;border-radius:0 8px 8px 0;}
+.nd-sec:hover{background:var(--bg-sunken);color:var(--ink);}
+.nd-foot{display:flex;gap:8px;padding:10px 16px 0;border-top:1px solid var(--border-soft);}
+.nd-foot button{flex:1;font-family:var(--font-body);font-size:12px;font-weight:600;padding:9px 8px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink-soft);cursor:pointer;}
+.nd-foot button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+.nd-foot button[hidden]{display:none;}
+body.nav-lock{overflow:hidden;}
+@media (max-width:560px){.nav-fab .cur{display:none;}}
+@media print{.nav-fab,.nav-scrim,.nav-drawer{display:none!important;}}
+
+/* ===== 탭 페이저 (2026.11.05) — 탭별 독립 세로 스크롤 + 좌우 스와이프 전환 ===== */
+@media screen{
+  html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
+  .wrap.app{max-width:none;margin:0;padding:0;height:100vh;height:100dvh;display:flex;flex-direction:column;}
+  .appbar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,calc((100% - 1240px)/2 + 20px)) 8px;background:var(--bg);}
+  .ab-logo{width:34px;height:34px;border-radius:9px;border:1px solid var(--border-soft);background:#fff;flex:0 0 auto;}
+  .ab-title{flex:1;min-width:0;}
+  .ab-title h1{font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);}
+  .ab-title p{margin:2px 0 0;font-size:11px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ab-pills{display:flex;gap:6px;flex:0 0 auto;}
+  .ab-btns{display:flex;gap:6px;align-items:center;flex:0 0 auto;}
+  .appbar .nav-fab{position:static;opacity:1;transform:none;pointer-events:auto;width:36px;height:36px;border-radius:10px;box-shadow:none;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;}
+  .appbar .nav-fab svg{width:18px;height:18px;}
+  .wrap.app > .tabs{flex:0 0 auto;margin:0;padding:0 max(8px,calc((100% - 1240px)/2 + 12px));background:var(--bg);scrollbar-width:none;overscroll-behavior-x:contain;}
+  .wrap.app > .tabs::-webkit-scrollbar{display:none;}
+  .pager{flex:1 1 auto;min-height:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .pager::-webkit-scrollbar{display:none;}
+  .pager > .panel{display:block;flex:0 0 100%;width:100%;min-width:0;height:100%;overflow-y:auto;overflow-x:hidden;scroll-snap-align:start;scroll-snap-stop:always;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:20px max(20px,calc((100% - 1240px)/2 + 20px)) calc(40px + env(safe-area-inset-bottom,0px));box-sizing:border-box;contain:paint;}
+  .pager > .panel > .foot{margin-top:28px;}
+  .pager > .panel:focus,.pager:focus{outline:none;}
+  .ov-intro .eyebrow{margin:2px 0 10px;font-size:10.5px;font-weight:600;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase;line-height:1.4;}
+  .ov-intro .kpis{margin-bottom:24px;}
+  .wrap.app > .foot{display:none;}
+  .pg-dots{display:none;}
+  @media (max-width:899px){.ab-pills{display:none;}}
+  @media (max-width:560px){
+    .appbar{gap:9px;padding-left:12px;padding-right:10px;}
+    .ab-logo{width:30px;height:30px;}
+    .ab-title h1{font-size:15.5px;}
+    .ab-btns{gap:4px;}
+    .appbar .themebtn{width:34px;height:34px;}
+    .pager > .panel{padding:14px 12px calc(32px + env(safe-area-inset-bottom,0px));}
+    .tab{padding:10px 12px;font-size:13px;}
+  }
+}
+@media print{
+  .appbar .nav-fab,.ab-btns{display:none!important;}
+  .pager{display:block;}
+}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-<div class="wrap">
+<div class="wrap app" id="app">
 
-  <div class="draft-banner">
-    <span>🗂</span>
-    <div>접수된 자료 기준으로 구성함. 금융(최용창)·설계(스케줄 사이트 연동 + SMC Biweekly PA Report)·제작(이홍정 현장감독 Weekly Report) 자료 반영됨. <b style="font-family:var(--font-mono);">2026.10.22</b> 업데이트 반영 — <b>Maker 선정 비용 변동 분석 Rev.1</b>(건조대금 예상 추가 예산 USD +285,278 → <b>+71,662</b> 확정), <b>조선소 PM 변경</b>(Que Jun) 및 조직도 갱신, <b>SMC 9월 감리비 청구서</b>(USD 16,613.30) 접수, <b>회계·법률 부수비용 지급 완료</b> 반영함. 10.16 반영분(Keel Laying 12.28 등 일정 변경)은 유지. 추가로 <b>WN43 Weekly Report</b>(10.16~22), <b>Production Progress 공정표(10.22판)</b>, <b>Block Division(10.22)</b> 신규 자료 반영함.</div>
-  </div>
-
-  <header class="top">
-    <div class="top-left">
-      <p class="eyebrow">MEGALINE · NEWBUILDING PROJECT MANAGEMENT</p>
-      <h1>25K 신조 PM 대시보드</h1>
-      <p class="sub">HULL NO. LH2603-25000-001 · 25,000 DWT Heavy Cargo Carrier · APSSE 조선소</p>
-    </div>
-    <div class="top-right">
-      <span class="pill"><span class="dot"></span>인계 예정: <span style="font-family:var(--font-mono);">2026.11</span></span>
-      <span class="pill"><span class="dot"></span>업데이트 (10.22)</span>
+  <header class="appbar" id="appbar">
+    <img class="ab-logo" src="icons/apple-touch-icon.png" alt="">
+    <div class="ab-title"><h1>25K 신조 PM 대시보드</h1><p>LH2603-25000-001 · 25,000 DWT HCC · APSSE 조선소</p></div>
+    <div class="ab-pills"><span class="pill"><span class="dot"></span>인계 예정: <span style="font-family:var(--font-mono);">2026.11</span></span>
+      <span class="pill"><span class="dot"></span>업데이트 (10.22)</span></div>
+    <div class="ab-btns">
       <button class="themebtn" id="printBtn" title="PDF로 저장 / 인쇄" aria-label="PDF로 저장">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8.5V3h12v5.5"/><path d="M6 17.5H4.8A1.8 1.8 0 0 1 3 15.7v-4.4A1.8 1.8 0 0 1 4.8 9.5h14.4A1.8 1.8 0 0 1 21 11.3v4.4a1.8 1.8 0 0 1-1.8 1.8H18"/><path d="M6 14.5h12V21H6v-6.5Z"/></svg>
       </button>
@@ -551,31 +634,9 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
         <svg class="icon-sun" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7"/></svg>
         <svg class="icon-moon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
       </button>
+      <button class="nav-fab" id="navFab" type="button" aria-label="탭 메뉴 열기" aria-controls="navDrawer" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
   </header>
-
-  <div class="kpis">
-    <div class="kpi">
-      <div class="label">계약대금 지급률</div>
-      <div class="value">50<small>%</small></div>
-      <div class="delta up">▲ 9/22 2차 인출 완료</div>
-    </div>
-    <div class="kpi">
-      <div class="label">설계 도면 제출률</div>
-      <div class="value">47<small>% (69/146)</small></div>
-      <div class="delta warn">▲ 전주 대비 +3건 · 지연 43건</div>
-    </div>
-    <div class="kpi">
-      <div class="label">설계 도면 승인율</div>
-      <div class="value">25<small>% (36/146)</small></div>
-      <div class="delta up">▲ 전주 대비 +6건 · PRD 포함 36%</div>
-    </div>
-    <div class="kpi">
-      <div class="label">강재 입고 (누적)</div>
-      <div class="value">4,254<small>톤</small></div>
-      <div class="delta">— 변동 없음 (10.11) · 절단 누적 505.5톤</div>
-    </div>
-  </div>
 
   <nav class="tabs" id="tabs">
     <div class="tab active" data-panel="overview">Overview</div>
@@ -585,9 +646,41 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     <div class="tab" data-panel="orgchart">조직도</div>
     <div class="tab" data-panel="issues">현안 종합</div>
   </nav>
+  <main class="pager" id="pager">
 
   <!-- ===================== OVERVIEW ===================== -->
   <div class="panel active" id="overview">
+    <div class="ov-intro">
+      <p class="eyebrow">MEGALINE · NEWBUILDING PROJECT MANAGEMENT</p>
+  <div class="draft-banner">
+        <span>🗂</span>
+        <div>접수된 자료 기준으로 구성함. 금융(최용창)·설계(스케줄 사이트 연동 + SMC Biweekly PA Report)·제작(이홍정 현장감독 Weekly Report) 자료 반영됨. <b style="font-family:var(--font-mono);">2026.10.22</b> 업데이트 반영 — <b>Maker 선정 비용 변동 분석 Rev.1</b>(건조대금 예상 추가 예산 USD +285,278 → <b>+71,662</b> 확정), <b>조선소 PM 변경</b>(Que Jun) 및 조직도 갱신, <b>SMC 9월 감리비 청구서</b>(USD 16,613.30) 접수, <b>회계·법률 부수비용 지급 완료</b> 반영함. 10.16 반영분(Keel Laying 12.28 등 일정 변경)은 유지. 추가로 <b>WN43 Weekly Report</b>(10.16~22), <b>Production Progress 공정표(10.22판)</b>, <b>Block Division(10.22)</b> 신규 자료 반영함.</div>
+      </div>
+
+  <div class="kpis">
+        <div class="kpi">
+          <div class="label">계약대금 지급률</div>
+          <div class="value">50<small>%</small></div>
+          <div class="delta up">▲ 9/22 2차 인출 완료</div>
+        </div>
+        <div class="kpi">
+          <div class="label">설계 도면 제출률</div>
+          <div class="value">47<small>% (69/146)</small></div>
+          <div class="delta warn">▲ 전주 대비 +3건 · 지연 43건</div>
+        </div>
+        <div class="kpi">
+          <div class="label">설계 도면 승인율</div>
+          <div class="value">25<small>% (36/146)</small></div>
+          <div class="delta up">▲ 전주 대비 +6건 · PRD 포함 36%</div>
+        </div>
+        <div class="kpi">
+          <div class="label">강재 입고 (누적)</div>
+          <div class="value">4,254<small>톤</small></div>
+          <div class="delta">— 변동 없음 (10.11) · 절단 누적 505.5톤</div>
+        </div>
+      </div>
+
+    </div>
 
     <section class="block">
       <div class="card chg-card">
@@ -1855,6 +1948,8 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
     </section>
   </div>
 
+  </main>
+
   <footer class="foot">
     <span>출처: <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">최진욱 팀장 요청 메일(26.09.21) 회신 자료 종합 ↗</a> · <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">설계 도면 승인 시스템 ↗</a> · 이홍정 현장감독 Weekly Report (WN36~43) · Block Division (10.22) · 조선소 블록생산계획 · ITP · 조선소 Production Progress · Action Plan · Maker Quotation · MOA Rev.2</span>
     <span>Last updated · 2026.10.22</span>
@@ -2367,6 +2462,141 @@ html[data-theme="dark"] .oc-tip a{color:#2f6fb0}
       wf.innerHTML=out;
     }
   }catch(e){}
+})();
+</script>
+
+
+<script>
+/* 탭 페이저: 좌우 스와이프/탭 클릭/키보드로 전환 · 탭별 세로 스크롤 위치 독립 유지 */
+(function(){
+  var pager=document.getElementById('pager');if(!pager)return;
+  var panels=[].slice.call(pager.querySelectorAll(':scope > .panel'));
+  var tabs=[].slice.call(document.querySelectorAll('#tabs .tab'));
+  var ids=panels.map(function(p){return p.id;});
+  var idx=Math.max(0,panels.findIndex(function(p){return p.classList.contains('active');}));
+  /* 출처 footer를 각 탭 하단에 복제 */
+  var foot=document.querySelector('.wrap.app > .foot');
+  if(foot)panels.forEach(function(p){p.appendChild(foot.cloneNode(true));});
+  function mark(i){
+    if(i<0||i>=panels.length)return;
+    idx=i;
+    tabs.forEach(function(t,k){t.classList.toggle('active',k===i);t.setAttribute('aria-selected',k===i?'true':'false');});
+    panels.forEach(function(p,k){p.classList.toggle('active',k===i);});
+    var t=tabs[i];if(t){var bar=t.parentNode;var x=t.offsetLeft-(bar.clientWidth-t.offsetWidth)/2;bar.scrollTo({left:Math.max(0,x),behavior:'smooth'});}
+    try{history.replaceState(null,'','#'+ids[i]);}catch(e){}
+    try{sessionStorage.setItem('nb25k-tab',ids[i]);}catch(e){}
+    if(window.Chart&&Chart.instances){Object.values(Chart.instances).forEach(function(c){try{c.resize();}catch(e){}});}
+  }
+  var lock=false,lockT=null;
+  function show(id,smooth,target){
+    var i=typeof id==='number'?id:ids.indexOf(id);if(i<0)return;
+    lock=true;clearTimeout(lockT);
+    mark(i);
+    pager.scrollTo({left:i*pager.clientWidth,behavior:smooth?'smooth':'auto'});
+    lockT=setTimeout(function(){lock=false;},smooth?600:50);
+    if(target){
+      var p=panels[i];
+      setTimeout(function(){
+        var el=target.closest?(target.closest('.block-head')||target):target;
+        var y=el.getBoundingClientRect().top-p.getBoundingClientRect().top+p.scrollTop-12;
+        p.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+      },smooth?380:0);
+    }
+  }
+  /* 스크롤 위치로 활성 탭 동기화 (스와이프) */
+  var raf=null;
+  pager.addEventListener('scroll',function(){
+    if(raf)return;
+    raf=requestAnimationFrame(function(){raf=null;
+      if(lock)return;
+      var i=Math.round(pager.scrollLeft/pager.clientWidth);
+      if(i!==idx)mark(i);
+    });
+  },{passive:true});
+  /* 탭 클릭 → 해당 페이지로 이동 (기존 핸들러보다 먼저 처리) */
+  tabs.forEach(function(t,i){t.setAttribute('role','tab');t.addEventListener('click',function(e){e.stopImmediatePropagation();show(i,true);},true);});
+  /* '조직도 탭 바로가기' 등 내부 이동 버튼 */
+  document.addEventListener('click',function(e){
+    var g=e.target.closest&&e.target.closest('[data-goto-panel]');
+    if(!g)return;e.preventDefault();e.stopPropagation();
+    var i=ids.indexOf(g.dataset.gotoPanel);if(i>=0){panels[i].scrollTop=0;show(i,true);}
+  },true);
+  /* 키보드 ← → */
+  document.addEventListener('keydown',function(e){
+    if(e.altKey||e.ctrlKey||e.metaKey)return;
+    var tg=e.target.tagName;if(/INPUT|SELECT|TEXTAREA/.test(tg))return;
+    if(e.key==='ArrowRight'&&idx<panels.length-1)show(idx+1,true);
+    else if(e.key==='ArrowLeft'&&idx>0)show(idx-1,true);
+  });
+  /* 화면 회전/리사이즈 시 현재 탭 위치 고정 */
+  var rz=null;window.addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(function(){lock=true;pager.scrollTo({left:idx*pager.clientWidth,behavior:'auto'});setTimeout(function(){lock=false;},60);},80);});
+  /* 탭 내부 가로 스크롤 요소(차트·표·타임라인)는 끝에 닿아도 탭이 넘어가지 않도록 차단 */
+  function guard(){
+    panels.forEach(function(p){p.querySelectorAll('*').forEach(function(el){
+      var ox=getComputedStyle(el).overflowX;
+      if((ox==='auto'||ox==='scroll')&&el.scrollWidth>el.clientWidth+2){el.style.overscrollBehaviorX='contain';}
+    });});
+  }
+  window.addEventListener('load',function(){setTimeout(guard,300);});
+  /* 세로 스크롤 시 고정 툴팁 닫기 (기존 window scroll 핸들러 재사용) */
+  panels.forEach(function(p){p.addEventListener('scroll',function(){window.dispatchEvent(new Event('scroll'));},{passive:true});});
+  /* 초기 탭: URL #해시 → 세션 기억 → Overview */
+  var start=(location.hash||'').slice(1);
+  if(ids.indexOf(start)<0){try{start=sessionStorage.getItem('nb25k-tab')||'';}catch(e){start='';}}
+  if(ids.indexOf(start)<0)start=ids[idx];
+  requestAnimationFrame(function(){show(start,false);});
+  window.NBPager={show:show,current:function(){return panels[idx];},index:function(){return idx;}};
+})();
+</script>
+<div class="nav-scrim" id="navScrim"></div>
+<aside class="nav-drawer" id="navDrawer" aria-label="탭 메뉴" aria-hidden="true">
+  <div class="nd-head"><img src="icons/apple-touch-icon.png" alt=""><div class="t"><b>25K 신조 PM</b><small>LH2603-25000-001 · APSSE</small></div><button class="nd-close" id="navClose" type="button" aria-label="닫기">✕</button></div>
+  <nav class="nd-list" id="navList"></nav>
+  <div class="nd-foot"><button type="button" id="navTop">↑ 맨 위로</button><button type="button" id="navTheme">◐ 테마</button><button type="button" class="pri" id="navInstall" hidden>⤓ 앱 설치</button></div>
+</aside>
+<script>
+(function(){
+  var fab=document.getElementById('navFab'),dr=document.getElementById('navDrawer'),sc=document.getElementById('navScrim'),list=document.getElementById('navList');
+  var tabs=[].slice.call(document.querySelectorAll('#tabs .tab'));
+  function h2text(h){var t='';h.childNodes.forEach(function(n){if(n.nodeType===3)t+=n.textContent;});return t.trim()||h.textContent.trim();}
+  function build(){
+    list.innerHTML='';
+    tabs.forEach(function(t,i){
+      var id=t.dataset.panel,p=document.getElementById(id);
+      var b=document.createElement('button');b.type='button';b.className='nd-tab'+(t.classList.contains('active')?' active':'');
+      var secs=p?[].slice.call(p.querySelectorAll('.block-head > h2')):[];
+      b.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span><span>'+t.textContent.trim()+'</span>'+(secs.length?'<span class="c">'+secs.length+'</span>':'');
+      b.addEventListener('click',function(){go(id,null);});
+      list.appendChild(b);
+      var w=document.createElement('div');w.className='nd-secs';
+      secs.forEach(function(h){var s=document.createElement('button');s.type='button';s.className='nd-sec';s.textContent=h2text(h);s.addEventListener('click',function(){go(id,h);});w.appendChild(s);});
+      list.appendChild(w);
+    });
+  }
+  function go(id,h){
+    close();
+    if(window.NBPager){NBPager.show(id,true,h||null);}
+    setTimeout(build,350);
+  }
+  function open(){build();dr.classList.add('open');sc.classList.add('open');fab.setAttribute('aria-expanded','true');dr.setAttribute('aria-hidden','false');document.body.classList.add('nav-lock');}
+  function close(){dr.classList.remove('open');sc.classList.remove('open');fab.setAttribute('aria-expanded','false');dr.setAttribute('aria-hidden','true');document.body.classList.remove('nav-lock');}
+  fab.addEventListener('click',open);sc.addEventListener('click',close);document.getElementById('navClose').addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  tabs.forEach(function(t){t.addEventListener('click',function(){setTimeout(build,0);});});
+  document.getElementById('navTop').addEventListener('click',function(){close();var p=window.NBPager&&NBPager.current();if(p)p.scrollTo({top:0,behavior:'smooth'});});
+  document.getElementById('navTheme').addEventListener('click',function(){var tb=document.getElementById('themeToggle');if(tb)tb.click();});
+  /* 스와이프로 닫기 */
+  var sx=null;dr.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});
+  dr.addEventListener('touchend',function(e){if(sx!==null&&e.changedTouches[0].clientX-sx>60)close();sx=null;});
+  build();
+  /* PWA: 설치 프롬프트 · 서비스워커 */
+  var dp=null,ib=document.getElementById('navInstall');
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;ib.hidden=false;});
+  ib.addEventListener('click',function(){if(!dp)return;dp.prompt();dp.userChoice.finally(function(){dp=null;ib.hidden=true;});});
+  window.addEventListener('appinstalled',function(){ib.hidden=true;});
+  if('serviceWorker' in navigator&&/^https:$|^http:$/.test(location.protocol)){
+    window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}});
+  }
 })();
 </script>
 </body></html>
