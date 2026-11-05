@@ -613,6 +613,18 @@ body.nav-lock{overflow:hidden;}
   .appbar .nav-fab,.ab-btns{display:none!important;}
   .pager{display:block;}
 }
+
+/* 이슈 정렬 키 (2026.11.05) */
+.iss-keys{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+.iss-keys .ik-lab{font-size:11.5px;color:var(--ink-faint);margin-right:2px;white-space:nowrap;flex:0 0 auto;}
+.iss-keys .ik{font-family:var(--font-body);font-size:11.5px;font-weight:600;color:var(--ink-soft);background:var(--bg-sunken);border:1px solid var(--border);border-radius:999px;padding:5px 11px;cursor:pointer;}
+.iss-keys .ik.on{background:var(--blue-soft);border-color:var(--blue-line);color:var(--ink);}
+.iss-keys .ik i,.iss-head .sh i{font-style:normal;font-size:9.5px;color:var(--blue);}
+.iss-head .sh{cursor:pointer;user-select:none;}
+.iss-head .sh:hover,.iss-head .sh.on{color:var(--ink);}
+.iss-head .sh:focus-visible{outline:2px solid var(--blue-line);outline-offset:2px;border-radius:4px;}
+@media (max-width:640px){.iss-keys{width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;overscroll-behavior-x:contain;}.iss-keys::-webkit-scrollbar{display:none;}.iss-keys .ik{flex:0 0 auto;}}
+@media print{.iss-keys{display:none;}}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1485,16 +1497,16 @@ body.nav-lock{overflow:hidden;}
             <button class="tl2-filter" data-f="open"><span class="cat-dot" style="background:var(--red);"></span>Open <span class="cnt" id="cntOpen"></span></button>
             <button class="tl2-filter" data-f="done"><span class="cat-dot" style="background:var(--green);"></span>Done <span class="cnt" id="cntDone"></span></button>
           </div>
-          <label class="iss-sort">정렬
-            <select id="issSort">
-              <option value="status">상태 (Open 우선)</option>
-              <option value="start-desc">발생일 최신순</option>
-              <option value="start-asc">발생일 오래된순</option>
-              <option value="dur-desc">기간 긴 순</option>
-            </select>
-          </label>
+          <div class="iss-keys" id="issKeys" role="group" aria-label="정렬 키">
+            <span class="ik-lab">정렬</span>
+            <button type="button" class="ik" data-k="field">분야<i></i></button>
+            <button type="button" class="ik" data-k="start">발생<i></i></button>
+            <button type="button" class="ik" data-k="end" title="Open 항목 우선 · 기한 경과 → ASAP → 날짜순 → 상시(Weekly·Ongoing)">해결/기한<i></i></button>
+            <button type="button" class="ik" data-k="dur">기간<i></i></button>
+            <button type="button" class="ik" data-k="status">상태<i></i></button>
+          </div>
         </div>
-        <div class="ctable-head" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div>분야</div><div>내용</div><div>발생</div><div>해결/기한</div><div>기간</div><div>상태</div></div>
+        <div class="ctable-head iss-head" id="issHead" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="sh" data-k="field" tabindex="0">분야<i></i></div><div>내용</div><div class="sh" data-k="start" tabindex="0">발생<i></i></div><div class="sh" data-k="end" tabindex="0">해결/기한<i></i></div><div class="sh" data-k="dur" tabindex="0">기간<i></i></div><div class="sh" data-k="status" tabindex="0">상태<i></i></div></div>
         <div class="ctable" id="issList">
           <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Machinery/Purch. <span class="badge-new">NEW</span></div><div data-k="내용"><b>Generator 납기 리스크</b> — 조선소·Maker 계약 납기 2027.08.15, Launching 08.23 대비 여유 8일 → 조선소 대응방안·탑재계획 확인 요청</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">당주</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용">Crane 수리 후 Magnet 6개 중 2개 손상 — 11.18까지 수리·반납 예정, Hook 사용·야간작업·영구자석 2개 예비 확보로 대응</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">2026.11.18</div><div data-k="기간" class="mono">당주</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
@@ -2279,26 +2291,46 @@ body.nav-lock{overflow:hidden;}
         rows.forEach(function(r){var ok=(filt==='all'||r.dataset.status===filt);r.style.display=ok?'':'none';if(ok)shown++;});
         document.getElementById('issEmpty').classList.toggle('show',shown===0);
       };
-      var sortRows=function(mode){
-        var s=rows.slice();
-        s.sort(function(a,b){
-          var sa=a.dataset.start, sb=b.dataset.start, da=+a.dataset.dur, db=+b.dataset.dur;
-          if(mode==='start-desc') return sb.localeCompare(sa);
-          if(mode==='start-asc') return sa.localeCompare(sb);
-          if(mode==='dur-desc') return db-da;
-          var oa=a.dataset.status==='open'?0:1, ob=b.dataset.status==='open'?0:1;
-          return oa-ob || sb.localeCompare(sa);
-        });
-        s.forEach(function(r){list.appendChild(r);});
+      var txt=function(r,k){var c=r.querySelector('[data-k="'+k+'"]');if(!c)return '';var t='';c.childNodes.forEach(function(n){if(n.nodeType===3)t+=n.textContent;else if(!(n.classList&&(n.classList.contains('badge-new')||n.classList.contains('tt-box'))))t+=n.textContent;});return t.trim();};
+      var endKey=function(r){var t=txt(r,'해결/기한');var m=t.match(/(\d{4})\.(\d{2})\.(\d{2})/);
+        if(r.dataset.status==='done'&&m)return '1'+m[1]+m[2]+m[3];
+        if(/경과/.test(t))return '0a';           /* 기한 경과 */
+        if(/ASAP/i.test(t))return '0b';           /* 즉시 */
+        if(m)return '1'+m[1]+m[2]+m[3];
+        if(/일 내|금주/.test(t))return '1'+'20261099';
+        return '9'+t;};                            /* Weekly·Ongoing 등 상시 */
+      var stRank=function(r){if(r.dataset.status!=='open')return 3;var st=r.querySelector('[data-k="상태"] .status');return st&&st.classList.contains('risk')?0:(st&&st.classList.contains('warn')?1:2);};
+      var cmp={
+        field:function(a,b){return txt(a,'분야').localeCompare(txt(b,'분야'),'ko');},
+        start:function(a,b){return a.dataset.start.localeCompare(b.dataset.start);},
+        end:function(a,b){var x=endKey(a),y=endKey(b);return x<y?-1:x>y?1:0;},
+        dur:function(a,b){return (+a.dataset.dur)-(+b.dataset.dur);},
+        status:function(a,b){return stRank(a)-stRank(b);}
       };
+      var defDir={field:1,start:-1,end:1,dur:-1,status:1};
+      var sk='status',sd=1;
+      var sortRows=function(){
+        var arr=rows.slice();
+        arr.sort(function(a,b){var v;if(sk==='end'){v=(a.dataset.status==='done')-(b.dataset.status==='done');if(v)return v;}v=cmp[sk](a,b)*sd;if(v)return v;
+          v=stRank(a)-stRank(b);if(v)return v;return b.dataset.start.localeCompare(a.dataset.start);});
+        arr.forEach(function(r){list.appendChild(r);});
+        document.querySelectorAll('#issKeys .ik, #issHead .sh').forEach(function(el){
+          var on=el.dataset.k===sk;el.classList.toggle('on',on);el.querySelector('i').textContent=on?(sd>0?' ▲':' ▼'):'';
+          el.setAttribute('aria-pressed',on?'true':'false');
+        });
+      };
+      var setKey=function(k){if(k===sk)sd=-sd;else{sk=k;sd=defDir[k];}sortRows();};
+      document.querySelectorAll('#issKeys .ik, #issHead .sh').forEach(function(el){
+        el.addEventListener('click',function(){setKey(el.dataset.k);});
+        el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();setKey(el.dataset.k);}});
+      });
       document.querySelectorAll('#issFilter .tl2-filter').forEach(function(b){
         b.addEventListener('click',function(){
           document.querySelectorAll('#issFilter .tl2-filter').forEach(function(x){x.classList.remove('active');});
           b.classList.add('active'); filt=b.dataset.f; apply();
         });
       });
-      document.getElementById('issSort').addEventListener('change',function(e){sortRows(e.target.value);});
-      sortRows('status'); apply();
+      sortRows(); apply();
     }
   }catch(e){}
 
