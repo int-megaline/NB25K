@@ -1,0 +1,56 @@
+/*
+ * Token-based -- this file does NOT hardcode any font or color. It reads
+ * whatever design tokens the host page's own :root already defines:
+ *   --font-sans, --font-mono   (typeface roles)
+ *   --page, --panel            (backgrounds)
+ *   --line-strong              (borders)
+ *   --radius, --shadow         (card chrome)
+ *   --ink, --muted             (text)
+ *   --cat-power (or --accent)  (the login card's action color -- see below)
+ *   --warn                     (error text)
+ *
+ * If the host page doesn't have this exact token set yet (e.g. it uses
+ * --accent instead of --cat-power), either rename the two var(--cat-power)
+ * references below to match, or add a --cat-power alias in the page's
+ * :root. See references/font_and_color_defaults.md for Jeffrey's approved
+ * defaults (Fraunces / Public Sans / JetBrains Mono + the sea-mist palette)
+ * to use when the host page has no token system of its own yet.
+ */
+.auth-gate{
+  position:fixed; inset:0; z-index:9999;
+  background:var(--page); display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.auth-card{
+  width:100%; max-width:360px; background:var(--panel); border:1px solid var(--line-strong);
+  border-radius:var(--radius); box-shadow:var(--shadow); padding:32px 28px;
+}
+.auth-brand{ font-family:var(--font-sans); font-weight:700; font-size:20px; color:var(--ink); margin:0 0 4px; }
+.auth-sub{ font-family:var(--font-mono); font-size:12px; color:var(--muted); margin:0 0 24px; }
+.auth-card input{
+  width:100%; box-sizing:border-box; font-family:var(--font-sans); font-size:14px;
+  padding:10px 12px; border:1px solid var(--line-strong); border-radius:8px;
+  background:var(--page); color:var(--ink); margin-bottom:10px;
+}
+.auth-card input:focus{ outline:none; border-color:var(--cat-power); }
+.auth-card button[type="submit"]{
+  width:100%; font-family:var(--font-sans); font-weight:600; font-size:14px;
+  color:#fff; background:var(--cat-power); border:none; padding:10px; border-radius:8px;
+  cursor:pointer; margin-top:4px;
+}
+.auth-card button[type="submit"]:hover{ filter:brightness(0.92); }
+.auth-card button[type="submit"]:disabled{ opacity:0.6; cursor:default; }
+.auth-error{ font-size:12.5px; color:var(--warn); margin:10px 0 0; }
+.auth-forgot{ display:block; text-align:center; font-size:12.5px; color:var(--muted); margin-top:14px; text-decoration:none; }
+.auth-forgot:hover{ color:var(--cat-power); text-decoration:underline; }
+
+.auth-logout-btn{ color:var(--ink-soft); }
+.auth-logout-btn:hover{ background:var(--cat-power); border-color:var(--cat-power); color:#fff; }
+
+/* ---- NB25K site aliases: 이 대시보드의 흑/백/회색 토큰에 맞춤 ---- */
+:root{
+  --page:var(--bg); --panel:var(--bg-elev); --line-strong:var(--border);
+  --muted:var(--ink-faint); --font-sans:var(--font-body);
+  --cat-power:var(--accent); --warn:var(--red);
+}
+.auth-card button[type="submit"]{ color:var(--accent-ink); }
+.auth-logout-btn:hover{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
