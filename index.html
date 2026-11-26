@@ -18,6 +18,65 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>body{margin:0;}img{max-width:100%}</style>
 <link rel="stylesheet" href="auth-gate.css">
+<style>
+/* ---------- 블록 제작 현황 카드 (bk-) ---------- */
+:root{--s0:#f1f0ed;--s0b:#dedcd8;--s1:#e3edf9;--s2:#bcd3f1;--s3:#8fb3e6;--s4:#b9e0cb;--s5:#7fbb9e;--sInk:#17171a;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s0:#1d1d21;--s0b:#2c2c31;--s1:#1f2d40;--s2:#2d4a6e;--s3:#4a74a8;--s4:#2c5843;--s5:#4f8f70;--sInk:#f1f1ef;}}
+:root[data-theme="dark"]{--s0:#1d1d21;--s0b:#2c2c31;--s1:#1f2d40;--s2:#2d4a6e;--s3:#4a74a8;--s4:#2c5843;--s5:#4f8f70;--sInk:#f1f1ef;}
+.bk-title{font-size:clamp(17px,2.2vw,21px);font-weight:700;margin:0;line-height:1.3;text-wrap:balance}
+.bk-sub{color:var(--ink-soft);margin:4px 0 14px;font-size:13px}
+.bk-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.bk-kpi{border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--bg-elev)}
+.bk-kpi .l{font-size:12px;color:var(--ink-faint)}.bk-kpi .v{font-size:24px;font-weight:700;line-height:1.15;margin-top:3px;font-variant-numeric:tabular-nums}
+.bk-kpi .v small{font-size:13px;font-weight:500;color:var(--ink-faint);margin-left:2px}.bk-kpi .s{font-size:12px;color:var(--ink-faint);margin-top:2px}
+.bk-kpi .s b{color:var(--red);font-weight:600}
+.bk-sw{width:13px;height:13px;border-radius:4px;border:1px solid var(--s0b);display:inline-block}
+.bk-dly{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block}
+.bk-legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--ink-soft)}
+.bk-legend span{display:inline-flex;align-items:center;gap:5px}
+.bk-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.bk-map{display:grid;grid-template-columns:repeat(15,minmax(44px,1fr));grid-template-rows:repeat(5,44px) repeat(3,60px);gap:4px;min-width:720px}
+.bk-cell{position:relative;border-radius:8px;border:1px solid var(--border);background:var(--bg-sunken);padding:3px;display:flex;flex-direction:column;cursor:pointer;overflow:hidden}
+.bk-cell:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.bk-cell .nm{font-size:11.5px;font-weight:600;line-height:1.1;padding:3px 3px 4px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1px 3px}
+.bk-cell .nm i{font-size:10.5px;font-style:normal;font-weight:500;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.bk-segs{flex:1;display:grid;gap:2px}.bk-seg{border-radius:3px;background:var(--s0);border:1px solid var(--s0b)}
+.bk-cell.late{border-color:var(--red)}.bk-cell.late::after{content:"";position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)}
+.bk-cell.late .nm i{margin-right:9px}
+.bk-cell.ahead{border-color:var(--green)}
+.bk-info{grid-row:1/span 5;grid-column:1/span 12;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:2px 8px 10px 2px}
+.bk-info .t{font-weight:600;font-size:13.5px}.bk-info .d{font-size:12.5px;color:var(--ink-faint);line-height:1.5}
+.bk-stack{display:flex;height:28px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.bk-stack div{display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--sInk);white-space:nowrap;overflow:hidden}
+#bkInfoM{display:none;padding:0 0 12px}.bk-swipe{display:none;font-size:12px;color:var(--ink-faint);margin:0 0 6px}
+.bk-axis{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-faint);margin-top:6px;min-width:720px}
+.bk-tip{position:fixed;z-index:1200;pointer-events:none;background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);padding:10px 12px;font-size:12.5px;min-width:220px;max-width:300px;opacity:0;transition:opacity .12s;color:var(--ink)}
+.bk-tip.on{opacity:1}.bk-tip h4{margin:0 0 6px;font-size:13.5px}.bk-tip table{border-collapse:collapse;width:100%}
+.bk-tip td{padding:2px 0;font-variant-numeric:tabular-nums}.bk-tip td:last-child{text-align:right;color:var(--ink-soft)}
+.bk-tip .pl{color:var(--ink-faint);font-size:12px;margin-top:6px;border-top:1px solid var(--border-soft);padding-top:6px}
+.bk-h3{font-size:14.5px;font-weight:700;margin:18px 0 6px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;align-items:baseline}
+.bk-h3 span{font-size:12px;font-weight:400;color:var(--ink-faint)}
+.bk-row{display:grid;grid-template-columns:120px minmax(0,1.5fr) minmax(0,1fr) 90px;gap:14px;align-items:center;padding:11px 0;border-top:1px solid var(--border-soft)}
+.bk-row:first-child{border-top:0}
+.bk-row .bn{font-weight:700;font-size:14px}.bk-row .bn small{display:block;font-weight:500;font-size:11.5px;color:var(--ink-faint)}
+.bk-pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}
+.bk-pipe div{height:25px;border-radius:5px;background:var(--s0);border:1px solid var(--s0b);font-size:11.5px;display:grid;place-items:center;color:var(--ink-faint);white-space:nowrap;overflow:hidden}
+.bk-pipe div.done{color:var(--sInk)}.bk-pipe div.cur{color:var(--sInk);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--ink)}
+.bk-pipe div.plan{outline:1.5px dashed var(--red);outline-offset:1px}
+.bk-mx{font-size:12.5px;color:var(--ink-soft);display:grid;gap:3px}
+.bk-bar{height:8px;border-radius:99px;background:var(--bg-sunken);overflow:hidden}.bk-bar span{display:block;height:100%;background:var(--blue);border-radius:99px}
+.bk-mx .t{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.bk-chip{justify-self:end;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.bk-chip.ok{background:var(--green-soft);color:var(--ink)}.bk-chip.late{background:var(--red-soft);color:var(--red)}.bk-chip.wait{background:var(--bg-sunken);color:var(--ink-soft)}
+.bk-g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
+.bk-zb{display:grid;grid-template-columns:76px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13px;padding:5px 0}
+.bk-zb .bk-bar{height:11px}.bk-zb .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:12.5px}
+.bk-up{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:10px;padding:7px 0;border-top:1px solid var(--border-soft);font-size:13px;align-items:baseline}
+.bk-up:first-child{border-top:0}.bk-up .d{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}.bk-up .w{color:var(--ink-faint);font-size:12px;white-space:nowrap}
+@media(max-width:820px){.bk-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.bk-g2{grid-template-columns:minmax(0,1fr)}
+ .bk-row{grid-template-columns:minmax(0,1fr) auto;gap:8px 12px}.bk-row .bk-pipe{grid-column:1/-1;grid-row:2}.bk-row .bk-mx{grid-column:1/-1;grid-row:3}.bk-row .bk-chip{grid-row:1;grid-column:2}}
+@media(max-width:700px){.bk-map .bk-info{display:none}#bkInfoM{display:flex}.bk-swipe{display:block}}
+</style>
 </head>
 <body>
 
@@ -668,7 +727,7 @@ body.nav-lock{overflow:hidden;}
     <img class="ab-logo" src="icons/apple-touch-icon.png" alt="">
     <div class="ab-title"><h1>25K 신조 PM 대시보드</h1><p>LH2603-25000-001 · 25,000 DWT HCC · APSSE 조선소</p></div>
     <div class="ab-pills"><span class="pill"><span class="dot"></span>인계 예정: <span style="font-family:var(--font-mono);">2026.11</span></span>
-      <span class="pill"><span class="dot"></span>업데이트 (11.20)</span></div>
+      <span class="pill"><span class="dot"></span>업데이트 (11.26)</span></div>
     <div class="ab-btns">
       <button class="themebtn" id="printBtn" title="PDF로 저장 / 인쇄" aria-label="PDF로 저장">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8.5V3h12v5.5"/><path d="M6 17.5H4.8A1.8 1.8 0 0 1 3 15.7v-4.4A1.8 1.8 0 0 1 4.8 9.5h14.4A1.8 1.8 0 0 1 21 11.3v4.4a1.8 1.8 0 0 1-1.8 1.8H18"/><path d="M6 14.5h12V21H6v-6.5Z"/></svg>
@@ -697,7 +756,7 @@ body.nav-lock{overflow:hidden;}
       <p class="eyebrow">MEGALINE · NEWBUILDING PROJECT MANAGEMENT</p>
   <div class="draft-banner">
         <span>🗂</span>
-        <div>접수된 자료 기준으로 구성함. 금융(최용창)·설계(SMC Plan Approval 시스템 실시간 조회)·제작(이홍정 현장감독 Weekly Report) 자료 반영됨. <b style="font-family:var(--font-mono);">2026.11.20</b> 업데이트 — <b>제작</b> WN46(11.13~19)·Production Progress(261115, 11.15주)·Action Plan(261118) 반영(절단 누적 1,726톤 · 공정률 1.3% · Action Plan 28건 중 Open 9건) · 설계·금융은 11.05 기준 유지. <b style="font-family:var(--font-mono);">2026.11.13</b> 반영분 — <b>제작</b> WN45(11.06~12)·Production Progress(261108, 11.08주) 반영(강재 입고 누적 7,076톤 · 절단 누적 1,624톤 · 공정률 1.1%). <b style="font-family:var(--font-mono);">2026.11.05</b> 반영분 — <b>설계</b> 도면 제출 69 → <b>87건(60%)</b>·승인 36 → <b>47건(32%)</b>, <b>금융</b> 예산-실적 시트(261105) 반영(USD 실적 19,903,995.30 · KRW 154,500,000), <b>제작</b> WN44(10.30~11.05)·Production Progress(11.03판) 반영(강재 입고 누적 5,264톤 · 절단 누적 1,362톤). 10.22 반영분(Keel Laying 12.28·Launching 08.23 등 일정 변경)은 유지.</div>
+        <div>접수된 자료 기준으로 구성함. 금융(최용창)·설계(SMC Plan Approval 시스템 실시간 조회)·제작(이홍정 현장감독 Weekly Report) 자료 반영됨. <b style="font-family:var(--font-mono);">2026.11.26</b> 업데이트 — <b>제작</b> WN47(11.20~26)·Production Progress(261122, 11.22주)·Action Plan(261126) 반영(절단 누적 2,152톤 · 공정률 1.8% · 착수 블록 28/127 · Action Plan 30건 중 Open 8건) · 「블록 제작 현황」 카드 신설(블록 생산계획·Block Division 카드 대체) · 설계·금융은 11.05 기준 유지. <b style="font-family:var(--font-mono);">2026.11.20</b> 반영분 — <b>제작</b> WN46(11.13~19)·Production Progress(261115, 11.15주)·Action Plan(261118) 반영(절단 누적 1,726톤 · 공정률 1.3% · Action Plan 28건 중 Open 9건) · 설계·금융은 11.05 기준 유지. <b style="font-family:var(--font-mono);">2026.11.13</b> 반영분 — <b>제작</b> WN45(11.06~12)·Production Progress(261108, 11.08주) 반영(강재 입고 누적 7,076톤 · 절단 누적 1,624톤 · 공정률 1.1%). <b style="font-family:var(--font-mono);">2026.11.05</b> 반영분 — <b>설계</b> 도면 제출 69 → <b>87건(60%)</b>·승인 36 → <b>47건(32%)</b>, <b>금융</b> 예산-실적 시트(261105) 반영(USD 실적 19,903,995.30 · KRW 154,500,000), <b>제작</b> WN44(10.30~11.05)·Production Progress(11.03판) 반영(강재 입고 누적 5,264톤 · 절단 누적 1,362톤). 10.22 반영분(Keel Laying 12.28·Launching 08.23 등 일정 변경)은 유지.</div>
       </div>
 
   <div class="kpis">
@@ -719,7 +778,7 @@ body.nav-lock{overflow:hidden;}
         <div class="kpi">
           <div class="label">강재 입고 (누적)</div>
           <div class="value">7,076<small>톤</small></div>
-          <div class="delta">― 11.15주 신규 입고 없음 · 절단 누적 1,726톤 (▲102)</div>
+          <div class="delta">― 11.22주 신규 입고 없음 · 절단 누적 2,152톤 (▲426)</div>
         </div>
       </div>
 
@@ -727,14 +786,14 @@ body.nav-lock{overflow:hidden;}
 
     <section class="block">
       <div class="card chg-card">
-        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">2026.11.13 → 2026.11.20</span><span class="badge-new">NEW</span></div>
+        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">2026.11.20 → 2026.11.26</span><span class="badge-new">NEW</span></div>
         <ul class="chg-list">
-          <li><b>제작 (공정표 261115 · 11.15주)</b> — 강재 입고 7,076톤 <span class="dlt">변동 없음</span> · 절단 누적 1,624 → <b>1,726톤</b> <span class="dlt up">▲102</span> (H05 4개 블록 → 80%) · H03 블록 제작 35~45% · H04C/B 소조립 착수(10%)</li>
-          <li><b>공정률</b> 1.1% → <b>1.3%</b> <span class="dlt up">▲0.2%p</span> (Block Fab. 2.8% → <b>3.2%</b>)</li>
-          <li><b style="color:var(--red);">지연 징후</b> — H05 절단 80%(11.15주 계획 95%) · H06 절단 0%(계획 C/B 90%·P/S 60%) · H04 블록 제작 C/B 10%·P/S 0%(계획 25%) · H03P/S 35%(계획 40%) · <b>H03B&amp;C 오조립</b> 확인(원인·수정안 제출 요청)</li>
-          <li><b>현장 (WN46 · 11.13~19)</b> — 타선용 강판 오사용·Patch 누락 즉시 시정(Closed) · R2 Grinding 8명 → 13~14명 증원 예정 · H04 → No.4, H02 → No.7 Slipway 배치(H01 차주 확정) · 우한 생산설계사 Hull-Outfitting 도면 대응 지연 · Magnetic Crane 수리 완료</li>
-          <li><b>Action Plan (261118)</b> — 28건 중 Done 19 · Open 9 · ITP 제출 완료(#12) · Generator: <b>Launching 유지 + Main Deck 개구부로 후탑재</b>(#26 조선소 회신) · WPS·용접사 List·헬멧 식별표시 11월 말 기한(#19~21)</li>
-          <li><b>일정</b> — Keel Laying 12.28 · Launching 08.23 · Delivery 12.28 변동 없음 · ME는 상해 창고 입고·통관 후 수로로 안휘 이송(12월 말 도착 예정, 최종 보관장소 미확정) · 메가라인 임원 방문 12.08~10</li>
+          <li><b>제작 (공정표 261122 · 11.22주)</b> — 절단 누적 1,726 → <b>2,152톤</b> <span class="dlt up">▲426</span> · H05 80 → 95% · H06 0 → 80% · H12 20%(계획 11.27보다 선행 착수) · 착수 블록 20 → <b>28개</b>/127</li>
+          <li><b>공정률</b> 1.3% → <b>1.8%</b> <span class="dlt up">▲0.5%p</span> (Block Fab. 3.2% → <b>4.5%</b>) · H03 블록 진행률 60.5~64.0%(제작 65~70%, 계획 45~55% 대비 선행)</li>
+          <li><b style="color:var(--red);">지연·리스크</b> — <b>H01 담당 시공업체 Kick-out</b>(9,800 DWT 투입업체 배정 검토, No.7-2 Slipway 정반 차주 확정) · H04 제작 C/B 20%·P/S 5%(계획 25%·20%) · H01·H02 소조립 공정표 실적 0%(계획 15%) · H05·H06 절단 미완 · 계획 대비 지연 20개 블록</li>
+          <li><b>현장 (WN47 · 11.20~26)</b> — H03B&amp;C 오조립 수정안 KR·KDT 합의(11.25 협의) → 시정 시행 · R2 Grinding 추가 인력 11.26 투입 · E/R 선행의장 3D 모델 12월 말~1월 중순 완료 예상 → 생산 순서 조정 · H03B&amp;C Ballast Pipe 제작·아연도금 12.08 목표</li>
+          <li><b>Action Plan (261126)</b> — 28 → <b>30건</b> · Done 22 · Open 8 · 신규 #29 NCR(H03B&amp;C 오조립)·#30 MSBD Maker 선정 · #24 Grinding·#27 Paint Maker·#28 Hull-Outfitting 도면 종결</li>
+          <li><b>일정</b> — Keel Laying 12.28 · Launching 08.23 · Delivery 12.28 변동 없음 · ME 보관: Tongling 보세창고 공간 부족 → 조선소 11.27까지 대체 장소 확정 통보 · MSBD 견적(HD Hyundai Electric·NORIS-SIBO) 차주 확정</li>
           <li><b>설계·금융</b> — 신규 자료 미접수로 11.05 기준 유지</li>
         </ul>
       </div>
@@ -743,7 +802,7 @@ body.nav-lock{overflow:hidden;}
     <section class="block">
       <div class="block-head">
         <h2>통합 마스터 일정</h2>
-        <span class="meta">2026.03 — 2028.03 · Today: 2026.11.20 · <span style="color:var(--red);">CHG</span> = 일정 변경 (마커 위 커서 시 원 일정·변경일 표시)</span>
+        <span class="meta">2026.03 — 2028.03 · Today: 2026.11.26 · <span style="color:var(--red);">CHG</span> = 일정 변경 (마커 위 커서 시 원 일정·변경일 표시)</span>
       </div>
       <div class="card">
         <div class="tl2-filters" id="tl2Filters">
@@ -797,7 +856,7 @@ body.nav-lock{overflow:hidden;}
                  stylesheet) — no gridline DOM elements needed at all -->
 
             <!-- today marker -->
-            <div class="tl2-todayline" style="left:34.8%;"></div>
+            <div class="tl2-todayline" style="left:35.6%;"></div>
 
             <svg class="tl2-svg" viewBox="0 0 100 570" preserveAspectRatio="none" id="tl2Svg">
               <!-- step connectors only — sequential, colored by the category of the milestone being
@@ -839,7 +898,7 @@ body.nav-lock{overflow:hidden;}
             <div class="tl2-bar pending" data-cat="build" style="left:71.0%;top:420px;color:var(--red);" data-date="2027.08.23 (예정 · 일정 변경)" data-note="Launching — 원 일정 2027.07.16 → 08.20 (2026.10.08 주간회의 결정) → 08.23 (2026.10.15 조선소 블록생산계획) · 총 +38일 · 4차 대금 인출 USD 7,945,000 (RG 수령 후 5일내)"><span>08.23</span></div>
             <div class="tl2-bar pending" data-cat="build" style="left:81.6%;top:480px;color:var(--yellow-line);" data-date="2027.11.12 (예정)" data-note="Sea Trial · SMC Biweekly PA Progress Report 기준 · 조선소 10.15 계획상 2027.11.30 (확인 필요)"><span>11.12</span></div>
             <div class="tl2-bar pending" data-cat="build" style="left:87.6%;top:540px;color:var(--yellow-line);" data-date="2027.12.28 (예정 · 계약 기준)" data-note="Delivery · 잔금 USD 3,972,500 지급 및 선박 인도 · 조선소 10.15 계획상 2027.12.30 (유예기간 2028.01.29) — 계약 기준일 유지"><span>12.28</span></div>
-            <div class="tl2-today-label" style="left:34.8%;">Today 11.20</div>
+            <div class="tl2-today-label" style="left:35.6%;">Today 11.26</div>
             <div class="tl2-ghost" style="left:38.4%;top:360px;"></div><div class="tl2-ghost-lab" style="left:38.4%;top:360px;">원 12.18</div>
             <div class="tl2-ghost" style="left:66.0%;top:420px;"></div><div class="tl2-ghost-lab" style="left:66.0%;top:420px;">원 07.16</div>
           </div>
@@ -879,49 +938,49 @@ body.nav-lock{overflow:hidden;}
               <div data-k="예정일" style="font-family:var(--font-mono);">확인 필요</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">H03B&amp;C 오조립 원인분석·수정방안 제출 <span class="badge-new">NEW</span><span class="tt-box">WN46: H03B&amp;C Block 조립 상태 확인 중 일부 오조립 확인 — 조선소가 원인·조치사항 정리 후 제출 예정</span></div>
+              <div class="main tt" data-k="항목" tabindex="0">Main Engine 최종 보관장소 확정 통보 <span class="badge-new">UPD</span><span class="tt-box">WN47·Action Plan #22: Tongling 보세구역 창고 공간 확보 곤란 → 조선소가 대체 보관장소 확인 중, 11.27까지 확정 통보 · 확정 후 보관조건·통관·이송 확인</span></div>
+              <div data-k="담당">조선소/구매</div>
+              <div data-k="예정일" style="font-family:var(--font-mono);">11.27</div>
+            </div>
+            <div class="crow" style="--cols:1.6fr .8fr .8fr;">
+              <div class="main tt" data-k="항목" tabindex="0">H01 대체 시공업체 배정·No.7-2 Slipway 정반 확정 <span class="badge-new">NEW</span><span class="tt-box">WN47: H01 담당 예정 시공업체 Kick-out → 9,800 DWT 시공업체 배정 검토 · No.7-2 Slipway Flat Bed/Jig 설치 차주 가능 — 인력 배치·제작 착수 일정 차주 확정</span></div>
               <div data-k="담당">조선소</div>
               <div data-k="예정일" style="font-family:var(--font-mono);">차주</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">H01 Block Slipway 배치 확정 <span class="badge-new">NEW</span><span class="tt-box">WN46: H04 → No.4 Slipway, H02 → No.7 Slipway 배치 확인 · H01 차주 확정 예정</span></div>
-              <div data-k="담당">조선소</div>
-              <div data-k="예정일" style="font-family:var(--font-mono);">차주</div>
-            </div>
-            <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">우한 생산설계사 Hull-Outfitting 도면 회신·H14 도면 출하 <span class="badge-new">NEW</span><span class="tt-box">WN46·Action Plan #28: 우한 생산설계사 대응 지연 — 조선소·설계사 Meeting 계획 · H14 Block 생산도면 출하 예정</span></div>
+              <div class="main tt" data-k="항목" tabindex="0">H03B&amp;C 오조립 시정 시행·재발방지 확인 <span class="badge-new">UPD</span><span class="tt-box">WN47·Action Plan #29(NCR): Root Cause·수정안 제출 → KR·KDT 수정안 가능 의견 · 11.25 생산설계업체·조선소 협의 → 합의된 시정조치 시행 및 시공 후 확인</span></div>
               <div data-k="담당">조선소/현장</div>
               <div data-k="예정일" style="font-family:var(--font-mono);">차주</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">WPS 제출·게시 · 용접사 List · 헬멧 식별표시 <span class="badge-new">NEW</span><span class="tt-box">Action Plan #19~21: WPS는 KR 승인 후 제출(참고용 CCS 승인본 우선) · 용접사 List·헬멧 식별표시는 Block 조립 착수 前 적용</span></div>
+              <div class="main tt" data-k="항목" tabindex="0">MSBD 견적 확정·Maker 선정 <span class="badge-new">NEW</span><span class="tt-box">WN47·Action Plan #30: HD Hyundai Electric·NORIS-SIBO 견적 차주 확인 → Maker 선정·발주가 생산 일정에 영향 없도록 확인</span></div>
+              <div data-k="담당">조선소(구매)</div>
+              <div data-k="예정일" style="font-family:var(--font-mono);">차주</div>
+            </div>
+            <div class="crow" style="--cols:1.6fr .8fr .8fr;">
+              <div class="main tt" data-k="항목" tabindex="0">WPS 제출·게시 · 용접사 List · 헬멧 식별표시<span class="tt-box">Action Plan #19~21: WPS는 KR 승인 후 제출(참고용 CCS 승인본 우선) · 용접사 List·헬멧 식별표시는 Block 조립 착수 前 적용</span></div>
               <div data-k="담당">조선소(QC)</div>
               <div data-k="예정일" style="font-family:var(--font-mono);">11월 말</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">Paint Maker 감리 투입 통보 · CV 제출 <span class="badge-new">UPD</span><span class="tt-box">WN46·Action Plan #27: 최소 10일 전 사전 통보 필요, 도장 작업 3~4일 전 Supervisor 투입, CV 사전 제출</span></div>
-              <div data-k="담당">조선소</div>
-              <div data-k="예정일" style="font-family:var(--font-mono);">11월 말</div>
+              <div class="main tt" data-k="항목" tabindex="0">H03B&amp;C Ballast Pipe 제작·아연도금 완료 <span class="badge-new">NEW</span><span class="tt-box">WN47: Ballast Pipe 자재 금주 입고·토요일 제작 착수 → 12.08 Galvanizing 완료 목표 · Sensor Pipe는 기술 확인 후 발주(입고 약 7일) · 타선 자재 전용 시 사전 승인·식별·추적성 확보 필요</span></div>
+              <div data-k="담당">조선소/의장</div>
+              <div data-k="예정일" style="font-family:var(--font-mono);">12.08</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">R2 Grinding 13~14명 증원 <span class="badge-new">UPD</span><span class="tt-box">WN46·Action Plan #24: 현재 8명 → 추가 Grinding Team 투입으로 13~14명 예정 · 숙련도·R2 Edge 품질 지속 확인</span></div>
-              <div data-k="담당">조선소</div>
-              <div data-k="예정일" style="font-family:var(--font-mono);">진행중</div>
-            </div>
-            <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">메가라인 임원 방문 (조선소 사전 Notice) <span class="badge-new">NEW</span><span class="tt-box">WN46: 12.08~10 방문 — 방문자 직급·성명 사전 통보 필요 · 12.29 Ceremony(통상 오전) 고려해 12.30 가능 여부 조선소 확인 요청</span></div>
+              <div class="main tt" data-k="항목" tabindex="0">메가라인 임원 방문 (조선소 사전 Notice)<span class="tt-box">WN46: 12.08~10 방문 — 방문자 직급·성명 사전 통보 필요 · 12.29 Ceremony(통상 오전) 고려해 12.30 가능 여부 조선소 확인 요청</span></div>
               <div data-k="담당">현장(이홍정)</div>
               <div data-k="예정일" style="font-family:var(--font-mono);">12.08~10</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">Main Engine 상해 도착·통관 → 안휘 이송 <span class="badge-new">UPD</span><span class="tt-box">WN46·Action Plan #22: 상해 창고 도착 후 통관, 수로로 안휘 이송 — 12월 말 도착 예정 · 안휘 내 최종 보관장소 미확정</span></div>
-              <div data-k="담당">조선소/구매</div>
-              <div data-k="예정일" style="font-family:var(--font-mono);">12월 말</div>
+              <div class="main tt" data-k="항목" tabindex="0">E/R 선행의장 3D 모델 완료·생산 순서 조정 <span class="badge-new">NEW</span><span class="tt-box">WN47·Action Plan #28: H 블록 Hull-Outfitting 설계 대부분 완료 · E/R 선행의장 반영 3D 모델 12월 말~1월 중순 완료 예상 → 도면 지연 영향 없는 블록 우선 생산 · STBD Exhaust Pipe 간섭으로 배관·구조물 Height 조정 필요</span></div>
+              <div data-k="담당">조선소/설계사</div>
+              <div data-k="예정일" style="font-family:var(--font-mono);">27.01 중순</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
-              <div class="main tt" data-k="항목" tabindex="0">Generator 후탑재 개구부 설계 확정 <span class="badge-new">UPD</span><span class="tt-box">Maker 납기 2027.08.15 vs Launching 08.23 (여유 8일) · Action Plan #26 조선소 회신: Launching 일정 유지, Main Deck에 개구부를 두어 Generator 후탑재 — 개구부 구조·선급 승인 확인 필요</span></div>
+              <div class="main tt" data-k="항목" tabindex="0">Generator 후탑재 개구부 설계 확정<span class="tt-box">Maker 납기 2027.08.15 vs Launching 08.23 (여유 8일) · Action Plan #26: Launching 유지, Main Deck 개구부로 Generator 후탑재 — 조치 기한 2027.06.01 · 개구부 구조·선급 승인 확인 필요</span></div>
               <div data-k="담당">기관/기술</div>
-              <div data-k="예정일" style="font-family:var(--font-mono);">ASAP</div>
+              <div data-k="예정일" style="font-family:var(--font-mono);">27.06.01</div>
             </div>
             <div class="crow" style="--cols:1.6fr .8fr .8fr;">
               <div class="main tt" data-k="항목" tabindex="0">3차 대금 인출 (Keel Laying) <span class="tl2-chg">CHG</span><span class="tt-box">원 일정 12.18 → 12.28 (+10일) · 2026.10.15 조선소 블록생산계획 제출로 변경</span></div>
@@ -1378,15 +1437,15 @@ body.nav-lock{overflow:hidden;}
   <div class="panel" id="build">
     <section class="block">
       <div class="card chg-card">
-        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">WN45 (11.06~12) → WN46 (11.13~19) · 공정표 11.08주 → 11.15주 · Action Plan 09.29 → 11.18</span> <span class="badge-new">NEW</span></div>
+        <div class="chg-head"><span class="chg-tag">전주 대비 변동</span><span class="chg-period">WN46 (11.13~19) → WN47 (11.20~26) · 공정표 11.15주 → 11.22주 · Action Plan 11.18 → 11.26</span> <span class="badge-new">NEW</span></div>
         <ul class="chg-list">
-          <li><b style="color:var(--red);">품질 이슈</b> — 타선(他船)용 강판이 본선 제작에 오사용된 것 확인, 즉시 교체 시정(Closed) · H03P Patch 누락 → 재절단·재용접 · <b>H03B&amp;C Block 오조립</b> 확인 → 조선소에 원인분석·수정방안 제출 요청 · 감독 평가: 전반적 작업품질은 점진적 개선</li>
-          <li><b>Steel Cutting</b> — 강재 입고 지연분 H01~H04 잔여 부재 추가 절단 · H05 4개 블록 80%(계획 95%) · H06B~S 절단 진행 중(감독 보고, 공정표 11.15주 실적은 0%) · 공정표 누적 1,624 → <b>1,726톤</b>(▲102)</li>
-          <li><b>Block 조립</b> — H03 대조립(Major Assembly) 진행, 블록 제작 35~45% · H04 소조립·판용접 착수(C/B 10%) · Slipway 배치: H04 → No.4, H02 → No.7, H01 차주 확정</li>
-          <li><b>R2 Grinding</b> — 현 8명, 별도 Grinding Team 추가 투입으로 <b>13~14명</b> 예정 · H01/H02/H04/H05 병행 · 미흡부 즉시 Rework 관리</li>
-          <li><b>생산도면</b> — 우한 생산설계사 Hull-Outfitting 도면 대응 지연 → 조선소·설계사 Meeting 계획 · H14 생산도면 출하 예정</li>
-          <li><b>Action Plan (261118)</b> — 09.29판 18건 → <b>28건</b>(신규 10건) · Done 19 · Open 9 · ITP 제출(#12)·Crane 대책(#23) 종결 · Generator 후탑재 개구부(#26) 확정 회신</li>
-          <li><b>공정률</b> 1.1% → <b>1.3%</b> (Block Fab. 2.8% → <b>3.2%</b>) · 강재 입고 7,076톤 변동 없음 · Magnetic Crane 수리 완료(11.19 사진)</li>
+          <li><b style="color:var(--red);">H01 생산 공백</b> — H01 담당 예정 시공업체 Kick-out(소/대조립 시공업체 4개사 작업 중) → 9,800 DWT 시공업체 배정 검토 · No.7-2 Slipway Flat Bed/Jig 차주 설치 가능 → 정반 위치·착수 일정 차주 확정</li>
+          <li><b>Steel Cutting</b> — 공정표 누적 1,726 → <b>2,152톤</b>(▲426) · H05 95%(계획 100%) · H06 80%(계획 95%) · H12 20%(계획 11.27 착수보다 선행) · H13 0%(계획 30%, WN47상 절단 진행 보고)</li>
+          <li><b>Block 조립</b> — H03 대조립, 제작 65~70%(계획 45~55% 대비 선행) · H04 소조립·판용접(No.4·No.5 Slipway, C/B 20%·P/S 5% vs 계획 25%·20%) · H02 소조립·판조립 착수(No.7 Slipway, 공정표 실적 0%) · H05 소조립용 강재 R2 Grinding</li>
+          <li><b>품질</b> — H03B&amp;C 오조립 Root Cause·수정안 제출 → KR·KDT 수정 가능 의견 · 11.25 생산설계업체·조선소 협의 → 시정 시행 예정(Action Plan #29 NCR) · R2 Grinding 추가 인력 11.26 투입</li>
+          <li><b>설계·의장</b> — E/R 선행의장 3D 모델 12월 말~1월 중순 완료 예상 → 도면 지연 없는 타 구획 블록 우선 생산으로 순서 조정 · STBD Exhaust Pipe 간섭으로 배관·구조 Height 조정 · H03B&amp;C Ballast Pipe 12.08 아연도금 완료 목표</li>
+          <li><b>Action Plan (261126)</b> — 28 → <b>30건</b> · Done 22 · Open 8 · 신규 #29(NCR)·#30(MSBD) · #24·#27·#28 Done 전환</li>
+          <li><b>공정률</b> 1.3% → <b>1.8%</b> (Block Fab. 3.2% → <b>4.5%</b>) · 강재 입고 7,076톤 변동 없음 · <b>「블록 제작 현황」 카드 신설</b>(블록 생산계획·Block Division 카드 대체)</li>
         </ul>
       </div>
     </section>
@@ -1394,23 +1453,23 @@ body.nav-lock{overflow:hidden;}
     <section class="block">
       <div class="block-head">
         <h2>제작 현황</h2>
-        <span class="meta">담당: 김용빈 팀장 · 공정표 11.15주(261115) · 주간보고 WN46(11.19) · Action Plan 11.18</span>
+        <span class="meta">담당: 김용빈 팀장 · 공정표 11.22주(261122) · 주간보고 WN47(11.26) · Action Plan 11.26</span>
       </div>
       <div class="grid-4">
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">강재 입고 (누적)</div>
           <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">7,076톤</div>
-          <div class="kdelta"><span class="dlt">변동 없음</span> 11.15주 입고 0톤 · Plate 6,206 · Profile 870</div>
+          <div class="kdelta"><span class="dlt">변동 없음</span> 11.22주 입고 0톤 · Plate 6,206 · Profile 870</div>
         </div>
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">Steel Cutting 진척</div>
-          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">1,726톤</div>
-          <div class="kdelta"><span class="dlt up">▲102톤</span> H01~H04 100% · H05 80% · <span style="color:var(--red);">H05·H06 지연</span></div>
+          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">2,152톤</div>
+          <div class="kdelta"><span class="dlt up">▲426톤</span> H01~H04 100% · H05 95% · H06 80% · H12 20% · <span style="color:var(--red);">H13 미착수</span></div>
         </div>
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">전체 공정률 (조선소 산정)</div>
-          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">1.3%</div>
-          <div class="kdelta"><span class="dlt up">▲0.2%p</span> Block Fab. 3.2% · 11.15주 공정표 기준</div>
+          <div class="value" style="font-family:var(--font-mono);font-size:22px;margin-top:4px;">1.8%</div>
+          <div class="kdelta"><span class="dlt up">▲0.5%p</span> Block Fab. 4.5% · 11.22주 공정표 기준</div>
         </div>
         <div class="card">
           <div class="label" style="font-size:11.5px;color:var(--ink-faint);">조선소 PM</div>
@@ -1418,14 +1477,14 @@ body.nav-lock{overflow:hidden;}
           <div class="kdelta"><span class="status ok"><span class="d"></span>교체 완료</span> 18818877103 · 전 PM Shen Songhong</div>
         </div>
       </div>
-      <p class="note">※ 절단 주간 실적: 10.25주 275.3t → 11.01주 581.5t → 11.08주 261.5t → 11.15주 102.0t(H05 잔여분만 진척). WN46상 H06B~S 절단은 진행 중으로 보고되었으나 공정표 11.15주 H06 실적은 0%(계획 C/B 90%·P/S 60%)로, 절단 물량이 전주 대비 크게 감소함. 강재 입고 지연분으로 H01~H04 일부 부재를 추가 절단함. 품질 면에서는 타선용 강판 오사용·Patch 누락(시정 완료)과 H03B&amp;C 오조립(원인 확인 중)이 발생했으나, 감독은 전반적 작업품질이 점진적으로 개선되고 있다고 평가함. R2 Grinding은 8명에서 13~14명으로 증원 예정. Magnetic Crane은 11.19 수리 완료. 공정표 Reporting Date 셀은 여전히 09.14로 미갱신.</p>
-      <p class="src">출처: <a href="https://drive.google.com/file/d/1KDN-NKIEBLGctnsR3jmzIENbSZMlfyQv/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261115).xlsx ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/17etrv14lxKEme3DFCVbu7Goi3zdNzL2p/view?usp=drivesdk" target="_blank" rel="noopener">WN46 신조감독 Weekly Report (11.13~19) ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1ahfGyqWtavxZkj2aeSyvID-aRb4YfW8M/view?usp=drivesdk" target="_blank" rel="noopener">Action Plan (261118) ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1L5TMaiRzFozJkpYljy1CVhp6dSIu0KqF/view?usp=drivesdk" target="_blank" rel="noopener">WN45 (11.06~12) ↗</a> · <a href="https://drive.google.com/file/d/18RJyQrFwZeCDY4a3pwJtAmbVr3-6v3TV/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261108) ↗</a></p>
+      <p class="note">※ 절단 주간 실적: 11.01주 581.5t → 11.08주 261.5t → 11.15주 102.0t → 11.22주 426.4t(H06 4개 블록 323.8t·H05 잔여 54.4t·H12 선행 48.3t). H13은 11.22주 계획 30% 대비 공정표 실적 0%(WN47상 절단 진행 보고). H03 제작은 65~70%로 계획을 앞섰으나, H01은 담당 시공업체 Kick-out으로 제작 착수 일정이 미확정이고 H02는 현장 소조립 착수 보고에도 공정표 제작 실적이 0%임. 공정표 Reporting Date 셀은 여전히 09.14로 미갱신.</p>
+      <p class="src">출처: <a href="https://drive.google.com/file/d/1RQaGHi2TCw1ysOd1sAmKvtT561hzEEbo/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261122).xlsx ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1zKxVea-U25-UN6a-IglH-7D21BBk5oMx/view?usp=drivesdk" target="_blank" rel="noopener">WN47 신조감독 Weekly Report (11.20~26) ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1GyamthSaMrjn8WM4Gu-3zragG_7jz7-y/view?usp=drivesdk" target="_blank" rel="noopener">Action Plan (261126) ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/17etrv14lxKEme3DFCVbu7Goi3zdNzL2p/view?usp=drivesdk" target="_blank" rel="noopener">WN46 (11.13~19) ↗</a> · <a href="https://drive.google.com/file/d/1KDN-NKIEBLGctnsR3jmzIENbSZMlfyQv/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261115) ↗</a></p>
     </section>
 
     <section class="block">
       <div class="block-head">
         <h2>생산 일정 (Production Progress) <span class="badge-new">UPD</span></h2>
-        <span class="meta">조선소 Visual Progress Board · <span class="tt" tabindex="0" style="border:none;">2026.11.19 공정표(11.15주) 반영<span class="tt-box">Drive 파일 Production Progress(261115) 기준. 단, 시트 내 Reporting Date 셀은 2026.09.14로 미갱신 상태임</span></span></span>
+        <span class="meta">조선소 Visual Progress Board · <span class="tt" tabindex="0" style="border:none;">2026.11.26 공정표(11.22주) 반영<span class="tt-box">Drive 파일 Production Progress(261122) 기준. 단, 시트 내 Reporting Date 셀은 2026.09.14로 미갱신 상태임</span></span></span>
       </div>
       <div class="card">
         <div class="gantt-ms" id="ganttMs"></div>
@@ -1433,78 +1492,67 @@ body.nav-lock{overflow:hidden;}
         <div class="gantt-legend">
           <span><i class="lg plan"></i>계획 구간</span>
           <span><i class="lg act"></i>실적(공정률)</span>
-          <span><i class="lg today"></i>Today (11.20)</span>
+          <span><i class="lg today"></i>Today (11.26)</span>
           <span><i class="lg ms"></i>마일스톤 (SC 강재절단 · KL 기공 · LC 진수 · DL 인도)</span>
         </div>
         <div class="grid-2" style="margin-top:16px;">
           <div>
-            <div class="subh">H01~H06 Block Steel Cutting (블록군별 누계, 11.15주 기준) <span class="badge-new">UPD</span></div>
+            <div class="subh">H01~H06·H12·H13 Block Steel Cutting (블록군별 누계, 11.22주 기준) <span class="badge-new">UPD</span></div>
             <div class="barlist">
               <div class="barrow"><div>H03 C/B/P/S</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">100%</div></div>
               <div class="barrow"><div>H04 C/B/P/S</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">100%</div></div>
               <div class="barrow"><div>H02 C/B/P/S</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">100%</div></div>
               <div class="barrow"><div>H01 C/B/P/S</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">100%</div></div>
-              <div class="barrow"><div>H05 C/B</div><div class="bt"><span style="width:80%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">80%</div></div>
-              <div class="barrow"><div>H05 P/S</div><div class="bt"><span style="width:80%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">80%</div></div>
-              <div class="barrow"><div>H06 C/B/P/S</div><div class="bt"><span style="width:0%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">0%</div></div>
+              <div class="barrow"><div>H05 C/B/P/S</div><div class="bt"><span style="width:95%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">95%</div></div>
+              <div class="barrow"><div>H06 C/B/P/S</div><div class="bt"><span style="width:80%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">80%</div></div>
+              <div class="barrow"><div>H12 C/B/P/S</div><div class="bt"><span style="width:20%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">20%</div></div>
+              <div class="barrow"><div>H13 C/B/P/S</div><div class="bt"><span style="width:0%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">0%</div></div>
             </div>
-            <p class="note">11.15주 공정표(261115) 기준 — 누적 절단 1,726톤. H01~H04 16개 블록 절단 완료. H05는 11.15주 계획 95% 대비 4개 블록 모두 80%로 지연(11.22주 100% 계획), H06은 11.15주 계획 C/B 90%·P/S 60% 대비 0%(WN46상 절단 진행 중), H13은 11.23~26 착수 계획. Block 제작 진행률: H03C 45% · H03B 40% · H03P/S 35%(계획 40%) · H04C/B 10% · H04P/S 0%(계획 25%).</p>
+            <p class="note">11.22주 공정표(261122) 기준 — 누적 절단 2,152톤. H01~H04 16개 블록 절단 완료. H05 95%(계획 100%), H06 80%(계획 95%)로 각각 11.29주 완료 계획. H12는 계획(11.27~30)보다 앞서 20% 절단, H13은 계획 30% 대비 0%. 11.29주 계획: H13 80%·H12 95%·H14 착수 20%. 블록별 단계·지연은 아래 「블록 제작 현황」 카드 참조.</p>
           </div>
           <div>
             <div class="subh">공정 구성 · 가중치</div>
             <div class="ctable compact">
               <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main tt" data-k="공정" tabindex="0">총 블록 수<span class="tt-box">WN42: 126 → 127개 정정 · 10.22 공정표(Erection 127 blocks) 및 Block Division 10.22판 반영 완료</span></div><div data-k="값" class="mono">127</div><div data-k="비고">공정표 반영 완료</div></div>
               <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">Block Fab. 내 가중치</div><div data-k="값" class="mono">15·70·15</div><div data-k="비고">절단·제작·도장(%)</div></div>
-              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">강재 입고 (공정표)</div><div data-k="값" class="mono">7,076t</div><div data-k="비고">Plate 6,206.2 · Profile 870.3 (11.15주 변동 없음)</div></div>
-              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main tt" data-k="공정" tabindex="0">블록 중량 입력<span class="tt-box">H01~H06 24개 블록 중량 입력 · 나머지 블록 및 Block Fab. 실적 시트는 미입력</span></div><div data-k="값" class="mono">2,202.9t</div><div data-k="비고">24 / 127 블록</div></div>
+              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">강재 입고 (공정표)</div><div data-k="값" class="mono">7,076t</div><div data-k="비고">Plate 6,206.2 · Profile 870.3 (11.22주 변동 없음)</div></div>
+              <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main tt" data-k="공정" tabindex="0">블록 중량 입력<span class="tt-box">06 Block Progress 시트 기준 H·E01~E04·A01/A02·F01~F03 계열 75개 블록 중량 입력 · E11~E14·A11/A12·F1x~F4x·P·FU·BW 52개 미입력</span></div><div data-k="값" class="mono">6,445.1t</div><div data-k="비고">75 / 127 블록</div></div>
               <div class="crow" style="--cols:1.4fr .6fr .8fr;"><div class="main" data-k="공정">FAT 계획일</div><div data-k="값" class="mono">미정</div><div data-k="비고">Baseline 확정 후 입력</div></div>
             </div>
           </div>
         </div>
-        <p class="note">11.15주 공정표 기준 Overall 1.3% · Block Fab. 3.2%(Erection·Outfitting 등 0%). Keel Laying 12.28, Launching 08.23 유지(공정표 Erection 종료 08.20) — 공정표상 Delivery는 2027.12.30으로 기재(계약 기준 12.28 유지). Block 도장은 12.05(H03C)부터 시작 계획.</p>
-        <p class="src">출처: <a href="https://drive.google.com/file/d/1KDN-NKIEBLGctnsR3jmzIENbSZMlfyQv/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261115).xlsx ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/18RJyQrFwZeCDY4a3pwJtAmbVr3-6v3TV/view?usp=drivesdk" target="_blank" rel="noopener">11.08판 ↗</a> · <a href="https://drive.google.com/file/d/1UiUuPJK48YP4ZP9P8WN66yClVrv7gJvp/view?usp=drivesdk" target="_blank" rel="noopener">11.03판 ↗</a> · <a href="https://drive.google.com/file/d/1sOQEXDPq3a0B8THw3laX16jzxWOjK9VR/view?usp=drivesdk" target="_blank" rel="noopener">10.22판 ↗</a> · <a href="https://drive.google.com/drive/folders/1tRAi1J5Oup0_93d7-hxkP2QD4D9kyeiJ" target="_blank" rel="noopener">Schedule - Production progress 폴더 ↗</a></p>
+        <p class="note">11.22주 공정표 기준 Overall 1.8% · Block Fab. 4.5%(Erection·Outfitting 등 0%). Keel Laying 12.28, Launching 08.23 유지(공정표 Erection 종료 08.20) — 공정표상 Delivery는 2027.12.30으로 기재(계약 기준 12.28 유지). 첫 완공검사 H03C 11.26 계획 · Block 도장은 12.05(H03C)부터 시작 계획.</p>
+        <p class="src">출처: <a href="https://drive.google.com/file/d/1RQaGHi2TCw1ysOd1sAmKvtT561hzEEbo/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261122).xlsx ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1KDN-NKIEBLGctnsR3jmzIENbSZMlfyQv/view?usp=drivesdk" target="_blank" rel="noopener">11.15판 ↗</a> · <a href="https://drive.google.com/file/d/18RJyQrFwZeCDY4a3pwJtAmbVr3-6v3TV/view?usp=drivesdk" target="_blank" rel="noopener">11.08판 ↗</a> · <a href="https://drive.google.com/drive/folders/1tRAi1J5Oup0_93d7-hxkP2QD4D9kyeiJ" target="_blank" rel="noopener">Schedule - Production progress 폴더 ↗</a></p>
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="bkSection">
       <div class="block-head">
-        <h2>블록 생산계획 (선행 생산계획) <span class="badge-new">UPD</span></h2>
-        <span class="meta">조선소 「주요공정 및 블록생산계획」 · 10.15 초판 → <b>10.22 수정본</b> · 실적 11.15주 공정표(261115) 반영 · 127 Block</span>
+        <h2>블록 제작 현황 <span class="badge-new">NEW</span></h2>
+        <span class="meta">공정표 11.22주(261122) 「06 Block Progress」 · 블록 127개 · 배치도: block division 시트</span>
       </div>
       <div class="card">
-        <div class="ap-kpis">
-          <div class="ap-k"><div class="l">계획 블록 수</div><div class="v">127</div><div class="s tt" tabindex="0" style="border:none;">고유 번호 127 · 중복 해소 ✓<span class="tt-box">초판의 P01S 3회·P11P 2회 중복을 정정하고 F12P·F12S·P01C·P11S·P11C·P21P·P21S 추가. 구성: H48 · E32 · F20 · A16 · P8 · FU2 · BW1</span></div></div>
-          <div class="ap-k"><div class="l">절단 기간</div><div class="v" style="font-size:16px;margin-top:6px;">10.01 ~ 27.03.12</div><div class="s">초판 03.24 → 12일 단축</div></div>
-          <div class="ap-k"><div class="l">Keel Laying 前 완공</div><div class="v">26 <span class="dlt up">▲13</span></div><div class="s">완공검사 12.28 이전 블록</div></div>
-          <div class="ap-k"><div class="l">전 블록 도장 종료</div><div class="v" style="font-size:16px;margin-top:6px;">2027.05.22</div><div class="s">초판 05.31 · 첫 완공검사 11.26</div></div>
+        <p class="bk-title" id="bkTitle">블록 제작 현황</p>
+        <p class="bk-sub" id="bkSubtitle"></p>
+        <div class="bk-kpis" id="bkKpis"></div>
+        <div class="bk-h3" style="margin-top:4px;">블록 배치도 · 공정 단계<span>칸 = 블록 유닛, 안쪽 조각 = P/C/B/S 개별 블록 · 커서/탭 시 상세</span></div>
+        <div class="bk-info" id="bkInfoM"></div>
+        <p class="bk-swipe">← 좌우로 밀어 선미·기관실 블록 확인 (화물창부터 표시)</p>
+        <div class="bk-scroll">
+          <div class="bk-map" id="bkMap"></div>
+          <div class="bk-axis"><span>◀ 선미 (AFT) · A</span><span>기관실 · E</span><span>화물창 · H</span><span>선수 (FWD) · F / 상부구조 P ▶</span></div>
         </div>
-        <div class="grid-2" style="margin-top:16px;">
-          <div>
-            <div class="subh">월별 블록 수 (절단 착수 · 완공검사 신청)</div>
-            <div class="mbar-head"><div>월</div><div>절단 착수</div><div>완공검사</div></div>
-            <div id="mbarList"></div>
-          </div>
-          <div>
-            <div class="subh">금주 계획 대비 실적 (Steel Cutting)</div>
-            <div class="ctable-head" style="--cols:.8fr 1.2fr 1.4fr;"><div>Block</div><div>계획 절단</div><div>실적 (11.15주)</div></div>
-            <div class="ctable compact">
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main" data-k="Block">H03 C/B/P/S</div><div data-k="계획" class="mono">10.01 ~ 10.12</div><div data-k="실적"><span class="status ok"><span class="d"></span>완료</span> 10.18 완료 · 블록 제작 35~45% (대조립 진행)</div></div>
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main" data-k="Block">H04 C/B/P/S</div><div data-k="계획" class="mono">10.13 ~ 10.21</div><div data-k="실적"><span class="status ok"><span class="d"></span>완료</span> 10.25주 100% · 블록 제작 C/B 10% 착수</div></div>
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main" data-k="Block">H02 C/B/P/S</div><div data-k="계획" class="mono">10.22 ~ 10.29</div><div data-k="실적"><span class="status ok"><span class="d"></span>완료</span> 11.01주 100%</div></div>
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main" data-k="Block">H01 C/B/P/S</div><div data-k="계획" class="mono">10.30 ~ 11.06</div><div data-k="실적"><span class="status ok"><span class="d"></span>완료</span> 11.08주 100%</div></div>
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main tt" data-k="Block" tabindex="0">H05 C/B/P/S<span class="tt-box">11.08주 C/B 60%·P/S 40% → 11.15주 4개 블록 모두 80% (계획 95%) · 계획 절단일(11.07~14) 경과 — 11.22주 100% 계획</span></div><div data-k="계획" class="mono">11.07 ~ 11.14</div><div data-k="실적"><span class="status risk"><span class="d"></span>지연</span> 80% (계획 95%)</div></div>
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main tt" data-k="Block" tabindex="0">H06 C/B/P/S<span class="tt-box">공정표 11.15주 계획 C/B 90%·P/S 60% 대비 실적 0% · WN46 감독 보고상 H06B~S 절단 진행 중(사진 11.16) — 차주 공정표 반영 여부 확인 필요</span></div><div data-k="계획" class="mono">11.15 ~ 11.22</div><div data-k="실적"><span class="status risk"><span class="d"></span>지연</span> 공정표 0% · 현장 절단 진행 중</div></div>
-              <div class="crow" style="--cols:.8fr 1.2fr 1.4fr;"><div class="main" data-k="Block">H13 C/B/P/S</div><div data-k="계획" class="mono">11.23 ~ 11.26</div><div data-k="실적"><span class="status muted"><span class="d"></span>예정</span> 11.22주 계획 30%</div></div>
-            </div>
-          </div>
+        <p class="note" id="bkMapNote"></p>
+        <div class="bk-h3">착수 블록 상세 · 계획 대비<span>점선 = 계획 단계 · 진한 테두리 = 현재 단계</span></div>
+        <div id="bkRows"></div>
+        <div class="bk-g2" style="margin-top:6px;">
+          <div><div class="bk-h3">구역별 착수 현황<span>착수 블록 / 전체</span></div><div id="bkZones"></div></div>
+          <div><div class="bk-h3">향후 4주 절단 착수 예정<span id="bkUpm"></span></div><div id="bkUps"></div></div>
         </div>
-        <p class="note">블록당 공정 순서: 선체 도면 제공 → 절단(3일) → 소조립(약 10일) → 조립대 탑재(약 25일) → 완공검사 신청 → 도장(약 7일) · 선행 의장은 소조립 종료 후 병행. 10.22 수정본에서 Keel Laying 前 완공 블록이 26개로 늘고 도장 종료가 평균 약 14일 앞당겨짐. 11.15주 기준 H05(80% vs 95%)·H06(0% vs 60~90%) 절단 지연과 H04 블록 제작 지연(C/B 10%·P/S 0% vs 25%)이 이어지고, H03B&amp;C 오조립까지 확인되어 Keel Laying(12.28) 前 완공 26개 블록 일정 영향을 지속 추적 필요.</p>
-        <div class="ap-links">
-          <a class="linkbtn" href="https://drive.google.com/file/d/1sOQEXDPq3a0B8THw3laX16jzxWOjK9VR/view?usp=drivesdk" target="_blank" rel="noopener">📄 수정본 열기 (Production Progress · Sheet 10) ↗</a>
-          <a class="linkbtn ghost" href="https://docs.google.com/spreadsheets/d/1bDnzSD54rz-r7CMmKdkcK0VyDpogv36NdfkZWAgncBM/edit" target="_blank" rel="noopener">📄 10.15 초판 ↗</a>
-          <a class="linkbtn ghost" href="https://drive.google.com/drive/folders/1khSL7yRl3sdvWZwCVhsc_U-WGUgtiZji" target="_blank" rel="noopener">📁 Schedule - Block fabricate plan 폴더 ↗</a>
-        </div>
+        <p class="note">※ 블록 진행률은 공정표 값 그대로 사용함 — 절단 15% + 제작 70% + 도장 15% 가중(예: H03C 절단 100%·제작 70% → 64.0%). 공정 단계는 공정표 절단·제작 %로 판정하고 H03은 WN 주간보고의 대조립 진행 기준을 적용함. 계획 단계는 공정표 계획일을 기준일에 대입해 산정함. 중량은 공정표 기재 75개 블록(6,445t)만 합산함.</p>
+        <p class="src">출처: <a href="https://drive.google.com/file/d/1RQaGHi2TCw1ysOd1sAmKvtT561hzEEbo/view?usp=drivesdk" target="_blank" rel="noopener">Production Progress (261122).xlsx ↗</a> <span class="badge-new">NEW</span> — 06 Block Progress·03 Steel Cutting·04 Block Fab 시트 · <a href="https://docs.google.com/spreadsheets/d/1JqeV9CVGEFDlq7_yeSeuYhd8EWHnsn3EohhxWBucUzA/edit?gid=1001#gid=1001" target="_blank" rel="noopener">block division (구글 시트) ↗</a> — 배치도·127개 블록 목록 · <a href="https://drive.google.com/file/d/1zKxVea-U25-UN6a-IglH-7D21BBk5oMx/view?usp=drivesdk" target="_blank" rel="noopener">WN47 Weekly Report (11.20~26) ↗</a> — 단계 판정 근거 · <a href="https://drive.google.com/file/d/10j0jzKrq2QtZur8EoBlDt9tm8yQoeMp1/view?usp=drivesdk" target="_blank" rel="noopener">Block Division 도면 (10.22) ↗</a></p>
       </div>
+      <div class="bk-tip" id="bkTip" role="tooltip"></div>
     </section>
 
     <section class="block">
@@ -1522,36 +1570,7 @@ body.nav-lock{overflow:hidden;}
     </section>
 
     <section class="block">
-      <div class="block-head">
-        <h2>Block Division <span class="badge-new">NEW</span></h2>
-        <span class="meta">조선소 Block Division Drawing · 2026.10.22 · 참고 자료</span>
-      </div>
-      <div class="card">
-        <div class="ap-kpis">
-          <div class="ap-k"><div class="l">총 블록 수</div><div class="v">127</div><div class="s">No. 1 ~ 127 (126 → 127 정정 반영)</div></div>
-          <div class="ap-k"><div class="l">LOA</div><div class="v" style="font-size:18px;margin-top:4px;">169.50m</div><div class="s">도면 표기 기준</div></div>
-          <div class="ap-k"><div class="l">Breadth</div><div class="v" style="font-size:18px;margin-top:4px;">43.00m</div><div class="s">도면 표기 기준</div></div>
-          <div class="ap-k"><div class="l">블록 그룹</div><div class="v" style="font-size:18px;margin-top:4px;">7</div><div class="s tt" tabindex="0" style="border:none;">H·E·F·A·P·FU·BW<span class="tt-box">블록생산계획 수정본 기준 그룹별 수량 — H(Hold) 48 · E(Engine room) 32 · F(Fore) 20 · A(Aft) 16 · P 8 · FU(Funnel) 2 · BW 1 (그룹 명칭은 블록번호 접두어 기준 추정)</span></div></div>
-        </div>
-        <div class="barlist" style="margin-top:14px;">
-          <div class="barrow"><div>H</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">48</div></div>
-          <div class="barrow"><div>E</div><div class="bt"><span style="width:67%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">32</div></div>
-          <div class="barrow"><div>F</div><div class="bt"><span style="width:42%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">20</div></div>
-          <div class="barrow"><div>A</div><div class="bt"><span style="width:33%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">16</div></div>
-          <div class="barrow"><div>P</div><div class="bt"><span style="width:17%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">8</div></div>
-          <div class="barrow"><div>FU</div><div class="bt"><span style="width:4%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">2</div></div>
-          <div class="barrow"><div>BW</div><div class="bt"><span style="width:2%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">1</div></div>
-        </div>
-        <p class="note">WN43에서 127 Block Division 최신본 업로드 확인. 블록생산계획 수정본(127 고유 번호)과 번호 체계 일치 여부 대조 필요.</p>
-        <div class="ap-links">
-          <a class="linkbtn" href="https://drive.google.com/file/d/16yzawUQ8VsTTOWo-x4MqY1sFJtNt8zTm/view?usp=drivesdk" target="_blank" rel="noopener">📄 Block Division (2026.10.22) PDF ↗</a>
-          <a class="linkbtn ghost" href="https://drive.google.com/drive/folders/1jjvk4zTFEkPk47yL9uF0nZrNpILIgSUq" target="_blank" rel="noopener">📁 Rerfer - Block division 폴더 ↗</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="block">
-      <div class="block-head"><h2>조선소 주요 이슈</h2><span class="meta">이홍정 현장감독 Weekly Report 기준 · WN46(11.19) + 공정표 11.15주 + Action Plan 11.18 반영 (11.20) · 기간 = 발생~해결 (Open은 11.20까지 경과일)</span></div>
+      <div class="block-head"><h2>조선소 주요 이슈</h2><span class="meta">이홍정 현장감독 Weekly Report 기준 · WN47(11.26) + 공정표 11.22주 + Action Plan 11.26 반영 (11.26) · 기간 = 발생~해결 (Open은 11.26까지 경과일)</span></div>
       <div class="card">
         <div class="iss-ctrl">
           <div class="tl2-filters" id="issFilter" style="margin-bottom:0;">
@@ -1570,37 +1589,41 @@ body.nav-lock{overflow:hidden;}
         </div>
         <div class="ctable-head iss-head" id="issHead" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="sh" data-k="field" tabindex="0">분야<i></i></div><div>내용</div><div class="sh" data-k="start" tabindex="0">발생<i></i></div><div class="sh" data-k="end" tabindex="0">해결/기한<i></i></div><div class="sh" data-k="dur" tabindex="0">기간<i></i></div><div class="sh" data-k="status" tabindex="0">상태<i></i></div></div>
         <div class="ctable" id="issList">
-          <div class="crow iss" data-status="open" data-start="2026-11-19" data-dur="1" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">NEW</span></div><div data-k="내용"><b>H03B&amp;C Block 오조립</b> 확인 — 조선소에 오조립 원인분석 및 수정방안 제출 요청, 조선소가 원인·조치사항 정리 후 제출 예정 (사진 H-20261119-13·19 DEFECT)</div><div data-k="발생" class="mono">2026.11.19</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">1일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-26" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용"><b>H01 담당 시공업체 Kick-out</b> — H01 생산 인력·시공 공백 발생, 9,800 DWT 시공업체 배정 검토 · No.7-2 Slipway Flat Bed/Jig 차주 설치 → 대체업체·인력·착수 일정 차주 확정 요청</div><div data-k="발생" class="mono">2026.11.26</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">0일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-24" data-dur="2" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Prod. <span class="badge-new">NEW</span></div><div data-k="내용">E/R 선행의장 3D 모델(Equipment 정보 반영) 12월 말~1월 중순 완료 예상 → 기관실 선행의장 생산도면 지연 · 도면 영향 없는 타 구획 블록 우선 생산으로 Production Sequence 조정 · STBD Exhaust Pipe 간섭으로 배관·구조물 Height 조정 필요</div><div data-k="발생" class="mono">2026.11.24</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">2일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-26" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Outfitting/Purch. <span class="badge-new">NEW</span></div><div data-k="내용">H03B&amp;C Ballast Pipe 자재 입고·제작 착수 → 제작·Galvanizing 12.08 완료 목표 · Sensor Pipe는 기술 확인 후 발주(입고 약 7일) · 타선 자재 전용 시 사전 승인·자재 식별·추적성 확보 요구</div><div data-k="발생" class="mono">2026.11.26</div><div data-k="해결/기한" class="mono">12.08</div><div data-k="기간" class="mono">0일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-26" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Purchase <span class="badge-new">NEW</span></div><div data-k="내용">MSBD 구매 — HD Hyundai Electric·NORIS-SIBO 견적 차주 확인 후 Maker 선정·발주 (Action Plan #30)</div><div data-k="발생" class="mono">2026.11.26</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">0일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-19" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">UPD</span></div><div data-k="내용"><b>H03B&amp;C Block 오조립</b> — 조선소 Root Cause·수정안 제출 → KR·KDT 수정 가능 의견 · 11.25 생산설계업체·조선소 협의 → 합의 시정조치 시행 및 시공 후 확인·재발방지 (Action Plan #29 NCR)</div><div data-k="발생" class="mono">2026.11.19</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-11-17" data-dur="2" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">NEW</span></div><div data-k="내용">타선(他船)용 배정 강판이 본선 제작에 오사용 · H03P Patch 누락 확인 — 즉시 교체 시정, 누락 Patch는 재절단·재용접 (WN46 Closed)</div><div data-k="발생" class="mono">2026.11.17</div><div data-k="해결/기한" class="mono">2026.11.19</div><div data-k="기간" class="mono">2일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-19" data-dur="1" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Prod. <span class="badge-new">NEW</span></div><div data-k="내용">우한 생산설계사의 Hull-Outfitting 생산도면 회신·출도 지연 — 조선소·설계사 Meeting 계획, H14 Block 생산도면 출하 일정 Follow-up (Action Plan #28)</div><div data-k="발생" class="mono">2026.11.19</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">1일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-19" data-dur="1" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용">Slipway 배치 — H04 → No.4 Slipway, H02 → No.7 Slipway 확인 · <b>H01 배치 차주 확정</b> 예정, 전체 Block Fab. 일정과 정합성 확인</div><div data-k="발생" class="mono">2026.11.19</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">1일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-15" data-dur="5" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용">H06 블록 Steel Cutting 지연 — 공정표 11.15주 계획 C/B 90%·P/S 60% 대비 실적 0% (WN46 감독 보고상 H06B~S 절단 진행 중)</div><div data-k="발생" class="mono">2026.11.15</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">5일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-18" data-dur="2" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC <span class="badge-new">NEW</span></div><div data-k="내용">WPS 제출·작업장 게시(KR 승인 후, 참고용 CCS 승인본 우선) · 용접사 List 제출 · 용접사 헬멧 식별표시 — Block 조립 착수 前 적용 (Action Plan #19~21)</div><div data-k="발생" class="mono">2026.11.18</div><div data-k="해결/기한" class="mono">11월 말</div><div data-k="기간" class="mono">2일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="8" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Tech./Prod. <span class="badge-new">UPD</span></div><div data-k="내용">Generator 탑재공간 확보 — Action Plan #26 조선소 회신: <b>Launching(08.23) 유지, Main Deck에 개구부를 두어 Generator 후탑재</b> · 개구부 크기·구조·탑재 Sequence 기술검토 및 선급 승인 확인 필요</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">Open</div><div data-k="기간" class="mono">8일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="8" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Prod. <span class="badge-new">NEW</span></div><div data-k="내용">H01~H05 선행의장(Pre-Outfitting) 생산도면 순차 출하 및 일부 Outfitting 생산 차주 착수 예정 — 도면 출하 일정 준수 여부 확인</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">8일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="8" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용">25K Cutting Bed에서 가축운반선(Livestock Carrier) 절단 병행 확인 — Capacity는 충분하다고 판단해 시정 요청 없음, 25K 절단 일정 영향 지속 확인</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">8일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-11-19" data-dur="6" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Prod. <span class="badge-new">UPD</span></div><div data-k="내용">우한 생산설계사 Hull-Outfitting 생산도면 지연 → H 블록 Hull-Outfitting 설계 대부분 완료·일부 생산도면 출도 (Action Plan #28 Done) — E/R 블록은 별도 관리</div><div data-k="발생" class="mono">2026.11.19</div><div data-k="해결/기한" class="mono">2026.11.25</div><div data-k="기간" class="mono">6일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-19" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">Slipway 배치 — H04 → No.4·No.5, H02 → No.7 Slipway 작업 중 · H01은 No.7-2 Slipway 예정(Flat Bed/Jig 차주 설치, 정반 위치 재확인)</div><div data-k="발생" class="mono">2026.11.19</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-15" data-dur="11" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">H06 블록 Steel Cutting — 11.15주 0% → 11.22주 4개 블록 80%(계획 95%), 11.29주 100% 계획 · H13은 11.22주 계획 30% 대비 공정표 0%(WN47 절단 진행 보고)</div><div data-k="발생" class="mono">2026.11.15</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">11일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-18" data-dur="8" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC <span class="badge-new">NEW</span></div><div data-k="내용">WPS 제출·작업장 게시(KR 승인 후, 참고용 CCS 승인본 우선) · 용접사 List 제출 · 용접사 헬멧 식별표시 — Block 조립 착수 前 적용 (Action Plan #19~21)</div><div data-k="발생" class="mono">2026.11.18</div><div data-k="해결/기한" class="mono">11월 말</div><div data-k="기간" class="mono">8일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="14" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Tech./Prod.</div><div data-k="내용">Generator 탑재공간 확보 — Action Plan #26 조선소 회신: <b>Launching(08.23) 유지, Main Deck 개구부로 Generator 후탑재</b>(조치 기한 2027.06.01) · 개구부 크기·구조·탑재 Sequence 기술검토 및 선급 승인 확인 필요</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">27.06.01</div><div data-k="기간" class="mono">14일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="14" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Prod. <span class="badge-new">NEW</span></div><div data-k="내용">H01~H05 선행의장(Pre-Outfitting) 생산도면 순차 출하 및 일부 Outfitting 생산 차주 착수 예정 — 도면 출하 일정 준수 여부 확인</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">차주</div><div data-k="기간" class="mono">14일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="14" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용">25K Cutting Bed에서 가축운반선(Livestock Carrier) 절단 병행 확인 — Capacity는 충분하다고 판단해 시정 요청 없음, 25K 절단 일정 영향 지속 확인</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">14일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-11-12" data-dur="1" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Tech. <span class="badge-new">NEW</span></div><div data-k="내용">Ballast Control System 협의 완료 · VRC & TLG(HOPPE Korea) 승인 소통 오해 해소, Owner Comment(ECU Valve Manual→Automatic, Workstation 위치) 반영</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">2026.11.12</div><div data-k="기간" class="mono">1일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-08" data-dur="12" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">H05 블록 Steel Cutting 계획 대비 지연 — 11.08주 C/B 60%·P/S 40% → 11.15주 4개 블록 80% (계획 95%), 11.22주 100% 계획</div><div data-k="발생" class="mono">2026.11.08</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">12일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="8" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">H01/H02/H04 Sub-Assembly 계획 대비 지연 — WN46: H04 소조립·판용접 착수(공정표 C/B 10%·P/S 0% vs 계획 25%), H03 대조립 진행(35~45%) · 9,800 DWT Resource 재배치·Assembly Jig 증설 이행 확인 필요</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">8일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-05" data-dur="15" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./Purchase <span class="badge-new">UPD</span></div><div data-k="내용">Main Engine 운송·보관 — 상해 창고 도착·통관 후 수로로 안휘 이송, <b>12월 말 도착</b> 예정 · 안휘 내 최종 보관장소·보관조건 미확정 (WN46·Action Plan #22)</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">12월</div><div data-k="기간" class="mono">15일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-05" data-dur="15" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./QC <span class="badge-new">UPD</span></div><div data-k="내용">Paint Maker 감리 투입 — 최소 10일 전 사전 통보, 도장 작업 약 3~4일 전 Supervisor 투입, CV 사전 제출 필요 → 도장 일정 확정·공식 Mobilization 통보 요청 (Action Plan #27)</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">11월 말</div><div data-k="기간" class="mono">15일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-05" data-dur="15" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./Purchase <span class="badge-new">UPD</span></div><div data-k="내용">Power Distribution System(MSBD·ESBD) TA를 KDT에 제출, 검토·확인 대기 — WN45·WN46에는 진행 현황 미기재</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">KDT 검토 후</div><div data-k="기간" class="mono">15일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-11-05" data-dur="15" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./QC <span class="badge-new">UPD</span></div><div data-k="내용">R2 Grinding — 현재 8명, 별도 Grinding Team 추가 투입으로 13~14명 예정 · H01/H02/H04/H05 병행, 숙련도·R2 Edge 품질 확인 및 미흡부 즉시 Rework (Action Plan #24)</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">15일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-08" data-dur="18" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">H05 블록 Steel Cutting 지연 — 11.15주 80% → 11.22주 95%(계획 100%) · 소조립용 강재 R2 Grinding 진행</div><div data-k="발생" class="mono">2026.11.08</div><div data-k="해결/기한" class="mono">Weekly</div><div data-k="기간" class="mono">18일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-12" data-dur="14" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">H01/H02/H04 Sub-Assembly 지연 — 공정표 11.22주 H04 C/B 20%·P/S 5%(계획 25%·20%), H01·H02 0%(계획 15%) · WN47: H02 소조립·판조립 착수, H01은 시공업체 공백 · H03은 65~70%로 계획 선행</div><div data-k="발생" class="mono">2026.11.12</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">14일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-05" data-dur="21" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./Purchase <span class="badge-new">UPD</span></div><div data-k="내용">Main Engine 운송·보관 — 상해 도착·통관 후 수로로 안휘 이송(12월 말) · Tongling 보세구역 창고 공간 부족 → 조선소 대체 장소 확인, <b>11.27까지 최종 확정 통보</b> (Action Plan #22)</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">2026.11.27</div><div data-k="기간" class="mono">21일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-11-05" data-dur="21" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./QC <span class="badge-new">UPD</span></div><div data-k="내용">Paint Maker 감리 투입 — 최소 10일 전 통보·작업 3~4일 전 Supervisor 투입·CV 사전 제출로 확정 (Action Plan #27 Done) · 도장 착수(12.05 H03C) 전 통보 이행 확인</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">2026.11.26</div><div data-k="기간" class="mono">21일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-11-05" data-dur="21" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./Purchase <span class="badge-new">UPD</span></div><div data-k="내용">Power Distribution System(MSBD·ESBD) TA를 KDT에 제출, 검토·확인 대기 — WN47: MSBD는 HD Hyundai Electric·NORIS-SIBO 견적 차주 확인 예정</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">KDT 검토 후</div><div data-k="기간" class="mono">21일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss done" data-status="done" data-start="2026-11-05" data-dur="21" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Prod./QC <span class="badge-new">UPD</span></div><div data-k="내용">R2 Grinding 인력 — 추가 작업자 11.26 현장 투입 (WN47 DONE · Action Plan #24 Done) · 실제 인원·생산량 증가 및 R2 Edge 품질 지속 점검</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">2026.11.26</div><div data-k="기간" class="mono">21일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-11-05" data-dur="0" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Prod. <span class="badge-new">NEW</span></div><div data-k="내용">생산도면 출하 순서 변경 — Equipment 확정 지연으로 선체 도면 우선 출하(H12/H13 출하 완료), 후속 도면은 변경 일정대로 제출</div><div data-k="발생" class="mono">2026.11.05</div><div data-k="해결/기한" class="mono">2026.11.05</div><div data-k="기간" class="mono">당주</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="29" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Machinery/Purch. <span class="badge-new">UPD</span></div><div data-k="내용"><b>Generator 납기 리스크</b> — Maker 납기 2027.08.15, Launching 08.23 대비 여유 8일 → 조선소 회신(Action Plan #26): Launching 유지·Main Deck 개구부로 후탑재 · 후탑재 시 Commissioning 일정 영향 확인 필요</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">29일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="35" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Machinery/Purch. <span class="badge-new">UPD</span></div><div data-k="내용"><b>Generator 납기 리스크</b> — Maker 납기 2027.08.15, Launching 08.23 대비 여유 8일 → 조선소 회신(Action Plan #26): Launching 유지·Main Deck 개구부로 후탑재 · 후탑재 시 Commissioning 일정 영향 확인 필요</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">35일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-22" data-dur="28" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">Crane 수리 후 Magnet 6개 중 2개 손상 — Hook 사용·야간작업·영구자석 2개 예비 확보로 대응 → Magnetic Crane 수리 완료 (WN46 사진 11.19 · Action Plan #23 Done)</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">2026.11.19</div><div data-k="기간" class="mono">28일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="29" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">NEW</span></div><div data-k="내용">형강(Profile) 반자동 옥외절단 확인 — 절단면 Grinding 및 R2 Edge 처리 필요</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">29일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="29" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">NEW</span></div><div data-k="내용">Ballast Tank R2 Grinding — 작업자 5명 추가 투입(10.31까지), H03은 소조립 선행 후 처리·기타 블록은 조립 前 Grinding</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">2026.10.31</div><div data-k="기간" class="mono">29일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-10-15" data-dur="36" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC</div><div data-k="내용">KR 검사관 입회 WQT(용접사 자격시험) 결과 및 승인 용접사 List·자격기록 확인 — WN43 결과 미기재</div><div data-k="발생" class="mono">2026.10.15</div><div data-k="해결/기한" class="mono">2026.10.23</div><div data-k="기간" class="mono">36일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-10-10" data-dur="41" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">HSSE <span class="badge-new">UPD</span></div><div data-k="내용">Safety Rounding Observation OBS-008~011 (헬멧 식별스티커·용접케이블·Slipway 맨홀 가드·추락위험 표지) — WN43 금주계획에 미결 HSSE NCR 후속 조치 포함</div><div data-k="발생" class="mono">2026.10.10</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">41일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-10-08" data-dur="43" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC/HSSE/Prod.</div><div data-k="내용">연휴 前 발행 Observation 미조치분 — NCR 전환 여부 및 결과 미기재</div><div data-k="발생" class="mono">2026.10.08</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">43일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="35" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">NEW</span></div><div data-k="내용">형강(Profile) 반자동 옥외절단 확인 — 절단면 Grinding 및 R2 Edge 처리 필요</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">35일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-22" data-dur="35" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC <span class="badge-new">NEW</span></div><div data-k="내용">Ballast Tank R2 Grinding — 작업자 5명 추가 투입(10.31까지), H03은 소조립 선행 후 처리·기타 블록은 조립 前 Grinding</div><div data-k="발생" class="mono">2026.10.22</div><div data-k="해결/기한" class="mono">2026.10.31</div><div data-k="기간" class="mono">35일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-15" data-dur="42" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC</div><div data-k="내용">KR 검사관 입회 WQT(용접사 자격시험) 결과 및 승인 용접사 List·자격기록 확인 — WN43 결과 미기재</div><div data-k="발생" class="mono">2026.10.15</div><div data-k="해결/기한" class="mono">2026.10.23</div><div data-k="기간" class="mono">42일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-10" data-dur="47" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">HSSE <span class="badge-new">UPD</span></div><div data-k="내용">Safety Rounding Observation OBS-008~011 (헬멧 식별스티커·용접케이블·Slipway 맨홀 가드·추락위험 표지) — WN43 금주계획에 미결 HSSE NCR 후속 조치 포함</div><div data-k="발생" class="mono">2026.10.10</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">47일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-10-08" data-dur="49" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC/HSSE/Prod.</div><div data-k="내용">연휴 前 발행 Observation 미조치분 — NCR 전환 여부 및 결과 미기재</div><div data-k="발생" class="mono">2026.10.08</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">49일</div><div data-k="상태"><span class="status risk"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-01" data-dur="35" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">25K 본격 생산 및 계획 대비 실적 모니터링 — Steel Cutting 정상 궤도 진입, H04P/S 지연 만회(WN44: 지연 없음)</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">2026.11.05</div><div data-k="기간" class="mono">35일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-01" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Production <span class="badge-new">UPD</span></div><div data-k="내용">Run-on/off Tab Plate — 조선소 표준(DWG No. LH2603-25000-001H-T01)에 따라 적용 확정 (Action Plan #13 Closed)</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">2026.10.08</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-01" data-dur="35" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Tech./Production <span class="badge-new">UPD</span></div><div data-k="내용">H05 생산도면 제출 지연 — 선체 생산도면 우선 출하로 일정 조정, H12/H13 도면 출하(WN44)</div><div data-k="발생" class="mono">2026.10.01</div><div data-k="해결/기한" class="mono">2026.11.05</div><div data-k="기간" class="mono">35일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-09-24" data-dur="57" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC</div><div data-k="내용">Tap Plate 용접 표준(조선소 Practice) 미준수 사례 반복 — 현장 작업자 재교육·관리 강화 요청</div><div data-k="발생" class="mono">2026.09.24</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">57일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-24" data-dur="63" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Hull/QC</div><div data-k="내용">Tap Plate 용접 표준(조선소 Practice) 미준수 사례 반복 — 현장 작업자 재교육·관리 강화 요청</div><div data-k="발생" class="mono">2026.09.24</div><div data-k="해결/기한" class="mono">Ongoing</div><div data-k="기간" class="mono">63일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-09-16" data-dur="63" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">QC <span class="badge-new">UPD</span></div><div data-k="내용">ITP(검사시험계획서, Sounding Pipe 검사 포함) — 10.15 초본 → 현장감독 코멘트 반영 ITP 제출 완료 (Action Plan #12 Done)</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">2026.11.18</div><div data-k="기간" class="mono">63일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="65" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Purchasing</div><div data-k="내용">Maker Drawing 확보 지연(조선소 구매 협상 병목) → 선행의장 Production Drawing 발행 지연</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">65일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
-          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="65" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">HSSE</div><div data-k="내용">Forklift/Truck/Slipway Crane·Transporter 이동 시 Signal Man 미배치 반복 — 추가 배치 결과 미기재</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">연휴 이후</div><div data-k="기간" class="mono">65일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="71" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Design/Purchasing</div><div data-k="내용">Maker Drawing 확보 지연(조선소 구매 협상 병목) → 선행의장 Production Drawing 발행 지연</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">ASAP</div><div data-k="기간" class="mono">71일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
+          <div class="crow iss" data-status="open" data-start="2026-09-16" data-dur="71" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">HSSE</div><div data-k="내용">Forklift/Truck/Slipway Crane·Transporter 이동 시 Signal Man 미배치 반복 — 추가 배치 결과 미기재</div><div data-k="발생" class="mono">2026.09.16</div><div data-k="해결/기한" class="mono">연휴 이후</div><div data-k="기간" class="mono">71일</div><div data-k="상태"><span class="status warn"><span class="d"></span>OPEN</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-15" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">강판 보관장 Crane 고장 → 수리 완료, Steel Cutting 재개 (Magnet 손상은 별도 Open 관리)</div><div data-k="발생" class="mono">2026.10.15</div><div data-k="해결/기한" class="mono">2026.10.22</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-15" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">UPD</span></div><div data-k="내용">형강(Profile) 절단 진행 현황 확인 — 반자동 옥외절단 확인, 품질 처리 이슈로 전환</div><div data-k="발생" class="mono">2026.10.15</div><div data-k="해결/기한" class="mono">2026.10.22</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
           <div class="crow iss done" data-status="done" data-start="2026-10-15" data-dur="7" style="--cols:1fr 2fr .75fr .75fr .6fr .8fr;"><div class="main" data-k="분야">Production <span class="badge-new">NEW</span></div><div data-k="내용">블록생산계획 수정본 업로드 — 블록번호 중복 3건 해소(127 고유 번호), 최종 절단 03.12·도장 종료 05.22로 조정</div><div data-k="발생" class="mono">2026.10.15</div><div data-k="해결/기한" class="mono">2026.10.22</div><div data-k="기간" class="mono">7일</div><div data-k="상태"><span class="status ok"><span class="d"></span>DONE</span></div></div>
@@ -1618,50 +1641,49 @@ body.nav-lock{overflow:hidden;}
         </div>
         <div class="tl2-empty" id="issEmpty">해당 상태의 이슈 없음</div>
         <p class="note">발생일 = Weekly Report·Action Plan 최초 기록일 · Done 항목은 해결 이력 관리를 위해 목록에 유지함 · Steel Cutting 실적 정정(315t → 150t, WN39)은 데이터 정정 사항으로 이슈 목록에서 제외함.</p>
-        <p class="src">출처: <a href="https://drive.google.com/file/d/17etrv14lxKEme3DFCVbu7Goi3zdNzL2p/view?usp=drivesdk" target="_blank" rel="noopener">WN46 ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1ahfGyqWtavxZkj2aeSyvID-aRb4YfW8M/view?usp=drivesdk" target="_blank" rel="noopener">Action Plan (11.18) ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1L5TMaiRzFozJkpYljy1CVhp6dSIu0KqF/view?usp=drivesdk" target="_blank" rel="noopener">WN45 ↗</a> · <a href="https://drive.google.com/file/d/1ioNPrnhmmNNwbgWc-lrJSmO27oP4PO_z/view?usp=drivesdk" target="_blank" rel="noopener">WN44 ↗</a> · <a href="https://drive.google.com/file/d/1JsmhAbpjiTI8ErsiApjmKq5kXv4RcQya/view?usp=drivesdk" target="_blank" rel="noopener">WN43 ↗</a> · <a href="https://drive.google.com/file/d/1vM-RsWAj6LFFDdqoKzmfZtVHWDpZJGLc/view?usp=drivesdk" target="_blank" rel="noopener">WN42 ↗</a> · <a href="https://drive.google.com/file/d/1B5sbLB7hfS13_F4xKwRXCWODUvwTCKLz/view?usp=drivesdk" target="_blank" rel="noopener">WN41 ↗</a> · <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 ↗</a> · <a href="https://drive.google.com/file/d/11xcbMk89sJ2V7KOvaGHaLOyI0Pl9-hnA/view?usp=drivesdk" target="_blank" rel="noopener">WN39 ↗</a> · <a href="https://drive.google.com/file/d/1asPnjYirLPA9gj9mVK4yY4791SoYoRWN/view?usp=drivesdk" target="_blank" rel="noopener">WN38 ↗</a> · <a href="https://drive.google.com/file/d/1aBKpQ-NwvMWgafij4aEVqWMQmj_Mcsk-/view?usp=drivesdk" target="_blank" rel="noopener">25K Newbuilding Action Plan (09.29) ↗</a></p>
+        <p class="src">출처: <a href="https://drive.google.com/file/d/1zKxVea-U25-UN6a-IglH-7D21BBk5oMx/view?usp=drivesdk" target="_blank" rel="noopener">WN47 ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/1GyamthSaMrjn8WM4Gu-3zragG_7jz7-y/view?usp=drivesdk" target="_blank" rel="noopener">Action Plan (11.26) ↗</a> <span class="badge-new">NEW</span> · <a href="https://drive.google.com/file/d/17etrv14lxKEme3DFCVbu7Goi3zdNzL2p/view?usp=drivesdk" target="_blank" rel="noopener">WN46 ↗</a> · <a href="https://drive.google.com/file/d/1L5TMaiRzFozJkpYljy1CVhp6dSIu0KqF/view?usp=drivesdk" target="_blank" rel="noopener">WN45 ↗</a> · <a href="https://drive.google.com/file/d/1ioNPrnhmmNNwbgWc-lrJSmO27oP4PO_z/view?usp=drivesdk" target="_blank" rel="noopener">WN44 ↗</a> · <a href="https://drive.google.com/file/d/1JsmhAbpjiTI8ErsiApjmKq5kXv4RcQya/view?usp=drivesdk" target="_blank" rel="noopener">WN43 ↗</a> · <a href="https://drive.google.com/file/d/1vM-RsWAj6LFFDdqoKzmfZtVHWDpZJGLc/view?usp=drivesdk" target="_blank" rel="noopener">WN42 ↗</a> · <a href="https://drive.google.com/file/d/1B5sbLB7hfS13_F4xKwRXCWODUvwTCKLz/view?usp=drivesdk" target="_blank" rel="noopener">WN41 ↗</a> · <a href="https://drive.google.com/file/d/1ukH_d_m_4vSYTKe7HV6hc8-mL4mL0Xla/view?usp=drivesdk" target="_blank" rel="noopener">WN40 ↗</a> · <a href="https://drive.google.com/file/d/11xcbMk89sJ2V7KOvaGHaLOyI0Pl9-hnA/view?usp=drivesdk" target="_blank" rel="noopener">WN39 ↗</a> · <a href="https://drive.google.com/file/d/1asPnjYirLPA9gj9mVK4yY4791SoYoRWN/view?usp=drivesdk" target="_blank" rel="noopener">WN38 ↗</a> · <a href="https://drive.google.com/file/d/1aBKpQ-NwvMWgafij4aEVqWMQmj_Mcsk-/view?usp=drivesdk" target="_blank" rel="noopener">25K Newbuilding Action Plan (09.29) ↗</a></p>
       </div>
     </section>
 
     <section class="block">
       <div class="block-head">
         <h2>Production Action Plan 요약 <span class="badge-new">UPD</span></h2>
-        <span class="meta">현장감독 → 조선소 Observation/NCR 관리대장 · Update 2026.11.18 (직전 09.29)</span>
+        <span class="meta">현장감독 → 조선소 Observation/NCR 관리대장 · Update 2026.11.26 (직전 11.18)</span>
       </div>
       <div class="card">
         <div class="ap-kpis">
-          <div class="ap-k"><div class="l">전체</div><div class="v">28 <span class="dlt up">▲10</span></div><div class="s tt" tabindex="0" style="border:none;">Observation 19 · NCR 1 · 미분류 8<span class="tt-box">#19~26은 Type 칸 미기재 — 내용상 Observation 성격</span></div></div>
-          <div class="ap-k"><div class="l">Open</div><div class="v" style="color:var(--red);">9</div><div class="s">32% (09.29 78%)</div></div>
-          <div class="ap-k"><div class="l">Delay</div><div class="v" style="color:var(--amber);">0</div><div class="s">ITP(#12) Done 전환</div></div>
-          <div class="ap-k"><div class="l">Done</div><div class="v" style="color:var(--green);">19</div><div class="s">68% · 09.29 대비 +16</div></div>
+          <div class="ap-k"><div class="l">전체</div><div class="v">30 <span class="dlt up">▲2</span></div><div class="s">Observation 28 · NCR 2</div></div>
+          <div class="ap-k"><div class="l">Open</div><div class="v" style="color:var(--red);">8</div><div class="s">27% (11.18 32%)</div></div>
+          <div class="ap-k"><div class="l">Delay</div><div class="v" style="color:var(--amber);">0</div><div class="s">기한 경과 Open: #7(09.18)</div></div>
+          <div class="ap-k"><div class="l">Done</div><div class="v" style="color:var(--green);">22</div><div class="s">73% · 11.18 대비 +3</div></div>
         </div>
         <div class="grid-2" style="margin-top:14px;">
           <div>
             <div class="subh">부서별 Open 항목 수</div>
             <div class="barlist">
-              <div class="barrow"><div>품질</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">4</div></div>
-              <div class="barrow"><div>생산</div><div class="bt"><span style="width:50%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">2</div></div>
-              <div class="barrow"><div>구매</div><div class="bt"><span style="width:50%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">2</div></div>
-              <div class="barrow"><div>안전환경</div><div class="bt"><span style="width:25%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">1</div></div>
+              <div class="barrow"><div>품질</div><div class="bt"><span style="width:100%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">3</div></div>
+              <div class="barrow"><div>구매</div><div class="bt"><span style="width:100%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">3</div></div>
+              <div class="barrow"><div>생산</div><div class="bt"><span style="width:33%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span></div><div class="num">1</div></div>
+              <div class="barrow"><div>안전환경</div><div class="bt"><span style="width:33%;background:var(--green-soft);border:1px solid var(--green-line);"></span></div><div class="num">1</div></div>
             </div>
-            <p class="note" style="margin-top:10px;">09.29판 Open 항목(PM·담당자 지정, Production Plan, 조직도, 3D 모델, 국가표준, 절단대 NCR, H03 강판, 재발방지 대책 등)은 모두 Done 처리됨. 신규 10건(#19~28) 중 #23(Crane 대책)·#25(형강 기계절단 적용) 2건 Done.</p>
+            <p class="note" style="margin-top:10px;">11.18판 대비 #24(Ballast Tank 2R Grinding)·#27(Paint Maker 감리)·#28(Hull-Outfitting 도면) 3건 Done 전환. 신규 #29 NCR(H03B&amp;C 오조립)·#30(MSBD Maker 선정) 2건 Open. #19~26 Type 칸 Observation으로 정리됨.</p>
           </div>
           <div>
-            <div class="subh">Open 항목 (9건)</div>
+            <div class="subh">Open 항목 (8건)</div>
             <div class="plist">
-              <div class="prow"><span class="pdate">#7</span><span class="plabel tt" tabindex="0">지게차·자재운반 차량 HSSE 신호수 배치<span class="tt-box">조선소 회신: 차주부터 시행(기한 09.18) — 이후 이행 결과 미기재, WN 주간보고에서도 반복 지적</span></span><span class="ptag">안전환경</span></div>
-              <div class="prow"><span class="pdate">#19~21</span><span class="plabel tt" tabindex="0">WPS 제출·게시 · 용접사 List · 헬멧 식별표시<span class="tt-box">WPS는 KR 승인 후 제출(참고용 CCS 승인본 우선 제출) · 용접사 List·식별표시는 Block 조립 착수 前 적용 · 기한 11월 말</span></span><span class="ptag">품질</span></div>
-              <div class="prow"><span class="pdate">#22</span><span class="plabel tt" tabindex="0">Main Engine 보관장소 사전 확정<span class="tt-box">상해 창고 도착 → 통관 → 수로로 안휘 이송, 12월 말 도착 예정 · 안휘 내 최종 보관장소 미확정</span></span><span class="ptag">구매</span></div>
-              <div class="prow"><span class="pdate">#24</span><span class="plabel tt" tabindex="0">Ballast Tank 2R Grinding (조립 前 완료 원칙)<span class="tt-box">현재 8명 → 추가 Grinding Team 투입으로 13~14명 예정, 품질 관리·추가 수정 지속</span></span><span class="ptag">생산</span></div>
-              <div class="prow"><span class="pdate">#26</span><span class="plabel tt" tabindex="0">Generator 납기(27.08.15) vs Launching(08.23)<span class="tt-box">조선소 회신: Launching 일정 유지, Main Deck 개구부를 두어 Generator 후탑재 — 개구부 설계·승인 확인 필요</span></span><span class="ptag">구매</span></div>
-              <div class="prow"><span class="pdate">#27</span><span class="plabel tt" tabindex="0">Paint Maker 감리 투입·CV 제출<span class="tt-box">최소 10일 전 통보, 도장 작업 3~4일 전 Supervisor 투입, CV 사전 제출</span></span><span class="ptag">품질</span></div>
-              <div class="prow"><span class="pdate">#28</span><span class="plabel tt" tabindex="0">우한 생산설계사 Hull-Outfitting 도면 지연<span class="tt-box">조선소가 설계사 Follow-up·출도 가속, 생산계획 대비 출도 현황 모니터링</span></span><span class="ptag">생산</span></div>
+              <div class="prow"><span class="pdate">#7</span><span class="plabel tt" tabindex="0">지게차·자재운반 차량 HSSE 신호수 배치<span class="tt-box">조선소 회신: 차주부터 시행(기한 09.18) — 이후 이행 결과 미기재 · WN47 HSSE Observation 시정 완료 사진(11.21) 있으나 Action Plan은 Open 유지</span></span><span class="ptag">안전환경</span></div>
+              <div class="prow"><span class="pdate">#19~21</span><span class="plabel tt" tabindex="0">WPS 제출·게시 · 용접사 List · 헬멧 식별표시<span class="tt-box">WPS는 KR 승인 후 제출(참고용 CCS 승인본 우선) · 용접사 List·식별표시는 Block 조립 착수 前 적용 · 기한 11월 말 — 이미 조립 진행 중으로 이행 확인 필요</span></span><span class="ptag">품질</span></div>
+              <div class="prow"><span class="pdate">#22</span><span class="plabel tt" tabindex="0">Main Engine 보관장소 확정 (11.27)<span class="tt-box">상해 창고 도착·통관 → 수로로 안휘 이송(12월 말) · Tongling 보세창고 공간 부족으로 대체 장소 확인 중 · 기한 2026.11.27</span></span><span class="ptag">구매</span></div>
+              <div class="prow"><span class="pdate">#26</span><span class="plabel tt" tabindex="0">Generator 후탑재 개구부 (기한 27.06.01)<span class="tt-box">Generator 납기 2027.08.15 vs Launching 08.23 — Launching 유지, Main Deck 개구부로 후탑재</span></span><span class="ptag">구매</span></div>
+              <div class="prow"><span class="pdate">#29</span><span class="plabel tt" tabindex="0">NCR — H03B&amp;C 오조립 시정 (차주)<span class="tt-box">Root Cause·수정안 제출 → KR·KDT 검토·동의 · 11.25 생산설계업체·조선소 협의 → 합의 시정조치 시행·수정 현황 Follow-up</span></span><span class="ptag">생산</span></div>
+              <div class="prow"><span class="pdate">#30</span><span class="plabel tt" tabindex="0">MSBD 견적 검토·Maker 확정 (차주)<span class="tt-box">HD Hyundai Electric·NORIS-SIBO 견적 차주까지 검토·확정 예정</span></span><span class="ptag">구매</span></div>
             </div>
           </div>
         </div>
-        <p class="note">※ #19~28은 Due Date 칸에 실제 기한 대신 「End of NOV.」 또는 공란으로 기재됨 · #12(ITP)는 11.18 Done으로 전환 · #17(ME 도착 2주 前 통보)은 Done이나 보관장소는 #22에서 Open 관리.</p>
+        <p class="note">※ #22 기한은 2026-11-27로 갱신됨 · #26 기한 2027-06-01 · #27 기한 칸은 2027-12-03으로 기재(입력 오류 추정, Done 처리) · 31번 항목은 비어 있음(30건 기준).</p>
         <div class="ap-links">
-          <a class="linkbtn" href="https://drive.google.com/file/d/1ahfGyqWtavxZkj2aeSyvID-aRb4YfW8M/view?usp=drivesdk" target="_blank" rel="noopener">📄 원본 파일 열기 (25K_Newbuilding Action Plan 261118.xlsx) ↗</a>
-          <a class="linkbtn ghost" href="https://drive.google.com/file/d/1aBKpQ-NwvMWgafij4aEVqWMQmj_Mcsk-/view?usp=drivesdk" target="_blank" rel="noopener">📄 09.29판 ↗</a>
+          <a class="linkbtn" href="https://drive.google.com/file/d/1GyamthSaMrjn8WM4Gu-3zragG_7jz7-y/view?usp=drivesdk" target="_blank" rel="noopener">📄 원본 파일 열기 (25K_Newbuilding Action Plan 261126.xlsx) ↗</a>
+          <a class="linkbtn ghost" href="https://drive.google.com/file/d/1ahfGyqWtavxZkj2aeSyvID-aRb4YfW8M/view?usp=drivesdk" target="_blank" rel="noopener">📄 11.18판 ↗</a>
           <a class="linkbtn ghost" href="https://drive.google.com/drive/folders/1G0IjylJwrE8EOfbigmEA5v21hrWaMffR" target="_blank" rel="noopener">📁 Status - Production action plan 폴더 ↗</a>
         </div>
       </div>
@@ -1952,7 +1974,7 @@ body.nav-lock{overflow:hidden;}
     <section class="block">
       <div class="block-head">
         <h2>주요 현안 종합</h2>
-        <span class="meta">신임 임원 브리핑용 · 2026.11.20 기준 (제작 WN46·공정표 11.15주·Action Plan 11.18 반영 · 설계·금융 11.05)</span>
+        <span class="meta">신임 임원 브리핑용 · 2026.11.26 기준 (제작 WN47·공정표 11.22주·Action Plan 11.26 반영 · 설계·금융 11.05)</span>
       </div>
       <div class="card">
         <div class="ctable-head" style="--cols:1.7fr .9fr .8fr 1.2fr;"><div>현안</div><div>분야</div><div>영향도</div><div>대응 현황</div></div>
@@ -1961,19 +1983,19 @@ body.nav-lock{overflow:hidden;}
             <div class="main" data-k="현안">Main Engine 운송·보관 · Paint Maker 투입 · Power Dist. TA(KDT) 검토 <span class="badge-new">UPD</span></div>
             <div data-k="분야">제작/구매</div>
             <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
-            <div data-k="대응">ME: 상해 창고 도착·통관 → 수로로 안휘 이송, 12월 말 도착 예정(안휘 내 최종 보관장소 미확정) · Paint Maker: 최소 10일 전 통보·작업 3~4일 전 Supervisor 투입·CV 사전 제출(11월 말) · MSBD/ESBD TA는 KDT 검토 후 Maker 확정 진행</div>
+            <div data-k="대응">ME: 상해 도착·통관 → 수로로 안휘 이송(12월 말) · Tongling 보세창고 공간 부족 → 조선소 11.27까지 대체 보관장소 확정 통보 · Paint Maker 투입 조건 확정(Action Plan #27 Done) · MSBD: HD Hyundai Electric·NORIS-SIBO 견적 차주 확인 후 Maker 선정(#30)</div>
           </div>
           <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
-            <div class="main" data-k="현안">블록 절단·조립 지연 · H03B&amp;C 오조립 · 타선 강판 오사용 <span class="badge-new">UPD</span></div>
+            <div class="main" data-k="현안">H01 시공업체 Kick-out · 블록 조립 지연 · H03B&amp;C 오조립 <span class="badge-new">UPD</span></div>
             <div data-k="분야">제작</div>
             <div data-k="영향도"><span class="status risk"><span class="d"></span>고</span></div>
-            <div data-k="대응">공정표 11.15주: H05 절단 80%(계획 95%) · H06 0%(계획 60~90%) · H04 블록 제작 C/B 10%·P/S 0%(계획 25%) · WN46: H03B&amp;C 오조립 원인·수정안 제출 요청, 타선 강판 오사용·Patch 누락은 시정 완료 · R2 Grinding 8명 → 13~14명 증원 예정 — Keel Laying(12.28) 前 블록 완공 일정 영향 추적 필요</div>
+            <div data-k="대응">WN47: H01 담당 시공업체 Kick-out → 9,800 DWT 시공업체 배정 검토·No.7-2 Slipway 정반 차주 확정 · 공정표 11.22주: 착수 28/127, 계획 대비 지연 20개 블록(H04 C/B 20%·P/S 5%, H01·H02 0%, H05·H06 절단 미완), H03은 65~70%로 선행 · H03B&amp;C 오조립 수정안 KR·KDT 합의 → 시정 시행(NCR #29) · R2 Grinding 추가 인력 11.26 투입 — Keel Laying(12.28) 前 블록 완공 일정 영향 추적 필요</div>
           </div>
           <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
             <div class="main" data-k="현안">Generator 후탑재 — Main Deck 개구부 확정 회신 <span class="badge-new">UPD</span></div>
             <div data-k="분야">기관/기술</div>
             <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
-            <div data-k="대응">Action Plan #26 조선소 회신: Launching(08.23) 유지, Main Deck 개구부로 Generator 후탑재 · 개구부 크기·구조·탑재 Sequence 기술검토 진행 — 구조강도·선급 승인 및 후탑재에 따른 Commissioning 일정 영향 확인 필요</div>
+            <div data-k="대응">Action Plan #26 조선소 회신: Launching(08.23) 유지, Main Deck 개구부로 Generator 후탑재(조치 기한 2027.06.01) · 개구부 크기·구조·탑재 Sequence 기술검토 진행 — 구조강도·선급 승인 및 후탑재에 따른 Commissioning 일정 영향 확인 필요 · 별도로 E/R 선행의장 3D 모델이 12월 말~1월 중순 완료 예상되어 기관실 블록 생산 순서 조정 예정</div>
           </div>
           <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
             <div class="main" data-k="현안">SMC 9월 감리비 USD 16,613.30 지급 확인 <span class="badge-new">NEW</span></div>
@@ -2036,10 +2058,10 @@ body.nav-lock{overflow:hidden;}
             <div data-k="대응">WN43 식별 → 조선소 회신(Action Plan #26): Launching 유지·Main Deck 개구부로 후탑재 — 납기 추가 지연 시 Commissioning·Delivery 영향 여부 지속 확인</div>
           </div>
           <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
-            <div class="main" data-k="현안">형강/Ballast R2 Grinding · HSSE 신호수 배치 <span class="badge-new">UPD</span></div>
+            <div class="main" data-k="현안">R2 Grinding 인력 투입 · HSSE 신호수 배치 <span class="badge-new">UPD</span></div>
             <div data-k="분야">제작/품질/HSSE</div>
             <div data-k="영향도"><span class="status warn"><span class="d"></span>중</span></div>
-            <div data-k="대응">Magnetic Crane 수리 완료(11.19, Action Plan #23 Done) · R2 Grinding 8명 → 13~14명 증원 예정 · 지게차·운반차량 신호수 배치(#7) 이행 미확인 · OBS-008~011 시정조치 Follow-up</div>
+            <div data-k="대응">R2 Grinding 추가 인력 11.26 투입(Action Plan #24 Done) — 실제 인원·생산량·R2 Edge 품질 점검 지속 · 지게차·운반차량 신호수 배치(#7) Open 유지 · HSSE Observation 시정 완료 사진 확인(11.21) · OBS-008~011 시정조치 Follow-up</div>
           </div>
                     <div class="crow" style="--cols:1.7fr .9fr .8fr 1.2fr;">
             <div class="main" data-k="현안">Maker 미확정 9건 (협의중 5 · 견적대기 4)</div>
@@ -2055,8 +2077,8 @@ body.nav-lock{overflow:hidden;}
   </main>
 
   <footer class="foot">
-    <span>출처: <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">최진욱 팀장 요청 메일(26.09.21) 회신 자료 종합 ↗</a> · <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">설계 도면 승인 시스템 ↗</a> · 이홍정 현장감독 Weekly Report (WN36~46) · Block Division (10.22) · 조선소 블록생산계획 · ITP · 조선소 Production Progress · Action Plan · Maker Quotation · MOA Rev.2</span>
-    <span>Last updated · 2026.11.20</span>
+    <span>출처: <a href="https://drive.google.com/file/d/1LzDEuAElIrV9kEVXdm1sCzQge6Cz5VvE/view?usp=drivesdk" target="_blank" rel="noopener">최진욱 팀장 요청 메일(26.09.21) 회신 자료 종합 ↗</a> · <a href="https://schultemarineconcept.bs-shipmanagement.com/PlanApprovalApp/PlanApproval/ProjectOverview" target="_blank" rel="noopener">설계 도면 승인 시스템 ↗</a> · 이홍정 현장감독 Weekly Report (WN36~47) · Block Division (10.22) · 조선소 블록생산계획 · ITP · 조선소 Production Progress · Action Plan · Maker Quotation · MOA Rev.2</span>
+    <span>Last updated · 2026.11.26</span>
   </footer>
 
 </div>
@@ -2433,13 +2455,13 @@ body.nav-lock{overflow:hidden;}
       var T0=Date.UTC(2026,7,1), T1=Date.UTC(2028,0,1);
       var pct=function(s){var p=s.split('-');var t=Date.UTC(+p[0],+p[1]-1,+p[2]);return ((t-T0)/(T1-T0)*100);};
       var rowsG=[
-        {n:'Block Fabrication',w:'40%',s:'2026-08-19',e:'2027-05-31',a:3.2},
+        {n:'Block Fabrication',w:'40%',s:'2026-08-19',e:'2027-05-31',a:4.5},
         {n:'Erection (127 blocks)',w:'30%',s:'2026-12-28',e:'2027-08-20',a:0},
         {n:'Outfitting',w:'11%',s:'2026-09-14',e:'2027-11-30',a:0},
         {n:'FAT',w:'4%',s:null,e:null,a:0},
         {n:'Commissioning',w:'5%',s:'2027-03-11',e:'2027-12-17',a:0},
         {n:'Mooring & Sea Trial',w:'10%',s:'2027-08-12',e:'2027-12-03',a:0},
-        {n:'Overall',w:'100%',s:'2026-08-19',e:'2027-12-28',a:1.3}
+        {n:'Overall',w:'100%',s:'2026-08-19',e:'2027-12-28',a:1.8}
       ];
       var ms=[
         {n:'Steel Cutting',k:'SC',d:'2026-08-19'},
@@ -2447,7 +2469,7 @@ body.nav-lock{overflow:hidden;}
         {n:'Launching',k:'LC',d:'2027-08-23',warn:1,tip:'원 일정 2027.07.16 → 08.20 (10.08) → 08.23 (10.15)'},
         {n:'Delivery',k:'DL',d:'2027-12-28'}
       ];
-      var today=pct('2026-11-20');
+      var today=pct('2026-11-26');
       var ax='<div class="g-axis">';
       for(var y=2026;y<=2027;y++){for(var m=(y===2026?8:1);m<=12;m++){
         var lbl=(m===1||(y===2026&&m===8))?('<span class="yr" style="left:'+pct(y+'-'+m+'-1')+'%">'+String(y).slice(2)+'.'+('0'+m).slice(-2)+'</span>'):(m%3===1?'<span style="left:'+pct(y+'-'+m+'-1')+'%">'+('0'+m).slice(-2)+'</span>':'');
@@ -2555,20 +2577,6 @@ body.nav-lock{overflow:hidden;}
       m.addEventListener('mouseenter',function(){ m.click(); });
       m.addEventListener('mouseleave',function(){ if(tipEl) tipEl.classList.remove('show'); });
     });
-  }catch(e){}
-
-  /* ---------- 블록 생산계획 월별 막대 ---------- */
-  try{
-    var mb=document.getElementById('mbarList');
-    if(mb){
-      var M=[['26.10',13,0],['26.11',27,2],['26.12',31,27],['27.01',31,25],['27.02',13,13],['27.03',12,37],['27.04',0,23]];
-      var mx=31;
-      mb.innerHTML=M.map(function(r){
-        return '<div class="mbar"><div class="ml">'+r[0]+'</div>'
-          +'<div class="mt"><span style="width:'+(r[1]/mx*100)+'%;background:var(--blue-soft);border:1px solid var(--blue-line);"></span><em>'+r[1]+'</em></div>'
-          +'<div class="mt"><span style="width:'+(r[2]/mx*100)+'%;background:var(--green-soft);border:1px solid var(--green-line);"></span><em>'+r[2]+'</em></div></div>';
-      }).join('');
-    }
   }catch(e){}
 
   /* ---------- MOA 예산 Waterfall ---------- */
@@ -2722,6 +2730,101 @@ body.nav-lock{overflow:hidden;}
     window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}});
   }
 })();
+</script>
+<script>
+/* ---------- 블록 제작 현황 카드 ---------- */
+try{(function(){
+const PP=[["H03C","2026-10-01","2026-10-03","2026-10-18","2026-10-30","2026-11-26","2026-12-05","2026-12-12",100.55,64.0],["H03B","2026-10-04","2026-10-06","2026-10-21","2026-11-02","2026-11-29","2026-12-08","2026-12-15",86.47,60.5],["H03P","2026-10-07","2026-10-09","2026-10-24","2026-11-05","2026-12-02","2026-12-11","2026-12-18",90.17,60.5],["H03S","2026-10-10","2026-10-12","2026-10-27","2026-11-08","2026-12-05","2026-12-14","2026-12-21",90.17,60.5],["H04C","2026-10-13","2026-10-15","2026-10-28","2026-11-09","2026-12-06","2026-12-15","2026-12-22",99.99,29.0],["H04B","2026-10-16","2026-10-17","2026-10-30","2026-11-11","2026-12-08","2026-12-17","2026-12-24",86.63,29.0],["H04P","2026-10-18","2026-10-19","2026-11-01","2026-11-13","2026-12-10","2026-12-19","2026-12-26",87.26,18.5],["H04S","2026-10-20","2026-10-21","2026-11-03","2026-11-15","2026-12-12","2026-12-21","2026-12-28",87.26,18.5],["H02C","2026-10-22","2026-10-23","2026-11-03","2026-11-15","2026-12-12","2026-12-21","2026-12-28",90.23,15.0],["H02B","2026-10-24","2026-10-25","2026-11-05","2026-11-17","2026-12-14","2026-12-23","2026-12-30",76.0,15.0],["H02P","2026-10-26","2026-10-27","2026-11-07","2026-11-19","2026-12-16","2026-12-25","2027-01-01",87.04,15.0],["H02S","2026-10-28","2026-10-29","2026-11-09","2026-11-21","2026-12-18","2026-12-27","2027-01-03",87.04,15.0],["H01C","2026-10-30","2026-10-31","2026-11-09","2026-11-21","2026-12-18","2026-12-27","2027-01-03",100.56,15.0],["H01B","2026-11-01","2026-11-02","2026-11-11","2026-11-23","2026-12-20","2026-12-29","2027-01-05",80.7,15.0],["H01P","2026-11-03","2026-11-04","2026-11-13","2026-11-25","2026-12-22","2026-12-31","2027-01-07",92.75,15.0],["H01S","2026-11-05","2026-11-06","2026-11-15","2026-11-27","2026-12-24","2027-01-02","2027-01-09",92.75,15.0],["H05C","2026-11-07","2026-11-08","2026-11-15","2026-11-27","2026-12-24","2027-01-02","2027-01-09",108.21,14.3],["H05B","2026-11-09","2026-11-10","2026-11-17","2026-11-29","2026-12-26","2027-01-04","2027-01-11",107.24,14.3],["H05P","2026-11-11","2026-11-12","2026-11-19","2026-12-01","2026-12-28","2027-01-06","2027-01-13",73.58,14.3],["H05S","2026-11-13","2026-11-14","2026-11-21","2026-12-03","2026-12-30","2027-01-08","2027-01-15",73.58,14.3],["H06C","2026-11-15","2026-11-16","2026-11-21","2026-12-03","2026-12-30","2027-01-08","2027-01-15",102.47,12.0],["H06B","2026-11-17","2026-11-18","2026-11-23","2026-12-05","2027-01-01","2027-01-10","2027-01-17",101.58,12.0],["H06P","2026-11-19","2026-11-20","2026-11-25","2026-12-07","2027-01-03","2027-01-12","2027-01-19",100.34,12.0],["H06S","2026-11-21","2026-11-22","2026-11-27","2026-12-09","2027-01-05","2027-01-14","2027-01-21",100.34,12.0],["H13C","2026-11-23","2026-11-23","2026-11-26","2026-12-08","2026-12-30","2027-01-08","2027-01-15",83.46,0.0],["H13B","2026-11-24","2026-11-24","2026-11-27","2026-12-09","2026-12-31","2027-01-09","2027-01-16",83.6,0.0],["H13P","2026-11-25","2026-11-25","2026-11-28","2026-12-10","2027-01-01","2027-01-10","2027-01-17",67.76,0.0],["H13S","2026-11-26","2026-11-26","2026-11-29","2026-12-11","2027-01-02","2027-01-11","2027-01-18",67.76,0.0],["H12C","2026-11-27","2026-11-27","2026-11-30","2026-12-12","2027-01-03","2027-01-12","2027-01-19",77.93,3.0],["H12B","2026-11-28","2026-11-28","2026-12-01","2026-12-13","2027-01-04","2027-01-13","2027-01-20",79.51,3.0],["H12P","2026-11-29","2026-11-29","2026-12-02","2026-12-14","2027-01-05","2027-01-14","2027-01-21",41.97,3.0],["H12S","2026-11-30","2026-11-30","2026-12-03","2026-12-15","2027-01-06","2027-01-15","2027-01-22",41.97,3.0],["H14C","2026-12-01","2026-12-01","2026-12-04","2026-12-16","2027-01-07","2027-01-16","2027-01-23",83.33,0.0],["H14B","2026-12-02","2026-12-02","2026-12-05","2026-12-17","2027-01-08","2027-01-17","2027-01-24",83.31,0.0],["H14P","2026-12-03","2026-12-03","2026-12-06","2026-12-18","2027-01-09","2027-01-18","2027-01-25",67.6,0.0],["H14S","2026-12-04","2026-12-04","2026-12-07","2026-12-19","2027-01-10","2027-01-19","2027-01-26",67.6,0.0],["H11C","2026-12-01","2026-12-01","2026-12-04","2026-12-16","2027-01-07","2027-01-16","2027-01-23",82.54,0.0],["H11B","2026-12-02","2026-12-02","2026-12-05","2026-12-17","2027-01-08","2027-01-17","2027-01-24",82.45,0.0],["H11P","2026-12-03","2026-12-03","2026-12-06","2026-12-18","2027-01-09","2027-01-18","2027-01-25",67.43,0.0],["H11S","2026-12-04","2026-12-04","2026-12-07","2026-12-19","2027-01-10","2027-01-19","2027-01-26",67.43,0.0],["H15C","2026-12-05","2026-12-05","2026-12-08","2026-12-20","2027-01-11","2027-01-20","2027-01-27",95.73,0.0],["H15B","2026-12-06","2026-12-06","2026-12-09","2026-12-21","2027-01-12","2027-01-21","2027-01-28",87.0,0.0],["H15P","2026-12-07","2026-12-07","2026-12-10","2026-12-22","2027-01-28","2027-01-22","2027-01-29",72.11,0.0],["H15S","2026-12-08","2026-12-08","2026-12-11","2026-12-23","2027-01-29","2027-01-23","2027-01-30",72.11,0.0],["H16C","2026-12-09","2026-12-09","2026-12-12","2026-12-24","2027-01-15","2027-01-24","2027-01-31",95.68,0.0],["H16B","2026-12-10","2026-12-10","2026-12-13","2026-12-25","2027-01-16","2027-01-25","2027-02-01",89.36,0.0],["H16P","2026-12-11","2026-12-11","2026-12-14","2026-12-26","2027-01-17","2027-01-26","2027-02-02",65.35,0.0],["H16S","2026-12-12","2026-12-12","2026-12-15","2026-12-27","2027-01-18","2027-01-27","2027-02-03",65.35,0.0],["E04C","2026-12-13","2026-12-13","2026-12-16","2026-12-28","2027-01-24","2027-02-22","2027-03-01",125.41,0.0],["E04B","2026-12-14","2026-12-14","2026-12-17","2026-12-29","2027-01-25","2027-02-23","2027-03-02",111.39,0.0],["E04P","2026-12-15","2026-12-15","2026-12-18","2026-12-30","2027-01-26","2027-02-24","2027-03-03",93.88,0.0],["E04S","2026-12-16","2026-12-16","2026-12-19","2026-12-31","2027-01-27","2027-02-25","2027-03-04",93.88,0.0],["E03C","2026-12-17","2026-12-17","2026-12-20","2027-01-01","2027-01-28","2027-02-26","2027-03-05",121.1,0.0],["E03B","2026-12-18","2026-12-18","2026-12-21","2027-01-02","2027-01-29","2027-02-27","2027-03-06",111.02,0.0],["E03P","2026-12-19","2026-12-19","2026-12-22","2027-01-03","2027-01-30","2027-02-28","2027-03-07",93.18,0.0],["E03S","2026-12-20","2026-12-20","2026-12-23","2027-01-04","2027-01-31","2027-03-01","2027-03-08",93.18,0.0],["E02C","2026-12-21","2026-12-21","2026-12-24","2027-01-05","2027-02-01","2027-03-02","2027-03-09",104.88,0.0],["E02B","2026-12-22","2026-12-22","2026-12-25","2027-01-06","2027-02-02","2027-03-03","2027-03-10",93.82,0.0],["E02P","2026-12-23","2026-12-23","2026-12-26","2027-01-07","2027-02-03","2027-03-04","2027-03-11",66.74,0.0],["E02S","2026-12-24","2026-12-24","2026-12-27","2027-01-08","2027-02-04","2027-03-05","2027-03-12",66.74,0.0],["E01C","2026-12-25","2026-12-25","2026-12-28","2027-01-09","2027-02-20","2027-03-06","2027-03-13",91.27,0.0],["E01B","2026-12-26","2026-12-26","2026-12-29","2027-01-10","2027-02-21","2027-03-07","2027-03-14",81.83,0.0],["E01P","2026-12-27","2026-12-27","2026-12-30","2027-01-11","2027-02-22","2027-03-08","2027-03-15",50.22,0.0],["E01S","2026-12-28","2026-12-28","2026-12-31","2027-01-12","2027-02-23","2027-03-09","2027-03-16",50.22,0.0],["A02C","2026-12-29","2026-12-29","2027-01-01","2027-01-28","2027-04-05","2027-04-14","2027-04-21",126.59,0.0],["A02B","2026-12-30","2026-12-30","2027-01-02","2027-01-29","2027-04-06","2027-04-15","2027-04-22",137.36,0.0],["A02P","2026-12-31","2026-12-31","2027-01-03","2027-01-30","2027-04-07","2027-04-16","2027-04-23",65.48,0.0],["A02S","2027-01-01","2027-01-01","2027-01-04","2027-01-31","2027-04-08","2027-04-17","2027-04-24",65.48,0.0],["A01C","2027-01-02","2027-01-02","2027-01-05","2027-02-01","2027-04-09","2027-04-18","2027-04-25",114.77,0.0],["A01B","2027-01-03","2027-01-03","2027-01-06","2027-02-02","2027-04-10","2027-04-19","2027-04-26",109.52,0.0],["A01P","2027-01-04","2027-01-04","2027-01-07","2027-02-03","2027-04-11","2027-04-20","2027-04-27",65.57,0.0],["A01S","2027-01-05","2027-01-05","2027-01-08","2027-02-04","2027-04-12","2027-04-21","2027-04-28",65.57,0.0],["F01G","2027-01-06","2027-01-06","2027-01-09","2027-02-20","2027-04-13","2027-04-22","2027-04-29",120.54,0.0],["F02G","2027-01-07","2027-01-07","2027-01-10","2027-02-21","2027-04-14","2027-04-23","2027-04-30",67.71,0.0],["F03G","2027-01-08","2027-01-08","2027-01-11","2027-02-22","2027-04-25","2027-05-04","2027-05-11",66.46,0.0],["E14C","2027-01-09","2027-01-09","2027-01-12","2027-01-24","2027-03-02","2027-03-16","2027-03-23",null,0.0],["E14B","2027-01-10","2027-01-10","2027-01-13","2027-01-25","2027-03-03","2027-03-17","2027-03-24",null,0.0],["E14P","2027-01-11","2027-01-11","2027-01-14","2027-01-26","2027-03-04","2027-03-18","2027-03-25",null,0.0],["E14S","2027-01-12","2027-01-12","2027-01-15","2027-01-27","2027-03-05","2027-03-19","2027-03-26",null,0.0],["E13C","2027-01-13","2027-01-13","2027-01-16","2027-01-28","2027-03-06","2027-03-20","2027-03-27",null,0.0],["E13B","2027-01-14","2027-01-14","2027-01-17","2027-01-29","2027-03-07","2027-03-21","2027-03-28",null,0.0],["E13P","2027-01-15","2027-01-15","2027-01-18","2027-01-30","2027-03-08","2027-03-22","2027-03-29",null,0.0],["E13S","2027-01-16","2027-01-16","2027-01-19","2027-01-31","2027-03-09","2027-03-23","2027-03-30",null,0.0],["E12C","2027-01-17","2027-01-17","2027-01-20","2027-02-01","2027-03-10","2027-03-24","2027-03-31",null,0.0],["E12B","2027-01-18","2027-01-18","2027-01-21","2027-02-02","2027-03-11","2027-03-25","2027-04-01",null,0.0],["E12P","2027-01-19","2027-01-19","2027-01-22","2027-02-03","2027-03-12","2027-03-26","2027-04-02",null,0.0],["E12S","2027-01-20","2027-01-20","2027-01-23","2027-02-04","2027-03-13","2027-03-27","2027-04-03",null,0.0],["E11C","2027-01-21","2027-01-21","2027-01-24","2027-02-20","2027-03-14","2027-03-28","2027-04-04",null,0.0],["E11B","2027-01-22","2027-01-22","2027-01-25","2027-02-21","2027-03-15","2027-03-29","2027-04-05",null,0.0],["E11P","2027-01-23","2027-01-23","2027-01-26","2027-02-22","2027-03-16","2027-03-30","2027-04-06",null,0.0],["E11S","2027-01-24","2027-01-24","2027-01-27","2027-02-23","2027-03-17","2027-03-31","2027-04-07",null,0.0],["A12C","2027-01-25","2027-01-25","2027-01-28","2027-02-24","2027-03-18","2027-03-27","2027-04-03",null,0.0],["A12B","2027-01-26","2027-01-26","2027-01-29","2027-02-25","2027-03-19","2027-03-28","2027-04-04",null,0.0],["A12P","2027-01-27","2027-01-27","2027-01-30","2027-02-26","2027-03-20","2027-03-29","2027-04-05",null,0.0],["A12S","2027-01-28","2027-01-28","2027-01-31","2027-02-27","2027-03-21","2027-03-30","2027-04-06",null,0.0],["A11C","2027-01-29","2027-01-29","2027-02-01","2027-02-28","2027-03-22","2027-03-31","2027-04-07",null,0.0],["A11B","2027-01-30","2027-01-30","2027-02-02","2027-03-01","2027-03-23","2027-04-01","2027-04-08",null,0.0],["A11P","2027-01-31","2027-01-31","2027-02-03","2027-03-02","2027-03-24","2027-04-02","2027-04-09",null,0.0],["A11S","2027-02-01","2027-02-01","2027-02-04","2027-03-03","2027-03-25","2027-04-03","2027-04-10",null,0.0],["F11P","2027-02-02","2027-02-02","2027-02-20","2027-03-04","2027-03-26","2027-04-04","2027-04-11",null,0.0],["F11S","2027-02-03","2027-02-03","2027-02-21","2027-03-05","2027-03-27","2027-04-05","2027-04-12",null,0.0],["F12P","2027-02-04","2027-02-04","2027-02-22","2027-03-06","2027-03-28","2027-04-16","2027-04-20",null,0.0],["F12S","2027-02-20","2027-02-20","2027-02-23","2027-03-07","2027-03-29","2027-04-17","2027-04-21",null,0.0],["F21P","2027-02-21","2027-02-21","2027-02-24","2027-03-08","2027-03-30","2027-04-18","2027-04-22",null,0.0],["F21S","2027-02-22","2027-02-22","2027-02-25","2027-03-09","2027-03-31","2027-04-19","2027-04-23",null,0.0],["F22P","2027-02-23","2027-02-23","2027-02-26","2027-03-10","2027-04-01","2027-04-20","2027-04-24",null,0.0],["F22S","2027-02-24","2027-02-24","2027-02-27","2027-03-11","2027-03-28","2027-04-16","2027-04-20",null,0.0],["F31C","2027-02-25","2027-02-25","2027-02-28","2027-03-12","2027-03-29","2027-04-17","2027-04-21",null,0.0],["F31P","2027-02-26","2027-02-26","2027-03-01","2027-03-13","2027-03-30","2027-04-18","2027-04-22",null,0.0],["F31S","2027-02-27","2027-02-27","2027-03-02","2027-03-14","2027-03-31","2027-04-19","2027-04-23",null,0.0],["F32C","2027-02-28","2027-02-28","2027-03-03","2027-03-15","2027-04-01","2027-04-20","2027-04-24",null,0.0],["F32P","2027-03-01","2027-03-01","2027-03-04","2027-03-16","2027-04-02","2027-04-21","2027-04-25",null,0.0],["F32S","2027-03-02","2027-03-02","2027-03-05","2027-03-17","2027-04-03","2027-04-22","2027-04-26",null,0.0],["F41C","2027-03-03","2027-03-03","2027-03-06","2027-03-18","2027-04-04","2027-04-23","2027-04-27",null,0.0],["F41P","2027-03-04","2027-03-04","2027-03-07","2027-03-19","2027-04-05","2027-04-24","2027-04-28",null,0.0],["F41S","2027-03-05","2027-03-05","2027-03-08","2027-03-20","2027-04-06","2027-04-25","2027-04-29",null,0.0],["P01P","2027-03-06","2027-03-06","2027-03-09","2027-03-21","2027-04-07","2027-04-26","2027-04-30",null,0.0],["P01S","2027-03-07","2027-03-07","2027-03-10","2027-03-22","2027-04-08","2027-04-27","2027-05-01",null,0.0],["P01C","2027-03-08","2027-03-08","2027-03-11","2027-03-23","2027-04-09","2027-04-28","2027-05-02",null,0.0],["P11P","2027-03-09","2027-03-09","2027-03-12","2027-03-24","2027-04-10","2027-04-29","2027-05-03",null,0.0],["P11S","2027-03-10","2027-03-10","2027-03-13","2027-03-25","2027-04-11","2027-04-30","2027-05-04",null,0.0],["P11C","2027-03-11","2027-03-11","2027-03-14","2027-03-26","2027-04-12","2027-05-01","2027-05-05",null,0.0],["P21P","2027-03-12","2027-03-12","2027-03-15","2027-03-27","2027-04-13","2027-05-02","2027-05-06",null,0.0],["P21S","2027-03-13","2027-03-13","2027-03-16","2027-03-28","2027-04-14","2027-05-03","2027-05-07",null,0.0],["FU01P","2027-03-14","2027-03-14","2027-03-17","2027-03-29","2027-04-15","2027-05-04","2027-05-08",null,0.0],["FU01S","2027-03-15","2027-03-15","2027-03-18","2027-03-30","2027-04-16","2027-05-05","2027-05-09",null,0.0],["BW01","2027-03-16","2027-03-16","2027-03-19","2027-03-31","2027-04-17","2027-05-06","2027-05-10",null,0.0]];const REF='2026-11-22';
+const STG=['미착수','가공(절단)','소조립','대조립','도장','탑재완료'];
+const SC=['var(--s0)','var(--s1)','var(--s2)','var(--s3)','var(--s4)','var(--s5)'];
+const CUT={H01:100,H02:100,H03:100,H04:100,H05:95,H06:80,H12:20};
+const FAB={H03C:70,H03B:65,H03P:65,H03S:65,H04C:20,H04B:20,H04P:5,H04S:5};
+const FABPLAN={H03C:55,H03B:55,H03P:45,H03S:45,H04C:25,H04B:25,H04P:20,H04S:20,H02B:15,H02C:15,H01B:15,H01C:15};
+const MAJOR={H03:1};
+const NOTE={H02:'WN47: 소조립·판조립 진행 보고 — 공정표 제작 실적 0%',H01:'WN47: 담당 시공업체 Kick-out → 대체업체·No.7-2 Slipway 정반 차주 확정',H06:'WN47: 절단 완료분 Grinding Area 이동',H05:'WN47: 소조립용 강재 R2 Grinding 진행',H12:'계획(11.27~) 대비 선행 절단 착수',H13:'WN47: 절단 진행 보고 — 공정표 11.22주 실적 0%'};
+const ZN={A:'선미부',E:'기관실',H:'화물창',F:'선수부',P:'상부구조',FU:'상부구조',BW:'상부구조'};
+const unitOf=b=>b.match(/^[A-Z]{1,2}\d\d/)[0];
+const md=d=>d?d.slice(5).replace('-','.'):'–';
+const $=id=>document.getElementById(id);
+const blocks=PP.map(([b,cs,cf,ss,js,fi,ps,pf,w,p])=>{
+  const u=unitOf(b),cut=CUT[u]||0,fab=FAB[b]||0;
+  const act=fab>0?(MAJOR[u]?3:2):cut>0?1:0;
+  const plan=ps<=REF?4:js<=REF?3:ss<=REF?2:cs<=REF?1:0;
+  const late=plan>act||(act===1&&cf<=REF&&cut<100)||(FABPLAN[b]!=null&&fab<FABPLAN[b]&&act>=2);
+  return {b,u,cs,cf,ss,js,fi,ps,w,p,cut,fab,act,plan,late,ahead:act>plan,zone:ZN[u.match(/^[A-Z]+/)[0]]};
+});
+const byU={};blocks.forEach(x=>(byU[x.u]=byU[x.u]||[]).push(x));
+const ORD={P:0,C:1,B:2,S:3,G:4};
+Object.values(byU).forEach(a=>a.sort((x,y)=>(ORD[x.b.slice(-1)]??5)-(ORD[y.b.slice(-1)]??5)));
+const avg=a=>a.reduce((s,x)=>s+x.p,0)/a.length;
+const N=blocks.length,started=blocks.filter(x=>x.act>0),late=blocks.filter(x=>x.late),ahead=blocks.filter(x=>x.ahead);
+const lateUnits=[...new Set(late.map(x=>x.u))];
+const addD=(d,n)=>{const t=new Date(d+'T00:00:00Z');t.setUTCDate(t.getUTCDate()+n);return t.toISOString().slice(0,10)};
+const END=addD(REF,28);
+const upcoming=blocks.filter(x=>x.act===0&&x.cs<=END);
+const h3=byU.H03;
+$('bkTitle').textContent=`127개 블록 중 ${started.length}개 착수 · 계획 대비 지연 ${late.length}개`;
+$('bkSubtitle').textContent=`기준 ${md(REF)} · H03 대조립 선두(블록 진행률 ${Math.min(...h3.map(x=>x.p))}~${Math.max(...h3.map(x=>x.p))}%) · 지연 유닛 ${lateUnits.join('·')}${ahead.length?` · 선행 ${[...new Set(ahead.map(x=>x.u))].join('·')}`:''} · 탑재 완료 0`;
+const K=[
+ ['착수 블록',`${started.length}<small>/ ${N}</small>`,`${(started.length/N*100).toFixed(1)}% · 미착수 ${N-started.length} · 탑재 0`],
+ ['블록 평균 진행률',`${avg(blocks).toFixed(1)}<small>%</small>`,`127개 단순 평균 · 착수 블록 평균 ${avg(started).toFixed(1)}%`],
+ ['계획 대비 지연',`${late.length}<small>블록</small>`,`<b>${lateUnits.join(' · ')}</b>`],
+ ['4주 내 절단 착수 대상',`${upcoming.length}<small>블록</small>`,`${[...new Set(upcoming.map(x=>x.u))].join(' · ')} · ~${md(END)}`]];
+$('bkKpis').innerHTML=K.map(([l,v,s])=>`<div class="bk-kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+const cnt=STG.map((_,i)=>blocks.filter(x=>x.act===i).length);
+const INFO=`<div class="t">127개 블록 단계 분포</div>
+ <div class="bk-stack">${cnt.map((c,i)=>c?`<div style="flex:${c};background:${SC[i]}" title="${STG[i]} ${c}">${c>=10?STG[i].replace('(절단)','')+' '+c:''}</div>`:'').join('')}</div>
+ <div class="bk-legend">${STG.map((s,i)=>`<span><i class="bk-sw" style="background:${SC[i]}"></i>${s} <b style="font-weight:600;color:var(--ink)">${cnt[i]}</b></span>`).join('')}<span><i class="bk-dly"></i>계획 대비 지연</span><span><i class="bk-sw" style="border:1.5px solid var(--green)"></i>계획 대비 선행</span></div>
+ <div class="d">Profile view · 선미(좌) → 선수(우) · 하부 칸 01~06 = Bottom 1,000~3,350 · 상부 칸 11~16 = 8,050 Deck · 선수부 F·상부구조 P는 우측 적층</div>`;
+$('bkInfoM').innerHTML=INFO;
+const L=[['FU01',1,13],['P21',1,14],['P11',2,13,1,2],['P01',3,13,1,2],['BW01',3,15],['F41',4,13],['F32',4,14,2,2],['F31',5,13],
+ ['A11',6,1],['A12',6,2],['E11',6,3],['E12',6,4],['E13',6,5],['E14',6,6],['H11',6,7],['H12',6,8],['H13',6,9],['H14',6,10],['H15',6,11],['H16',6,12],['F21',6,13],['F22',6,14],['F03',6,15,3,1],
+ ['A01',7,1,2],['A02',7,2,2],['E01',7,3,2],['E02',7,4,2],['E03',7,5,2],['E04',7,6,2],['H01',7,7,2],['H02',7,8,2],['H03',7,9,2],['H04',7,10,2],['H05',7,11,2],['H06',7,12,2],['F11',7,13],['F12',7,14],['F01',8,13],['F02',8,14]];
+const map=$('bkMap');
+map.innerHTML=L.map(([u,r,c,rs=1,cs=1])=>{
+  const a=byU[u]||[];const up=a.length?avg(a):0;const lt=a.some(x=>x.late),ah=a.some(x=>x.ahead);
+  return `<div class="bk-cell${lt?' late':ah?' ahead':''}" tabindex="0" data-u="${u}" style="grid-row:${r}/span ${rs};grid-column:${c}/span ${cs}">
+   <div class="nm"><span>${u}</span><i>${up?(up<10?up.toFixed(0):Math.round(up))+'%':''}</i></div>
+   <div class="bk-segs" style="grid-template-columns:repeat(${Math.max(a.length,1)},1fr)">${a.map(x=>`<div class="bk-seg" style="background:${SC[x.act]}"></div>`).join('')}</div></div>`}).join('')
+ +`<div class="bk-info">${INFO}</div>`;
+$('bkMapNote').textContent='※ 배치도 시트 하부 L·M열은 모두 H06으로 표기되어 있어 H05·H06으로 해석함. H02(소조립·판조립)·H13(절단)은 WN47상 현장 진행 보고가 있으나 공정표 11.22주 실적 기준으로 표시함.';
+const sc=map.parentElement;
+const fixScroll=()=>{if(sc.scrollWidth>sc.clientWidth+4){const h=map.querySelector('[data-u="H01"]');sc.scrollLeft=Math.max(0,h.offsetLeft-56);}};
+fixScroll();document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-panel="build"],[data-goto-panel="build"]');if(t)setTimeout(fixScroll,60);});
+const tip=$('bkTip');
+function showTip(el){const u=el.dataset.u,a=byU[u]||[];if(!a.length)return;
+  const w=a.reduce((s,x)=>s+(x.w||0),0);
+  tip.innerHTML=`<h4>${u} · ${a[0].zone}</h4><table>${a.map(x=>`<tr><td>${x.b}${x.late?' <span style="color:var(--red)">●</span>':''}</td><td>${STG[x.act]} · ${x.p}%</td></tr>`).join('')}</table>
+  <div class="pl">계획 단계(${md(REF)}): ${STG[Math.max(...a.map(x=>x.plan))]}<br>절단 ${md(a[0].cs)}~${md(a[a.length-1].cf)} · 완공검사 ${md(a[0].fi)}~${md(a[a.length-1].fi)}${w?`<br>중량 ${w.toFixed(1)} t`:''}${NOTE[u]?`<br>${NOTE[u]}`:''}</div>`;
+  tip.classList.add('on');
+  const r=el.getBoundingClientRect();let x=r.left+r.width/2-140,y=r.bottom+8;
+  x=Math.max(8,Math.min(x,innerWidth-310));if(y+tip.offsetHeight>innerHeight-8)y=r.top-8-tip.offsetHeight;
+  tip.style.left=x+'px';tip.style.top=y+'px';}
+const hide=()=>tip.classList.remove('on');
+map.querySelectorAll('.bk-cell').forEach(el=>{el.addEventListener('mouseenter',()=>showTip(el));el.addEventListener('focus',()=>showTip(el));
+  el.addEventListener('click',()=>showTip(el));el.addEventListener('mouseleave',hide);el.addEventListener('blur',hide);});
+addEventListener('scroll',hide,{passive:true});
+const DU=['H03','H04','H02','H01','H05','H06','H12','H13'];
+const P5=['절단','소조립','대조립','도장','탑재'];
+$('bkRows').innerHTML=DU.map(u=>{const a=byU[u];
+  const act=Math.max(...a.map(x=>x.act)),mn=Math.min(...a.map(x=>x.act)),plan=Math.max(...a.map(x=>x.plan));
+  const nl=a.filter(x=>x.late).length,cut=a[0].cut,fabs=a.map(x=>x.fab),fp=a.map(x=>FABPLAN[x.b]).filter(v=>v!=null);
+  const pipe=P5.map((s,i)=>{const k=i+1;const cls=k<act?'done':k===act?'cur':'';const pl=k===plan&&plan>act?' plan':'';
+    return `<div class="${cls}${pl}" style="${k<=act?`background:${SC[k]}`:''}">${s}</div>`}).join('');
+  const chip=act>plan?`<span class="bk-chip ok">계획 대비 선행</span>`:act===0?(nl?`<span class="bk-chip late">착수 지연</span>`:`<span class="bk-chip wait">착수 전</span>`):nl?`<span class="bk-chip late">지연 ${nl}/${a.length}</span>`:`<span class="bk-chip ok">계획 내</span>`;
+  const fabTxt=Math.max(...fabs)>0?`제작 ${Math.min(...fabs)}~${Math.max(...fabs)}%${fp.length?` (계획 ${Math.min(...fp)}~${Math.max(...fp)}%)`:''}`:`제작 0%${fp.length?` (계획 ${Math.max(...fp)}%)`:''}`;
+  return `<div class="bk-row"><div class="bn">${u} ${a.map(x=>x.b.slice(-1)).join('/')}<small>${act!==mn?`${STG[mn]}~${STG[act]} 혼재`:STG[act]} · 완공검사 ${md(a[0].fi)}~</small></div>
+   <div class="bk-pipe">${pipe}</div>
+   <div class="bk-mx"><div class="t"><span>절단 ${cut}% · ${fabTxt}</span><b>${avg(a).toFixed(1)}%</b></div><div class="bk-bar"><span style="width:${avg(a)}%"></span></div>${NOTE[u]?`<div style="font-size:11.5px;color:var(--ink-faint)">${NOTE[u]}</div>`:''}</div>${chip}</div>`}).join('');
+const ZO=['선미부','기관실','화물창','선수부','상부구조'];
+$('bkZones').innerHTML=ZO.map(z=>{const a=blocks.filter(x=>x.zone===z),s=a.filter(x=>x.act>0).length;
+  return `<div class="bk-zb"><span>${z}</span><div class="bk-bar"><span style="width:${s/a.length*100}%"></span></div><span class="n">${s} / ${a.length}</span></div>`}).join('')
+  +`<p class="note">착수 블록 ${started.length}개는 모두 화물창(H01~H06·H12) — 기관실은 E/R 선행의장 3D 모델(12월 말~1월 중순 완료 예상) 지연으로 생산 순서 조정 예정(WN47).</p>`;
+$('bkUpm').textContent=`${md(addD(REF,1))} ~ ${md(END)}`;
+const ug={};upcoming.forEach(x=>(ug[x.u]=ug[x.u]||[]).push(x));
+$('bkUps').innerHTML=Object.entries(ug).map(([u,a])=>{const w=a.reduce((s,x)=>s+(x.w||0),0),lt=a.some(x=>x.cs<=REF);
+  return `<div class="bk-up"><span class="d">${md(a[0].cs)}${a.length>1?'~'+md(a[a.length-1].cs):''}</span><span>${a.map(x=>x.b).join(' · ')}${lt?' <span class="bk-chip late" style="padding:2px 8px">착수 지연</span>':''}</span><span class="w">${w?w.toFixed(0)+' t':''}</span></div>`}).join('');
+})();}catch(e){console.error('bk card',e);}
 </script>
 <script defer src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
