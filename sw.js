@@ -1,5 +1,5 @@
 /* NB25K PWA service worker — 페이지는 network-first(주간 갱신 즉시 반영), 정적 자원은 cache-first */
-const VER = 'nb25k-20261126';
+const VER = 'nb25k-20261127';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VER).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
